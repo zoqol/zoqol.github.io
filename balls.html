@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Balls</title>
+    <style >
+        
+        #canv{
+
+        border:1px solid black;
+background-color: white;
+  
+        }
+        .dio{
+            width: 480px;
+            display: block;
+            margin: auto;
+        }
+        body{
+            background-color: black;
+           
+            overflow: hidden;
+        }
+    </style>
+ <script type="text/javascript" src="dat.gui.js"></script>
+</head>
+</div>
+<div class="dio">
+  <canvas id="canv" width="400" height="400" ></canvas>  
+<a id="dl" href="" style="color:white;" download><pre>download source code</pre></a>
+<script >var dl=document.getElementById("dl");
+dl.href=window.location;</script>
+</div>
+
+<script>
+
+
+var controls = new function() {
+this.Speed = 0.03;
+this.Size = .3;
+}
+var gui = new dat.GUI();
+gui.add(controls, 'Speed', 0.01, .1);
+gui.add(controls, 'Size', 0, 1);
+
+var el=document.getElementById("canv");
+var w=400;
+var h=400;
+    var ctx=el.getContext("2d");
+    var idata=ctx.getImageData(0,0,400,400);
+    var data=idata.data;
+
+var t=0;
+    reanimate();
+    var dlta=0;
+    var offset=100;
+
+
+    function reanimate() {
+        ctx.fillStyle="#000000";
+        t++;
+        dlta+=controls.Speed;
+        ctx.clearRect(0, 0, w, h);
+        ctx.beginPath()
+        var ax = w/2;
+        var ay = h/2;
+        var x=ax+Math.cos(dlta)*90;
+        var y = ay + Math.sin(dlta * 2) * 40;
+        var xa = ax + Math.sin(dlta*.5) * 70;
+        var ya = ay+Math.cos(dlta)*30;
+if(dlta>100) dlta=0;
+   for(var i=offset;i<w-offset;i++){
+    for(var j=offset;j<h-offset;j++)
+        { 
+
+            var dx = (i - xa);
+            var dy = (j - ya);
+            var fx = Math.sqrt(dx * dx + dy * dy) / w;
+            var arg = 2*(fx - .5);
+            fx =Math.sqrt(1-arg*arg);
+            var ln =(255*fx);
+            dx = (i - x);
+            dy = (j - y);
+            fx = Math.sqrt(dx * dx + dy * dy) / w;
+            arg = 1 * (fx - 2);
+            var rad = 1-controls.Size;
+            var ux =rad* Math.sqrt(4 - arg * arg)*255;
+            //ln = Std.int((255 * gx + ln) / 2);
+            dx = (i - ax);
+            dy = (j - ay);
+            fx = Math.sqrt(dx * dx + dy * dy) / w;
+            arg = (fx - 2);
+            var gx = Math.sqrt(4 - arg * arg)*255;
+            ln = parseInt((gx + ux + ln) / 3);
+
+           if(ln<150){
+            ctx.fillRect(i,j,1,1)
+
+           }  
+            //ctx.arc(i,j,2,0,Math.PI*2);
+           
+        }
+   }
+
+ ctx.fill();
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<body>
+
+</body>
+</html>

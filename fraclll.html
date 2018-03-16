@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FracTAAL</title>
+</head>
+<style type="text/css">
+ .dio{
+  width: 1024px;
+  margin: auto;
+  background-color: white;
+ }
+ body{background-color: black;}
+</style>
+<div class="dio">
+  
+  <canvas width="1024" height="550" id="canv" style="border:solid black 1px;"></canvas>
+</div>
+<body>
+<script>
+    var el=document.getElementById("canv")
+var ctx=el.getContext("2d");
+    var center={x:0,y:400};
+   var  grad = ctx.createRadialGradient(0,0,0,0,0,500);
+    grad.addColorStop(1,"rgba(0,50,50,0.2)");
+    grad.addColorStop(0,"rgba(0,20,170,0.2)");
+
+    function  geenratePoint(n) {
+        var points=[];
+        var first={x:0,y:0};
+        var last={x:1,y:0};
+        var m={max:-10000,min:10000}
+        points.push(first)
+        gerp(first,last,n);
+        function gerp(a,b,n) {
+            if(n<1) return;
+            var deltaX=b.x-a.x;
+            var u={x:a.x+(b.x-a.x)/2,y:(b.y+a.y)/2}
+            u.y+=(Math.random()*2-1)*deltaX;
+
+            gerp(a,u,n-1);
+            points.push(u);
+            gerp(u,b,n-1)
+        }
+
+        points.push(last);
+
+        points.forEach(function (o) {
+            m.max=Math.max(m.max,o.y);
+            m.min=Math.min((m.min),o.y);
+        })
+        var ratio=1/(m.max-m.min)
+        points.forEach(function (o) {
+            o.y=ratio*(o.y-m.min);
+
+        })
+        points.m=m;
+        return points;
+    }
+
+    ps=geenratePoint(9)
+    ps2=geenratePoint(9)
+
+var peta=0;
+    var speed=1/100;
+setInterval(function () {
+
+    ps2=geenratePoint(9)
+},9000)
+  function  drawCircle(_ps,minrad,center)
+  {
+      var ps=_ps;
+      var n=ps.length;
+      var R=100;
+      ctx.beginPath();
+
+
+      for(var i=0;i<n-1;i++){
+          var u=ps[i]
+
+          var phi=Math.PI*2*(u.x)+peta;
+          R= u.y*200;
+
+          var x=Math.cos(phi)*R+center.x;
+          var y=Math.sin(phi)*R+center.y;
+          ctx.lineTo(x,y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+  }
+
+    center.y=400
+
+    setInterval(function () {
+        //ps1=ps2;
+      // ps2=generate(9);
+
+    },1500)
+
+
+    render()
+    var t=0;
+
+
+
+function  render() {
+    for(var i=0;i<ps.length;i++){
+        var v=ps[i];
+        var u=ps2[i];
+        ps[i]={x:v.x+(u.x-v.x)*speed,y:v.y+(u.y-v.y)*speed};
+
+    }
+   // ctx.clearRect(0,0,800,800)
+    t+=.5;
+    peta+=.002
+    var phi=(t/1024)*Math.PI*2*2+peta;
+ center.x+=.5;
+  //  center.y=Math.sin(phi)*100+400;
+//center.x=400;center.y=400;
+    center.y=Math.sin(phi)*50+400
+    ctx.lineWidth=1.03;
+   ctx.strokeStyle=grad;
+ //  ctx.clearRect(0,0,800,800);
+    drawCircle(ps,t/80,center)
+    requestAnimationFrame(render)
+
+}
+</script>
+</body>
+</html>

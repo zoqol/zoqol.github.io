@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dots on straight lines</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+var el=document.getElementById("canv");
+var w=480;
+var h=480;
+    var ctx=el.getContext("2d");
+    var idata=ctx.getImageData(0,0,400,400);
+    var data=idata.data;
+
+var t=0;
+        var n=0;
+        var r=200;
+        var ths=[];
+         var step=1;
+        add()
+       
+function add() {
+            n=n+step;
+           if(n<1 || n>10) step*=-1;
+            ths=[];
+        for(var i=0;i<n;i++){
+            var theta=(i/n)*Math.PI+Math.PI/2;
+            var xx=Math.sin(theta);
+            var yy=Math.cos(theta);
+             ths.push({x:xx,y:yy,p:{x:0,y:0}});
+        }
+            // body...
+        }
+        setInterval(add,3000)
+    reanimate();
+    var dlta=0;
+    var offset=100;
+
+
+    function reanimate() {
+        ctx.fillStyle="#000000";
+        t++;
+        dlta+=.03;
+        ctx.clearRect(0, 0, w, h);
+        ctx.beginPath();
+
+/*
+ ctx.beginPath();
+             ctx.arc(w/2+xx,h/2+yy,10,0,Math.PI*2)
+             ctx.fill()
+*/
+
+ctx.beginPath();
+       ctx.arc(w/2,h/2,r,0,Math.PI*2);
+       ctx.stroke();
+var opratio=Math.sin(dlta+Math.PI)+1
+for(var i=0;i<ths.length;i++){
+
+    var ratio=Math.sin(dlta+(i/n)*Math.PI);
+            var dir=ths[i];
+            var p={x:dir.x*r,y:dir.y*r};
+             ctx.beginPath();
+            // ctx.strokeStyle="#11aaff"
+             ctx.strokeStyle = "rgba(17, 170, 255, "+opratio+")";
+             ctx.moveTo(w/2+p.x,h/2+p.y);
+         
+
+           //  ctx.arc(w/2-p.x,h/2-p.y,10,0,Math.PI*2)
+
+             ctx.lineTo(w/2-p.x,h/2-p.y)
+             ctx.stroke()
+              ctx.beginPath();
+              ctx.fillStyle="#ffffff"
+               ctx.arc(w/2+dir.x*r*ratio,h/2+dir.y*r*ratio,8,0,Math.PI*2)
+               ctx.fill();
+
+        }
+        //ctx.arc(w/2,h/2,10,0,Math.PI*2)
+       
+      
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+    document.getElementById("cd").append(window.document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

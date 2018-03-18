@@ -94,9 +94,13 @@ function add() {
 */
 
 ctx.beginPath();
+ctx.lineWidth=2
 ctx.strokeStyle="#11aaff"
+
        ctx.arc(w/2,h/2,r,0,Math.PI*2);
        ctx.stroke();
+
+       ctx.lineWidth=1
 var opratio=Math.sin(dlta+Math.PI)+1
 for(var i=0;i<ths.length;i++){
 

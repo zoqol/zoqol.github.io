@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fibo spiral</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+height: auto;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+ text-align: center;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+        a{
+            color:white;
+           left: 650px;
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+
+<div id="canv">
+ 
+  <a href="fibo.swf" download>download swf file</a>
+ <br>
+ <object  width="480" height="480" data="fibo.swf">
+ 
+
+</div>
+
+    
+    
+
+</object>
+
+   
+<script id="sourcex">
+package  {
+    
+    import flash.display.MovieClip;
+    import flash.events.Event;
+    import flash.display.Graphics;
+    import flash.geom.Point;
+    import flash.events.MouseEvent;
+    import flash.text.TextField;
+    import flash.display.Sprite;
+    import com.bit101.components.Label;
+    import com.bit101.components.PushButton;
+    import com.bit101.components.HSlider;
+    import com.bit101.components.Component;
+    import com.bit101.components.CheckBox;
+    import flash.geom.ColorTransform;
+    import flash.utils.*
+    import com.bit101.components.Slider;
+    
+
+    
+    [SWF(backgroundColor=0xffffff, width=480, height=480, frameRate=60)]
+    public class Fibo extends MovieClip {
+        //taylor series
+
+        public var g:Graphics;
+        public var h:int;
+        public var w:int;
+        public var m:Point;
+        public var mo:Point;
+        public var cm:Point;
+        public var sf:Number=1;
+        public var points:Array=[];
+        public var O:Point;
+        public var isDown:Boolean=false;
+        public var ObjClicked:Boolean=false;
+        public var Htxs:Vector.<Label>;
+        public var Vtxs:Vector.<Label>;
+        public var a:Object;
+        public var c:Object
+        public var clickables:Array=[];
+        public var q:Object
+        public var zoomIn:PushButton;
+        public var zoomOut:PushButton;
+        public var theta:Number=0;
+        public var k:int=1;
+        public var f1=2;
+        public var f0=3;
+        public function Fibo() {
+            
+            
+            Htxs=new Vector.<Label>();
+            Vtxs=new Vector.<Label>();
+            g=this.graphics;
+            h=stage.stageHeight;
+            w=stage.stageWidth;
+            m=new Point();
+            mo=new Point();
+            cm=new Point();
+            O=new Point(w/2,h/2);
+            var mc:Sprite=new Sprite();
+                
+                    var qc:Sprite=new Sprite();
+                    qc.graphics.beginFill(0x101010);
+                qc.graphics.drawRect(0,0,w,h);
+                    qc.addChild(mc);
+                    this.addChild(qc)
+                var step:Number=10;
+                var st:Number = 0;
+            var gc:Graphics=qc.graphics;
+            gc.lineStyle(1,0xffffff,.1)
+            
+                    
+            for(var i:int;i<6;i++){
+                var tx:Label=new Label(this);
+                
+                tx.text="0";
+                 
+                
+                tx.x=i*(w/6);
+                tx.y=O.y;
+                Htxs.push(tx);
+                }
+                
+                for(i=0;i<6;i++){
+                tx=new Label(this);
+                tx.y=i*(w/6);
+                tx.x=O.x;
+                Vtxs.push(tx);
+                }
+                
+                a={x:-1,y:0,isClicked:false,update:null};;
+
+                c={x:0,y:-1,isClicked:false,update:null};
+                
+            
+                
+                    
+                    c.update=a.update=function (o:Object){
+                    
+                    //o.y=-1
+                    o.x=sf*(stage.mouseX-O.x)/w
+                    o.y=sf*(stage.mouseY-O.y)/w
+                    }
+                    
+                    
+                    
+                clickables.push(a);
+                clickables.push(c);
+                
+                zoomIn=new PushButton(this,0,0,"+");
+                zoomIn.width=25;
+                
+                zoomOut=new PushButton(this,0,zoomIn.height,"-");
+                zoomOut.width=25;
+                    zoomIn.addEventListener(MouseEvent.CLICK,onZoomIn);
+                zoomOut.addEventListener(MouseEvent.CLICK,onZoomOut);
+                g=mc.graphics;
+                var l:Label=new Label(this,30,10,"use the red point to rotate spiral");;
+                
+                
+                //  slider.name="slider"
+                    //slider.metaData="fff"
+                    //animated.selected=true;
+
+
+             setInterval (function helloFun():void {
+                if(k>8) return
+                var q=f0+f1;
+                f0=f1;
+                f1=q;
+                trace(f1)
+                
+             k+=1
+
+             }, 2000);
+            qc.addEventListener(MouseEvent.MOUSE_DOWN,onMD);
+            qc.addEventListener(MouseEvent.MOUSE_UP,onMU);
+             
+            
+            this.addEventListener(Event.ENTER_FRAME,loop);
+             
+        }
+        public function onZoomIn(e:MouseEvent){
+            if(sf<0) sf+=.5;
+                //sf-=.5;
+            f1+=.4;
+            }
+            public function onZoomOut(e:MouseEvent){
+            
+                //sf+=.5;
+                f1-=.4;
+            }
+        public function onMD(e:MouseEvent){
+            
+            
+                isDown=true;
+            m.setTo(stage.mouseX,stage.mouseY);
+            
+            }
+        public function onMU(e:MouseEvent){
+                isDown=false;
+            ObjClicked=false;
+            for each(var o:Object in clickables){o.isClicked=false;}
+            O=O.add(mo);
+            mo.setTo(0,0);
+            }
+        
+    public function loop(e:Event):void{
+        if(true){sf+=(f1-sf)*.2}
+        
+        g.clear();
+        
+        if(isDown && ObjClicked==false){
+            cm.setTo(stage.mouseX,stage.mouseY);
+            mo.setTo(cm.x-m.x,cm.y-m.y);
+            O=O.add(mo);
+            g.moveTo(m.x,m.y);
+            g.lineTo(cm.x,cm.y);
+             
+            }
+        
+        
+        draw();
+            for(var i:int;i<6;i++){
+                var tx:Label=Htxs[i];
+                tx.y=O.y;
+                tx.y=Math.max(tx.y,0);
+                tx.y=Math.min(tx.y,h-15)
+            var xt:Number = (i / 6) *sf-(O.x/w)*sf;
+                        tx.text=xt.toFixed(2)+"";
+                var tx2:Label=Vtxs[i];
+                tx2.x=O.x;
+                tx2.x=Math.max(tx2.x,0)
+                tx2.x=Math.min(tx2.x,w-15)
+                xt = (i / 6) *sf-(O.y/h)*sf;
+                xt*=-1;
+            tx2.text=xt.toFixed(2)+"";
+                        
+            }
+        
+            
+            drawLim();
+            O=O.subtract(mo);
+            
+            
+    }
+    public function drawFiboRect(e:Object,d1:Number,d2:Number){
+
+
+
+            g.lineStyle(1,0x00f6ff);
+            
+            var l=1/Math.sqrt(e.x*e.x+e.y*e.y);
+            var dx=d1+d2;
+            var vx=e.x*l*dx;
+            var vy=e.y*l*dx;
+            var p=new Point(-vx+e.x,-vy+e.y);
+            var p2=new Point(-vy+p.x,vx+p.y);
+            var p3=new Point(-vy+e.x,vx+e.y);
+
+
+            g.moveTo(e.x*w/sf+O.x,e.y*w/sf+O.y)
+            g.lineTo(p.x*w/sf+O.x,p.y*w/sf+O.y)
+            g.lineTo(p2.x*w/sf+O.x,p2.y*w/sf+O.y)
+            g.lineTo(p3.x*w/sf+O.x,p3.y*w/sf+O.y)
+            g.lineTo(e.x*w/sf+O.x,e.y*w/sf+O.y)
+            var ep=new Point(e.x-p.x,e.y-p.y)
+            drawp(p,ep,0,1,1)
+
+        //  drawFiboRect(p,d2,d1+d2)
+    }
+    public function drawp(e:Object,dir:Object,d1:Number,d2:Number,n:Number){
+        
+
+        var dx=d1+d2;
+
+        dir.x*=dx;
+        dir.y*=dx;
+        var norm=new Point(-dir.y,dir.x);
+        if(n%2==0) {
+                norm.x*=-1;
+                norm.y*=-1
+
+        }
+    
+        g.lineStyle(1,0x00f6ff)
+        var p1=new Point(e.x+dir.x,e.y+dir.y);
+        var p2=new Point(p1.x+norm.x,p1.y+norm.y)
+        var p3=new Point(e.x+norm.x,e.y+norm.y)
+
+            g.moveTo(e.x*w/sf+O.x,e.y*w/sf+O.y)
+            g.lineTo(p1.x*w/sf+O.x,p1.y*w/sf+O.y)
+            g.lineTo(p2.x*w/sf+O.x,p2.y*w/sf+O.y)
+            g.lineTo(p3.x*w/sf+O.x,p3.y*w/sf+O.y)
+            g.lineTo(e.x*w/sf+O.x,e.y*w/sf+O.y)
+         
+            dir.x/=dx;
+            dir.y/=dx;
+            var nn=dir;
+            if(n%2==0){
+                dir.x*=-1;
+                dir.y*=-1;
+
+            }
+
+            
+            g.lineStyle(1,0xffffff,.2)
+            var qp=p1
+            if(n%2==0){
+
+                qp=p3
+            }
+            
+            g.drawCircle((qp.x)*w/sf+O.x,(qp.y)*w/sf+O.y,dx*w/sf);
+            var len=(dx*w/sf)/4
+            //dx*w/sf;
+
+            var phi=Math.atan2(-a.y,-a.x);
+//trace(phi)
+            var R=dx
+            var step=(Math.PI)/2
+            step=step/len;
+            var t=phi;
+            var s=1
+            g.lineStyle(2,0xff0000)
+
+            var _x;
+            var _y;
+
+            t=(0/len)*(Math.PI/2)-n*(Math.PI/2)+phi;
+                
+                _x=Math.cos(t)*R+qp.x;
+                _y=Math.sin(t)*R+qp.y;
+                
+                g.moveTo(_x*w/sf+O.x,_y*w/sf+O.y)
+
+            for(var i=0;i<len;i++){
+                t=(i/len)*(Math.PI/2)-n*(Math.PI/2)+phi;
+                
+                _x=Math.cos(t)*R+qp.x;
+                _y=Math.sin(t)*R+qp.y;
+                
+                //g.drawCircle(_x*w/sf+O.x,_y*w/sf+O.y,5)
+            //  g.moveTo((qp.x)*w/sf+O.x,(qp.y)*w/sf+O.y);
+                g.lineTo(_x*w/sf+O.x,_y*w/sf+O.y)
+            }
+
+         
+            if(n>=k) return;
+            drawp(new Point(p1.x+norm.x,p1.y+norm.y),nn,d2,d1+d2,n+1)
+
+    }
+    public function recFib(e:Object,d2:Number,d1:Number){
+            //var l=1-d/Math.sqrt(e.x*e.x+e.y*e.y);
+            //var t=new Point(e.x*l,e.y*l);
+            //g.drawCircle(t.x*w/sf+O.x,t.y*w/sf+O.y,5)
+
+    }
+    
+    public function drawLim(){
+    //  trace(slider.value)
+    
+    drawFiboRect(a,0,1)
+        g.beginFill(0xff0000);
+        g.lineStyle(0,0,0)
+    g.drawCircle(a.x*w/sf+O.x,a.y*h/sf+O.y,6)
+        g.endFill()
+        if(isDown){
+        for each(var o:Object in clickables){
+    
+            var m=new Point(o.x*w/sf+O.x-stage.mouseX,o.y*w/sf+O.y-stage.mouseY)
+            var d:Number=m.x*m.x+m.y*m.y;
+            if(o.isClicked==true && o.update!=null) o.update(o);
+            if(d<25) {
+                
+                    
+                if(ObjClicked==false){
+                    ObjClicked=true;
+                o.isClicked=true;
+
+                    }
+            
+                }
+            }
+        }
+        
+        }
+    
+    
+    public function draw(){
+    g.lineStyle(1,0xffffff);
+        g.moveTo(0, O.y);
+        g.lineTo(w, O.y);
+        g.moveTo(O.x, 0);
+        g.lineTo(O.x, h);
+
+            
+            
+        }
+    
+    
+    }
+    
+    
+}
+
+           
+  
+</script>
+<script type="text/javascript">
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

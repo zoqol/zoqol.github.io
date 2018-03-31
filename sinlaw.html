@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Law of Sinus</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+height: auto;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+ text-align: center;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+        a{
+            color:white;
+           left: 650px;
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+
+<div id="canv">
+ 
+  <a href="sinlaw.swf" download>download swf file</a>
+ <br>
+ <object  width="480" height="480" data="sinlaw.swf">
+ 
+
+</div>
+
+    
+    
+
+</object>
+
+   
+<script id="sourcex">
+package  {
+    
+    import flash.display.MovieClip;
+    import flash.events.Event;
+    import flash.display.Graphics;
+    import flash.geom.Point;
+    import flash.events.MouseEvent;
+    import flash.text.TextField;
+    import flash.display.Sprite;
+    import com.bit101.components.Label;
+    import com.bit101.components.PushButton;
+    import com.bit101.components.HSlider;
+    import com.bit101.components.Component;
+    import com.bit101.components.CheckBox;
+    import flash.geom.ColorTransform;
+    import com.bit101.components.Slider;
+    
+
+    
+    [SWF(backgroundColor=0xffffff, width=480, height=480, frameRate=60)]
+    public class Ellipse extends MovieClip {
+       
+
+        public var g:Graphics;
+        public var h:int;
+        public var w:int;
+        public var m:Point;
+        public var mo:Point;
+        public var cm:Point;
+        public var sf:Number=6;
+        
+        public var O:Point;
+        public var isDown:Boolean=false;
+        public var ObjClicked:Boolean=false;
+        public var Htxs:Vector.<Label>;
+        public var Vtxs:Vector.<Label>;
+        public var a:Object;
+        public var c:Object
+        public var clickables:Array=[];
+        public var q:Object
+        public var theta:Number=0;
+    
+        public var slider:Slider;
+        public function Ellipse() {
+            
+            
+            Htxs=new Vector.<Label>();
+            Vtxs=new Vector.<Label>();
+            g=this.graphics;
+            h=stage.stageHeight;
+            w=stage.stageWidth;
+            m=new Point();
+            mo=new Point();
+            cm=new Point();
+            O=new Point(w/2,h/2);
+            var mc:Sprite=new Sprite();
+                
+                    var qc:Sprite=new Sprite();
+                    qc.graphics.beginFill(0x101010);
+                qc.graphics.drawRect(0,0,w,h);
+                    qc.addChild(mc);
+                    this.addChild(qc)
+                var step:Number=10;
+                var st:Number = 0;
+            var gc:Graphics=qc.graphics;
+            gc.lineStyle(1,0xffffff,.1)
+            
+                    
+            for(var i:int;i<6;i++){
+                var tx:Label=new Label(this);
+                
+                tx.text="0";
+                 
+                
+                tx.x=i*(w/6);
+                tx.y=O.y;
+                Htxs.push(tx);
+                }
+                
+                for(i=0;i<6;i++){
+                tx=new Label(this);
+                tx.y=i*(w/6);
+                tx.x=O.x;
+                Vtxs.push(tx);
+                }
+                
+                a={x:0,y:-w/6,isClicked:false,update:null};
+                c={x:2*w/6,y:0,isClicked:false,update:null};
+                q={x:-2*w/6,y:0,isClicked:false,update:null};
+                c.update=q.update=function (o:Object){
+                    var tq=o.x;
+                    
+                    o.x=stage.mouseX-O.x;
+                    if(c.x<0) c.x+=-c.x;
+                    if(q.x>0) q.x+=-q.x;
+                    if(o==q){c.x=-q.x}
+                    if(o==c){q.x=-c.x}
+                    }
+                a.update=function (o:Object){
+                    
+                    o.y=stage.mouseY-O.y;
+                
+                    }
+                clickables.push(a);
+                clickables.push(c);
+                clickables.push(q);
+                
+                
+                g=mc.graphics;
+                
+                    slider=new Slider(Slider.HORIZONTAL,this,10,10);
+                    slider.value=25
+                    
+                    var l:Label=new Label(this,10,20,"speed");
+                    var l2:Label=new Label(this,10,40,"move white point to\nresize the ellipse")
+                //  slider.name="slider"
+                    //slider.metaData="fff"
+                    //animated.selected=true;
+            qc.addEventListener(MouseEvent.MOUSE_DOWN,onMD);
+            qc.addEventListener(MouseEvent.MOUSE_UP,onMU);
+            
+            
+            this.addEventListener(Event.ENTER_FRAME,loop);
+             
+        }
+    
+        public function onMD(e:MouseEvent){
+            
+            
+                isDown=true;
+            m.setTo(stage.mouseX,stage.mouseY);
+            
+            }
+        public function onMU(e:MouseEvent){
+                isDown=false;
+            ObjClicked=false;
+            for each(var o:Object in clickables){o.isClicked=false;}
+            O=O.add(mo);
+            mo.setTo(0,0);
+            }
+        
+    public function loop(e:Event):void{
+        g.clear();
+        
+        if(isDown && ObjClicked==false){
+            cm.setTo(stage.mouseX,stage.mouseY);
+            mo.setTo(cm.x-m.x,cm.y-m.y);
+            O=O.add(mo);
+            g.moveTo(m.x,m.y);
+            g.lineTo(cm.x,cm.y);
+             
+            }
+        
+        
+        draw();
+            for(var i:int;i<6;i++){
+                var tx:Label=Htxs[i];
+                tx.y=O.y;
+                tx.y=Math.max(tx.y,0);
+                tx.y=Math.min(tx.y,h-15)
+            var xt:Number = (i / 6) *sf-(O.x/w)*sf;
+                        tx.text=xt.toFixed(2)+"";
+                var tx2:Label=Vtxs[i];
+                tx2.x=O.x;
+                tx2.x=Math.max(tx2.x,0)
+                tx2.x=Math.min(tx2.x,w-15)
+                xt = (i / 6) *sf-(O.y/h)*sf;
+                xt*=-1;
+            tx2.text=xt.toFixed(2)+"";
+                        
+            }
+        
+            
+            drawEllipse();
+            O=O.subtract(mo);
+            
+            
+    }
+    
+    public function drawEllipse(){
+    //  trace(slider.value)
+        
+        g.endFill()
+        
+        var n:int=50;
+        
+        
+        var ay=a.y/(w/6)
+        var qx=((q.x-c.x)/2)/(w/6)
+        
+        var b:Number=Math.sqrt(ay*ay+qx*qx)*(w/6);
+            theta+=.01*Math.PI*(slider.value/100)
+        var Rx:Number=getXY(0,b,a.y).x;
+        
+g.lineStyle(1,0xff5a00,.8)
+        //small circle
+        g.drawCircle(O.x,O.y,a.y)
+        //big circle
+        g.lineStyle(1,0x00f6ff,.8)
+        g.drawCircle(O.x,O.y,Rx)
+        var sc=getXY(theta,a.y,a.y)
+        
+        g.lineStyle(1,0xffffff)
+        g.beginFill(0xffffff)
+        //little arc
+        g.drawCircle(sc.x+O.x,sc.y+O.y,3)
+        var bc=getXY(theta+Math.PI,Rx,Rx)
+        g.drawCircle(bc.x+O.x,bc.y+O.y,3)
+        
+        g.drawCircle(bc.x+O.x,sc.y+O.y,3);
+        g.endFill()
+        g.moveTo(O.x,O.y);
+        g.lineTo(sc.x*10000+O.x,sc.y*10000+O.y)
+        g.beginFill(0x11aaff,.1);
+        g.lineStyle(0,0xffffff,.2)
+        g.moveTo(sc.x+O.x,sc.y+O.y);
+        g.lineTo(bc.x+O.x,bc.y+O.y);
+        g.lineTo(bc.x+O.x,sc.y+O.y)
+        g.lineTo(sc.x+O.x,sc.y+O.y);
+        g.endFill()
+        g.lineStyle(1,0xff0000,.9)
+        var pqr=getXY(0,b,a.y);
+        g.moveTo(O.x+pqr.x,O.y+pqr.y);
+        for(var i:int=0;i<50;i++){
+        var phi:Number=(i/n)*Math.PI*2;
+            var kk=getXY(phi,b,a.y);
+            g.lineTo(O.x+kk.x,O.y+kk.y);
+        }
+        
+        g.lineTo(O.x+pqr.x,O.y+pqr.y);
+         
+        g.endFill()
+        function getXY(phi:Number,rx:Number,ry:Number){
+            
+            return {x:Math.cos(phi)*rx,y:Math.sin(phi)*ry};
+        }
+    
+        for each(var pq:Object in clickables){
+            g.lineStyle(0,0,0)
+            
+        g.beginFill(0xffffff,.5);
+        g.drawCircle(O.x+pq.x,O.y+pq.y,5);
+        }
+        
+    
+        
+        if(isDown){
+        for each(var o:Object in clickables){
+            var m=new Point(o.x+O.x-stage.mouseX,o.y+O.y-stage.mouseY)
+            var d:Number=m.x*m.x+m.y*m.y;
+            if(o.isClicked==true && o.update!=null) o.update(o);
+            if(d<25) {
+                
+                    
+                if(ObjClicked==false){
+                    ObjClicked=true;
+                o.isClicked=true;
+                    }
+            
+                }
+            }
+        }
+        
+        }
+        public function drawFunc(fx:Function) {
+            g.endFill()
+            g.lineStyle(2,0x00f6ff);
+        g.moveTo(0,-fx((0 / w) *sf-(O.x/w)*sf)*(h/2)/(sf/2) + O.y);
+        for (var i:int=1;i<w;i++) {
+            
+            var _x:Number = i;
+            var xt:Number = (i / w) *sf-(O.x/w)*sf;
+            var _y:Number = -fx(xt) * (h / 2) / (sf / 2) + O.y;
+            g.lineTo(_x , _y);
+        }
+        g.endFill()
+        
+    }
+    
+    public function draw(){
+    g.lineStyle(1,0xffffff);
+        g.moveTo(0, O.y);
+        g.lineTo(w, O.y);
+        g.moveTo(O.x, 0);
+        g.lineTo(O.x, h);
+
+            
+            
+        }
+    
+    
+    }
+    
+    
+}
+
+  
+</script>
+<script type="text/javascript">
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

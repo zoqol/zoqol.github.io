@@ -164,12 +164,43 @@ function Constrain(_p1,_target) {
     // body...
 }
 //----------------------------------
- el.addEventListener("mouseup",function (e) {
-
+ window.addEventListener("touchend", tend);
+window.addEventListener("touchcancel", tend);
+ el.addEventListener("mouseup",tend);
+ function tend(e) {
+e.preventDefault()
     if(cp) cp.isDragging=false;
- })
- el.addEventListener("mousedown",function (e) {
+ }
 
+ el.addEventListener("touchstart", function (e) {
+    e.preventDefault()
+console.log("ss")
+     
+        m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+
+     ps.forEach(function (o) {
+            var dx=m.x-o.loc.x;
+            var dy=m.y-o.loc.y;
+            var len=dx*dx+dy*dy;
+
+       if(len<45) {
+            cp=o;
+            cp.isDragging=true;
+            return;
+           
+
+
+       }
+        // body...
+    })
+
+      
+      // body...
+    });
+
+ el.addEventListener("mousedown",function (e) {
+e.preventDefault()
     ps.forEach(function (o) {
             var dx=m.x-o.loc.x;
             var dy=m.y-o.loc.y;
@@ -179,6 +210,8 @@ function Constrain(_p1,_target) {
             cp=o;
             cp.isDragging=true;
             return;
+           
+
 
        }
         // body...
@@ -193,6 +226,12 @@ function Constrain(_p1,_target) {
       //console.log(e.clientX-parseInt(e.target.style.left))
 
     })
+  el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    }, false)
 
 offx=w/2-(res*cols)/2
 offy=h/7;

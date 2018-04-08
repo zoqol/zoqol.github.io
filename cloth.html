@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dots on straight lines</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+ /**
+     * @author javid jafari 
+     8-9-2013
+     ------------
+     ported to JS (7-4-2018)
+
+     Drag to tear apart
+
+     */
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+var w=480;
+var h=480;
+var joints=[];
+var points=[];
+var ps=[];
+var cols=10;
+var rows=10;
+var res=20
+var offx;
+var offy;
+var cp;
+var gravity={x:0,y:.3};
+var m={x:0,y:0}
+function Particle(_x,_y) {
+    this.loc={x:_x,y:_y};
+    this.v={x:0,y:0};
+    this.a={x:0,y:0};
+    this.mass=1.9;
+    this.pinned=false;
+    this.isDragging=false;
+    this.maxV=20;
+
+    this.excertForce=function (f) {
+        this.a.x+=f.x/this.mass;
+        this.a.y+=f.y/this.mass;
+
+    }
+    this.limit=function (ve,lim) {
+        var ln=Math.sqrt(ve.x*ve.x+ve.y*ve.y);
+        if(ln>lim){
+            ve.x*=lim/ln;
+            ve.y*=lim/ln;
+        }
+        return ve;
+    }
+    this.update=function () {
+        if(this.pinned || this.isDragging){
+            this.v.x*=0;
+            this.v.y*=0;
+            this.a.x*=0;
+            this.a.y*=0;
+        }else{
+            this.v.x+=this.a.x;
+            this.v.y+=this.a.y;
+            var lim=this.limit(this.v,this.maxV);
+            this.loc.x+=this.v.x;
+            this.loc.y+=this.v.y;
+            this.a.x*=0;
+            this.a.y*=0;
+
+
+        }
+        // body...
+    }
+
+ 
+}
+
+function Constrain(_p1,_target) {
+    this.K=.5;
+    this.DAMP=.05;
+    this.p1=_p1;
+    this.p2=_target;
+    this.breaks=false;
+    var t={x:this.p2.loc.x-this.p1.loc.x ,
+        y:this.p2.loc.y-this.p1.loc.y};
+    this.len=Math.sqrt(t.x*t.x+t.y*t.y);
+    this.update=function () {
+        if(this.breaks) return;
+         var spring={x:this.p2.loc.x-this.p1.loc.x ,
+          y:this.p2.loc.y-this.p1.loc.y};
+         var t=spring;
+         var curlen=Math.sqrt(t.x*t.x+t.y*t.y);
+         var X=curlen-this.len;
+
+         var fs=this.K*X;
+         spring.x*=fs/curlen;
+         spring.y*=fs/curlen;
+         var p1=this.p1;
+         var p2=this.p2;
+         var damping={x:p2.v.x-p1.v.x,y:p2.v.y-p1.v.y};
+         damping.x*=this.DAMP;
+         damping.y*=this.DAMP;
+         p1.excertForce(spring);
+         p1.excertForce(damping);
+         spring.x*=-1;
+         spring.y*=-1;
+         damping.x*=-1;
+         damping.y*=-1;
+         p2.excertForce(spring);
+         p2.excertForce(damping);
+
+         ctx.strokeStyle="#ffffff";
+         ctx.beginPath();
+         ctx.moveTo(p1.loc.x,p1.loc.y);
+         ctx.lineTo(p2.loc.x,p2.loc.y);
+         ctx.stroke();
+
+        // body...
+    }
+
+
+
+    // body...
+}
+//----------------------------------
+ el.addEventListener("mouseup",function (e) {
+
+    if(cp) cp.isDragging=false;
+ })
+ el.addEventListener("mousedown",function (e) {
+
+    ps.forEach(function (o) {
+            var dx=m.x-o.loc.x;
+            var dy=m.y-o.loc.y;
+            var len=dx*dx+dy*dy;
+
+       if(len<45) {
+            cp=o;
+            cp.isDragging=true;
+            return;
+
+       }
+        // body...
+    })
+ });
+
+ el.addEventListener("mousemove",function (e) {
+        m.x=e.clientX-e.target.offsetLeft;
+
+        m.y=e.clientY-e.target.offsetTop;
+     // console.log(e.clientY-e.target.offsetTop)
+      //console.log(e.clientX-parseInt(e.target.style.left))
+
+    })
+
+offx=w/2-(res*cols)/2
+offy=h/7;
+addPointAndJoiint();
+
+points[0][0].pinned=true
+points[cols-1][0].pinned=true
+function addPointAndJoiint() {
+    var j=0;
+    var i=0;
+    for(i=0;i<cols;i++){
+        points.push([]);
+        for(j=0;j<rows;j++){
+            var p=new Particle(i*res+offx,j*res+offy)
+             points[i].push(p)
+             ps.push(p)
+
+            if(j!=0){
+                var jo=new Constrain(points[i][j],points[i][j-1]);
+                joints.push(jo)
+            }
+            if(i!=0){
+                 var jo2=new Constrain(points[i][j],points[i-1][j]);
+                 joints.push(jo2)
+
+            }
+
+        }
+    }
+
+    // body...
+}
+
+
+ 
+
+   
+    function update() {
+        ctx.fillStyle="#ffffff";
+        ctx.clearRect(0,0,w,h);
+            if(cp!=null && cp.isDragging){
+                if(!cp.leaved){
+                    cp.loc.x+=(m.x-cp.loc.x)*.1
+
+                cp.loc.y+=(m.y-cp.loc.y)*.1
+
+                }
+                var a=cp.a;
+                var alen=Math.sqrt(a.x*a.x+a.y*a.y);
+                if(alen>50){
+                    joints.forEach(function (jo) {
+                        if(jo.p1==cp || jo.p2==cp){
+                           var dir={x:cp.v.x+cp.loc.x-m.x,y:cp.v.y+cp.loc.y-m.y};
+                           dir.x*=-.05;
+                           dir.y*=-.05;
+                            cp.a=dir;
+                            cp.isDragging=false;
+                            cp.leaved=true;
+                            jo.breaks= true;
+                            jo.p1=jo.p2=cp
+
+                        }
+                        // body...
+                    })
+
+                }
+
+
+
+            }
+
+         var j=0;
+         var i=0;
+         ctx.beginPath()
+    for(i=0;i<cols;i++){
+       
+        for(j=0;j<rows;j++){
+            var p=points[i][j];
+            ctx.beginPath()
+            ctx.arc(p.loc.x,p.loc.y,3,0,Math.PI*2)
+             ctx.closePath();
+            ctx.fill()
+            p.update()
+            p.excertForce(gravity)
+//ctx.fillRect(p.loc.x,p.loc.y,5,5)
+            
+        }
+    }
+    joints.forEach(function (jo) {
+        jo.update()
+        // body...
+    })
+   
+    //ctx.fill()
+
+        // body...
+    }
+ reanimate();
+
+    function reanimate() {
+  
+        update()
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

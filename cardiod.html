@@ -96,9 +96,10 @@ el.addEventListener("mousedown",md);
 el.addEventListener("mouseup",mu);
 function md(e) {
   e.preventDefault();
+  if(e.changedTouches){
  m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
     m.y=e.changedTouches[0].pageY-e.target.offsetTop;
-
+}
    anchor={x:m.x-O.x,y:m.y-O.y};
 
   isDown=true;

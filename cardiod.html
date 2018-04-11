@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cardiod</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+     <script type="text/javascript" src="dat.gui.js"></script>
+
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+var w=480;
+var h=480;
+var O={x:w/2,y:h/2};
+var m={x:0,y:0}
+var anchor={x:0,y:0}
+var isDown=false;
+var sf=6;
+var htx=[];
+var tt=2;
+var dots=[]
+
+var controls = new function() {
+this.radius = 2;
+this.n = 70;
+}
+
+var gui = new dat.GUI();
+gui.add(controls, 'radius', .1, 3);
+gui.add(controls, 'n', 0, 100);
+
+
+
+el.addEventListener("mousemove",mo);
+function mo(e) {
+  e.preventDefault();
+   m.x=e.clientX-e.target.offsetLeft;
+   m.y=e.clientY-e.target.offsetTop;
+}
+el.addEventListener("mousedown",md);
+el.addEventListener("mouseup",mu);
+function md(e) {
+  e.preventDefault();
+   anchor={x:m.x-O.x,y:m.y-O.y};
+
+  isDown=true;
+
+
+}
+function mu(e) {
+  e.preventDefault();
+  isDown=false;
+
+
+}
+ctx.font='12px Courier New';
+
+ reanimate();
+  var v=0;
+    function reanimate() {
+      v+=Math.PI/90;
+      if(isDown){
+        O.x=m.x-anchor.x;
+        O.y=m.y-anchor.y;
+      }
+
+
+        ctx.clearRect(0,0,w,h)
+
+
+       coord()
+       
+       tt+=(controls.radius-tt)*.1
+      t=tt;
+     
+       var r=(t/sf)*w
+      
+       var n=controls.n;
+       ctx.lineWidth=1;
+       ctx.strokeStyle="#11aaff88"
+
+       for(var i=0;i<n;i++){
+
+         ctx.beginPath();
+          var t=(i/n)*Math.PI*2;
+          var t2=((i*2)/n)*Math.PI*2;
+          var x1=O.x+Math.sin(t)*r;
+          var y1=O.y+Math.cos(t)*r;
+          var x2=O.x+Math.sin(t2)*r
+          var y2=O.y+Math.cos(t2)*r;
+
+          ctx.moveTo(x1,y1)
+          ctx.lineTo(x2,y2)
+          ctx.stroke()
+      
+
+       }
+
+
+        ctx.lineWidth=2;
+       ctx.strokeStyle="red"
+       ctx.beginPath();
+         ctx.arc(O.x,O.y,r,0,Math.PI*2)
+       ctx.stroke();
+
+
+         ctx.strokeStyle="#ee891d"
+       ctx.beginPath();
+       var nr=r/3;
+         ctx.arc(O.x,O.y,nr,0,Math.PI*2)
+       ctx.stroke();
+
+         ctx.strokeStyle="#1dddee"
+       ctx.beginPath();
+       var nr=r/3;
+       var ux=O.x+Math.sin(v+Math.PI*3)*nr*2;
+       var uy=O.y+Math.cos(v+Math.PI*3)*nr*2;
+         ctx.arc(ux,uy,nr,0,Math.PI*2)
+       ctx.stroke();
+        var a2=-2*nr;
+
+      var px=O.x+a2*(1-Math.cos(v))*Math.sin(v)
+      var py=O.y-nr+a2*(1-Math.cos(v))*Math.cos(v)
+        ctx.beginPath()
+       ctx.arc(px,py,5,0,Math.PI*2)
+       ctx.fill();
+       dot={x:px,y:py};
+       dots.push(dot)
+       if(dots.length>100) dots.shift()
+
+
+          
+          var cntr=0;
+          var len=dots.length;
+          var last=dots[0];
+            ctx.strokeStyle="white"
+        dots.forEach(function (o,idx) {
+         
+          var ti=(idx+1)/len;
+          ctx.beginPath();
+          ctx.moveTo(last.x,last.y)
+          
+          
+        ctx.lineWidth=ti*5;
+
+       ctx.lineTo(o.x,o.y)
+       last=o;
+       ctx.stroke()
+        })
+      
+
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+    function coord() {
+
+      ctx.beginPath();
+        ctx.lineWidth=2;
+       ctx.strokeStyle="white";
+       ctx.moveTo(0,O.y);
+       ctx.lineTo(w,O.y);
+       ctx.moveTo(O.x,0);
+       ctx.lineTo(O.x,h);
+       ctx.stroke();
+
+       for(var i=0;i<6;i++){
+        var tx={x:(i)*(w/6),y:O.y};
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        tx.y=O.y+15;
+        tx.y=Math.max(tx.y,15);
+        tx.y=Math.min(tx.y,h)
+        var xt=(i/6)*sf-(O.x/w)*sf;
+        ctx.fillText(xt.toFixed(2),tx.x,tx.y);
+        tx={x:O.x,y:(i)*(h/6)};
+
+        ctx.beginPath();
+        tx.x=O.x;
+        tx.x=Math.max(tx.x,0);
+        tx.x=Math.min(tx.x,w-17)
+        var xt=(i/6)*sf-(O.y/w)*sf;
+        ctx.fillText(xt.toFixed(2),tx.x,tx.y);
+
+        ctx.closePath();
+       }
+    }
+           
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fluid</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+/*
+        drag to make things move
+*/
+var w=480;
+var h=480;
+var r=50
+var c=50
+var cs=[]
+var ps=[]
+var isDown=false;
+var a=2
+var b=25;
+var n=900;
+var m={x:0,y:0}
+var m1={x:0,y:0}
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+ el.addEventListener("mouseup",tend);
+  el.addEventListener("touchend", tend);
+  el.addEventListener("touchstart",tstart);
+el.addEventListener("touchcancel", tend);
+ function tend(e) {
+    e.preventDefault()
+    isDown=false;
+ }
+  el.addEventListener("mousedown",tstart)
+  function tstart(e) {
+    e.preventDefault()
+
+    isDown=true;
+  }
+ el.addEventListener("mousemove",function (e) {
+    e.preventDefault()
+        m.x=e.clientX-e.target.offsetLeft;
+
+        m.y=e.clientY-e.target.offsetTop;
+
+    })
+   el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    }, false)
+
+
+function Particle(x,y) {
+    this.x={x:x,y:y};
+    this.v={x:0,y:0};
+    this.a={x:0,y:0};
+    this.o;
+}
+Particle.prototype.update=function () {
+   if(this.x.x<0){
+    this.x.y=h-this.x.y;
+    this.x.x=w-10;
+   }
+   if(this.x.x>h){
+    this.x.y=475-this.x.y;
+    this.x.x=5;
+   }
+   if(this.x.y<0){
+    this.x.y=h-20;
+
+   }
+   if(this.x.y>h){
+    this.x.y=10;
+
+   }
+}
+
+ for(var i=0;i<n;i++){
+    var p=new Particle(w*Math.random(),h*Math.random())
+    p.o={x:p.x.x,y:p.x.y};
+
+    ps.push(p);
+ }
+ var stw=w/r;
+ var sth=h/c;
+ var hi=0
+ var wi=0;
+ for(var i=0;i<r;i++){
+    cs[i]=[]
+    wi=0;
+    for(var j=0;j<c;j++){
+        var ce={x:{x:wi+(stw/2),y:hi+(sth/2)},
+        v:{x:0,y:0}}
+        cs[i][j]=ce;
+        wi+=stw;
+    }
+    hi+=sth;
+
+ }//end for
+ function loop() {
+     // body...
+
+     var V={x:m.x-m1.x,y:m.y-m1.y};
+     console.log(V)
+     for(var i=0;i<r;i++){
+        for(var j=0;j<c;j++){
+            var ce=cs[i][j]
+            if(isDown){
+                var M={x:m.x,y:m.y}
+                   var Q = {x:M.x - ce.x.x, y:M.y - ce.x.y}
+                        var l = Math.sqrt(Q.x * Q.x + Q.y * Q.y);
+                        var qdv = (Q.x * V.x + Q.y * V.y)/(b * l * l);
+                        var al = a / l;
+                        ce.v.x += V.x * al + Q.x *qdv ;
+                        ce.v.y += V.y* al + Q.y * qdv;
+            }
+             ce.v.x *= .9;
+             ce.v.y *= .9;
+        }
+     }
+ ctx.clearRect(0,0,w,h);
+     ps.forEach(function (p) {
+          i = Math.floor(p.x.x / (h / r));
+            j= Math.floor(p.x.y / (w / c));
+         if (i < r && i >= 0 && j < c && j >= 0) {
+               ce= cs[j][i];
+                p.v.x += ce.v.x;
+                p.v.y += ce.v.y;
+                p.x.x += p.v.x;
+                p.x.y += p.v.y;
+                p.v.x *= .7;
+                p.v.y *= .7;
+                }
+          
+
+                p.x.x+=(p.o.x-p.x.x)*.01;
+                 p.x.y+=(p.o.y-p.x.y)*.01;
+           
+              ctx.fillStyle="#ffffff";
+            ctx.strokeStyle="#ffffff"
+
+            ctx.beginPath()
+          // ctx.arc(p.x.x,p.x.y,1,0,Math.PI*2)
+          ctx.moveTo(p.x.x,p.x.y)
+          ctx.lineTo(p.x.x+p.v.x+Math.random(),p.x.y+p.v.y+Math.random())
+            ctx.stroke();
+            
+            p.update()
+         // body...
+     })
+     m1.x=m.x;
+     m1.y=m.y;
+ }
+ ctx.fillStyle="#ffffff";
+ reanimate();
+
+    function reanimate() {
+  loop()
+       
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

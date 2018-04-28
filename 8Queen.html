@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body{
+            background-color: #93d5f6;
+        }
+        #board{
+        margin-left: 350px;
+            top:-3px;
+           background-repeat: no-repeat;
+            position: fixed;
+            width: 720px;
+            height: 720px;
+            background-image: url(Board2.png);
+        }
+        .queen{
+            position: fixed;
+            width: 43px;
+            height: 69px;
+            background-image: url(Queen2.png);
+
+        }
+
+        #start{
+            position: fixed;
+            width: 66px;
+            height: 66px;
+            top: 83%;
+            left: 86%;
+            background-image: url("start.png");
+            visibility: hidden;
+            
+        }
+        #start:hover{
+            opacity: .5;
+        }
+        #startText{
+            position: fixed;
+            width: 74px;
+            height: 122px;
+            top: 63%;
+            left: 85.7%;
+            background-image: url("starttext.png");
+            visibility: hidden;
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div id="start"></div>
+<div id="startText"></div>
+<div id="board"></div>
+<script src="Twin.js"></script>
+<script>
+    var btn=document.getElementById('start');
+    var tex=document.getElementById('startText');
+    Twin.init();
+    var qs=[];
+    var xs=[];
+    var ys=[];
+    var z={x:505,y:60};
+    for(var i=0;i<8;i++){
+        var q=new Queen();
+        q.setX(505+4*63-30);
+        q.setY(60+4*68);
+        xs.push(505+i*63);
+        ys.push(60+i*63)
+        qs.push(q);
+
+    }
+    showText();
+   function showText(){
+       Twin.go('id3',{a:0},{a:1},80,Easing.x5.eOut, hideTex,function (e){
+           tex.style.opacity= e.obj.a;
+
+       });
+
+   }
+    function hideTex(){
+        Twin.go('id2',{a:1},{a:0},80,Easing.x5.eInOut, showText,function (e){
+
+            tex.style.opacity= e.obj.a;
+
+        });
+    }
+qii(0)
+   function qii(i){
+       if(i>qs.length-1) {
+           btn.style.visibility="visible";
+           tex.style.visibility="visible";
+           return;};
+       var q=qs[i];
+       Twin.go('id',{x:505+4*63-30,y:60+4*68},{x:xs[i],y:ys[0]},80,Easing.x4.eInOut,onFin,function (e){
+           // el.style.left= e.obj.x+'px';
+           q.setX(e.obj.x);
+           q.setY(e.obj.y)
+
+       });
+       function onFin(){
+           qii(i+1);
+       }
+
+   }
+    function Queen(){
+        console.log('ss')
+        var el=document.createElement("div");
+        el.setAttribute('class','queen');
+        document.body.appendChild(el);
+        this.setX=function (x){
+            el.style.left=x+'px';
+        }
+        this.setY=function (y){ el.style.top=y+'px';}
+    }
+
+</script>
+<script src="Csp.js"></script>
+</body>
+</html>

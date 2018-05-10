@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Klein bottle</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: white;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+    <div id="deer" style="color:white;display:none">
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+//drag to rorate the bottle
+
+
+var el=document.getElementById("canv");
+var w=480;
+var h=480;
+Vec3.prototype.O=new Vec3(w/2,h/2,0);
+Vec3.O=new Vec3(w/2,h/2,0);
+function Vec3(x,y,z) {
+    this.x=x;
+    this.y=y;
+    this.z=z;
+
+    // body...
+}
+
+
+Vec3.prototype.to=function (v) {
+    return new Vec3(v.x - this.x, v.y - this.y, v.z - this.z);
+    // body...
+}
+function Obj3D(loc) {
+    this.loc=loc;
+    this.x=0;
+    this.y=0;
+    this.visible=true;
+    this.scale=1;
+
+}
+Obj3D.prototype.rotateZ=function (b) {
+    var o = this;
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+        var x = o.loc.x- Vec3.O.x;
+        var y = o.loc.y- Vec3.O.y;
+       var z = o.loc.y;
+        var xx = x * cosb - y * sinb;
+        var yy = y * cosb + x * sinb;
+        o.loc.x = Vec3.O.x+xx;
+        o.loc.y = Vec3.O.y+yy;
+
+    // body...
+}
+Obj3D.prototype.rotateX=function (b) {
+         var o = this;
+            
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+        var x = o.loc.x- Vec3.O.x;
+        var y = o.loc.y- Vec3.O.y;
+        var z = o.loc.z-Vec3.O.z;
+        var zz = z * cosb - y * sinb;
+        var yy = y * cosb + z * sinb;
+        o.loc.z = Vec3.O.z+zz;
+        o.loc.y = Vec3.O.y+yy;
+
+
+}
+Obj3D.prototype.rotateY=function (b) {
+            var o = this;
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+       
+        var x = o.loc.x- Vec3.O.x;
+
+        var y = o.loc.y- Vec3.O.y;
+        var z = o.loc.z-Vec3.O.z;
+        var xx = x * cosb - z * sinb;
+    
+        var zz = z * cosb + x * sinb;
+        
+        o.loc.x = Vec3.O.x+xx;
+        //o.loc.y = Vc3.O.y + yy;
+        o.loc.z = 0 + zz;
+}
+
+Obj3D.prototype.update=function () {
+
+    var fl = 250;
+   // console.log()
+        var p = this.loc;
+        Vec3.O=Vec3.prototype.O;
+
+        if(p.z>-fl){
+        var k =Vec3.O.to(p);
+       
+        var sc = fl / (fl + p.z);
+       
+        //this.scaleX = this.scaleY = sc;
+        this.scale=sc;
+        this.x = Vec3.O.x + k.x * sc;
+        this.y = Vec3.O.y + k.y * sc;
+        this.visible = true;
+    //  this.alpha = sc; 
+        } else {
+        this.visible = false;   
+        }
+
+
+    // body...
+}
+var rad=1;
+var t=0;
+var m={x:0,y:0}
+var m1={x:0,y:0}
+var isDown=false;
+ el.addEventListener("mouseup",tend);
+  el.addEventListener("touchend", tend);
+  el.addEventListener("touchstart",tstart);
+el.addEventListener("touchcancel", tend);
+ function tend(e) {
+    e.preventDefault()
+    isDown=false;
+ }
+  el.addEventListener("mousedown",tstart)
+  function tstart(e) {
+    e.preventDefault()
+
+    isDown=true;
+  }
+ el.addEventListener("mousemove",function (e) {
+    e.preventDefault()
+        m.x=e.clientX-e.target.offsetLeft;
+
+        m.y=e.clientY-e.target.offsetTop;
+
+    })
+   el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    }, false)
+
+var ctx=el.getContext("2d");
+var ps=[];
+var obj=new Obj3D(new Vec3(w/2+50,h/2+50,0));
+//ps.push(obj);
+ ctx.strokeStyle="#ffffff"
+ ctx.beginPath();
+var n=50
+var n2=20;
+
+
+var ls=[]
+var row={}
+var col={}
+var angx=0;
+var angy=0;
+for(var i=0;i<n;i++){
+
+    var t=(i/n)*Math.PI*2
+    var r=100;
+    var si=Math.sin(t)
+    var td=(i/n)*Math.PI
+    var f=Math.sin(td)
+    f=Math.pow(f,4);
+    var x=si*r*f+w/2;
+    var y=-Math.cos(t)*r+h/2;
+    if(i==0)  ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+    ls.push({x:x,y:y})
+   // var obj=new Obj3D(new Vec3(x,y,0));
+    
+     //obj.rotateY(phi)
+     //obj.update()
+      //  ps.push(obj);
+    
+
+
+}
+for(var i=0;i<n-1;i++){
+    var o=ls[i]
+    var o2=ls[i+1]
+    var dt={x:o2.x-o.x,y:o2.y-o.y}
+    var ang=Math.atan2(dt.x,dt.y);
+  
+var x=o.x;
+var y=o.y;
+var tx=(i/n)
+var nt=tx*Math.PI*2
+
+var r3=(Math.exp(nt)*Math.sin(nt))*(7.460488539293396)/30
+if(tx<.3) {
+    r3=(1-(tx/.3))*20
+}
+var r2=Math.abs(r3)+3
+
+    col[i]=[]
+    for(var u=0;u<n2;u++){
+        var ph=(u/n2)*Math.PI*2;
+        var xx=Math.sin(ph)*r2;
+        var yy=Math.cos(ph)*r2;
+        var obj=new Obj3D(new Vec3(xx+w/2,yy+h/2,0));
+        obj.rotateX(Math.PI/2)
+        obj.rotateZ(-ang)
+       obj.loc.x+=x-w/2;
+       obj.loc.y+=y-w/2;
+        ps.push(obj);
+        if(!row[u]) row[u]=[]
+        row[u].push(obj);
+        col[i].push(obj);
+
+
+    }
+}
+
+
+
+   ctx.stroke()
+reanimate()
+
+    function reanimate() {
+        t++;
+        ctx.clearRect(0,0,480,480);
+       var V={x:m.x-m1.x,y:m.y-m1.y};
+       if(isDown){
+        angx+=V.x/10
+        angy+=-V.y/10;
+       }
+       else{
+        angx+=(Math.PI/70-angx)*.9;
+        angy+=(Math.PI/170-angy)*.9;
+       }
+      
+       ctx.strokeStyle="#00000055"
+      // ctx.moveTo(ps[0].x,ps[0].y)
+
+      for(var i=0;i<n2;i++){
+
+        row[i].forEach(function (rw,idx) {
+
+           if(idx==0) ctx.moveTo(rw.x,rw.y);
+            ctx.lineTo(rw.x,rw.y)
+            if(idx==n-2) ctx.lineTo(row[i][0].x,row[i][0].y);
+            // body...
+        })
+      
+      }
+
+      for(var i=0;i<n-1;i++){
+        col[i].forEach(function (rw,idx) {
+            if(idx==0) ctx.moveTo(rw.x,rw.y);
+            ctx.lineTo(rw.x,rw.y)
+            if(idx==n2-1) ctx.lineTo(col[i][0].x,col[i][0].y);
+
+            // body...
+        })
+         
+      }
+      ctx.stroke()
+
+       ps.forEach(function (obj) {
+        obj.update()
+        obj.rotateY(angx/10)
+         ctx.beginPath();
+          obj.rotateX(angy/10)
+   //    obj.rotateX(Math.PI/170)
+       // ctx.arc(obj.x,obj.y,obj.scale*rad,0,Math.PI*2);
+        //ctx.stroke()
+        ctx.closePath();
+
+
+        
+           // body...
+       })
+
+       m1.x=m.x;
+       m1.y=m.y;
+
+       angx*=.9;
+        angy*=.9;
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

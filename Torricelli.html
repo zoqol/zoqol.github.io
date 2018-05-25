@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Torricelli's trumpet</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+    <div id="deer" style="color:white;display:none">
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+//drag to rorate the object
+
+
+var el=document.getElementById("canv");
+var w=480;
+var h=480;
+Vec3.prototype.O=new Vec3(w/2,h/2,0);
+Vec3.O=new Vec3(w/2,h/2,0);
+function Vec3(x,y,z) {
+    this.x=x;
+    this.y=y;
+    this.z=z;
+
+    // body...
+}
+
+
+Vec3.prototype.to=function (v) {
+    return new Vec3(v.x - this.x, v.y - this.y, v.z - this.z);
+    // body...
+}
+function Obj3D(loc) {
+    this.loc=loc;
+    this.x=0;
+    this.y=0;
+    this.visible=true;
+    this.scale=1;
+
+}
+Obj3D.prototype.rotateZ=function (b) {
+    var o = this;
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+        var x = o.loc.x- Vec3.O.x;
+        var y = o.loc.y- Vec3.O.y;
+       var z = o.loc.y;
+        var xx = x * cosb - y * sinb;
+        var yy = y * cosb + x * sinb;
+        o.loc.x = Vec3.O.x+xx;
+        o.loc.y = Vec3.O.y+yy;
+
+    // body...
+}
+Obj3D.prototype.rotateX=function (b) {
+         var o = this;
+            
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+        var x = o.loc.x- Vec3.O.x;
+        var y = o.loc.y- Vec3.O.y;
+        var z = o.loc.z-Vec3.O.z;
+        var zz = z * cosb - y * sinb;
+        var yy = y * cosb + z * sinb;
+        o.loc.z = Vec3.O.z+zz;
+        o.loc.y = Vec3.O.y+yy;
+
+
+}
+Obj3D.prototype.rotateY=function (b) {
+            var o = this;
+        var cosb = Math.cos(b);
+        var sinb = Math.sin(b);
+       
+        var x = o.loc.x- Vec3.O.x;
+
+        var y = o.loc.y- Vec3.O.y;
+        var z = o.loc.z-Vec3.O.z;
+        var xx = x * cosb - z * sinb;
+    
+        var zz = z * cosb + x * sinb;
+        
+        o.loc.x = Vec3.O.x+xx;
+        //o.loc.y = Vc3.O.y + yy;
+        o.loc.z = 0 + zz;
+}
+
+Obj3D.prototype.update=function () {
+
+    var fl = 250;
+   // console.log()
+        var p = this.loc;
+        Vec3.O=Vec3.prototype.O;
+
+        if(p.z>-fl){
+        var k =Vec3.O.to(p);
+       
+        var sc = fl / (fl + p.z);
+       
+        //this.scaleX = this.scaleY = sc;
+        this.scale=sc;
+        this.x = Vec3.O.x + k.x * sc;
+        this.y = Vec3.O.y + k.y * sc;
+        this.visible = true;
+    //  this.alpha = sc; 
+        } else {
+        this.visible = false;   
+        }
+
+
+    // body...
+}
+var rad=1;
+var t=0;
+var m={x:0,y:0}
+var m1={x:0,y:0}
+var isDown=false;
+ el.addEventListener("mouseup",tend);
+  el.addEventListener("touchend", tend);
+  el.addEventListener("touchstart",tstart);
+el.addEventListener("touchcancel", tend);
+ function tend(e) {
+    e.preventDefault()
+    isDown=false;
+ }
+  el.addEventListener("mousedown",tstart)
+  function tstart(e) {
+    e.preventDefault()
+
+    isDown=true;
+  }
+ el.addEventListener("mousemove",function (e) {
+    e.preventDefault()
+        m.x=e.clientX-e.target.offsetLeft;
+
+        m.y=e.clientY-e.target.offsetTop;
+
+    })
+   el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    }, false)
+
+var ctx=el.getContext("2d");
+var ps=[];
+var obj=new Obj3D(new Vec3(w/2+50,h/2+50,0));
+//ps.push(obj);
+ ctx.strokeStyle="#ffffff"
+ ctx.beginPath();
+var n=50
+var n2=20;
+
+
+var ls=[]
+var row={}
+var col={}
+var angx=0;
+var angy=0;
+for(var i=0;i<n;i++){
+
+    var t=(i/n)*Math.PI*2
+    var x=(i/n)*(w/4)+w/2
+    var y=(1/t)*(h/4)+h/2-h/4
+    
+    ls.push({x:x,y:y})
+   
+    
+
+
+}
+for(var j=0;j<n2;j++){
+  var phi=(j/n2)*Math.PI*2
+  row[j]=[]
+
+for(var i=0;i<n-1;i++){
+  if(!col[i]) col[i]=[];
+ 
+  var l=ls[i]
+  var x=l.x;
+  var y=l.y
+  var obj=new Obj3D(new Vec3(x,y,0));
+
+  obj.rotateY(phi)
+  ps.push(obj)
+  row[j].push(obj)
+  col[i].push(obj)
+  
+}
+}
+ ps.forEach(function (obj) {
+
+  obj.rotateZ(-Math.PI/5)
+  //obj.rotateX(Math.PI/10)
+ 
+ })
+
+
+
+ 
+reanimate()
+
+    function reanimate() {
+        t++;
+        ctx.clearRect(0,0,480,480);
+       var V={x:m.x-m1.x,y:m.y-m1.y};
+       if(isDown){
+        angx+=V.x/10
+        angy+=-V.y/10
+       }
+       else{
+       
+       }
+       // angx+=(Math.PI/70-angx)*.9;
+       // angy+=(Math.PI/170-angy)*.9;
+      
+       ctx.strokeStyle="#ffffff55"
+      // ctx.moveTo(ps[0].x,ps[0].y)
+
+      for(var i=0;i<n2;i++){
+ctx.beginPath()
+        row[i].forEach(function (rw,idx) {
+
+          if(Math.abs(rw.x)>480*3 || Math.abs(rw.y)>480*3 || rw.x==0 || rw.y==0) return
+
+           if(idx==0) ctx.moveTo(rw.x,rw.y);
+            ctx.lineTo(rw.x,rw.y)
+
+          // if(idx==n-2) ctx.lineTo(row[i][0].x,row[i][0].y);
+
+            // body...
+        })
+        ctx.stroke()
+      
+      }
+
+      for(var i=0;i<n-1;i++){
+        col[i].forEach(function (rw,idx) {
+            if(idx==0) ctx.moveTo(rw.x,rw.y);
+            ctx.lineTo(rw.x,rw.y)
+            if(idx==n2-1) ctx.lineTo(col[i][0].x,col[i][0].y);
+
+            // body...
+        })
+         
+      }
+        ctx.stroke()
+
+       ps.forEach(function (obj) {
+        obj.update()
+        obj.rotateY(angx/10)
+         ctx.beginPath();
+          obj.rotateX(angy/10)
+          var rad=1
+
+               // ctx.arc(obj.x,obj.y,obj.scale*rad,0,Math.PI*2);
+                ctx.stroke()
+      obj.rotateY(Math.PI/170)
+       // ctx.arc(obj.x,obj.y,obj.scale*rad,0,Math.PI*2);
+        //ctx.stroke()
+        ctx.closePath();
+
+
+        
+           // body...
+       })
+
+       m1.x=m.x;
+       m1.y=m.y;
+ 
+         // console.log(angy)
+       angx*=.9;
+        angy*=.9;
+
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

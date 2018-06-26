@@ -168,12 +168,13 @@ function Constrain(_p1,_target) {
 window.addEventListener("touchcancel", tend);
  el.addEventListener("mouseup",tend);
  function tend(e) {
-e.preventDefault()
+
     if(cp) cp.isDragging=false;
+    e.preventDefault()
  }
 
  el.addEventListener("touchstart", function (e) {
-    e.preventDefault()
+
 console.log("ss")
      
         m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
@@ -184,29 +185,32 @@ console.log("ss")
             var dy=m.y-o.loc.y;
             var len=dx*dx+dy*dy;
 
-       if(len<45) {
+       if(len<45*5) {
+            if(cp) cp.isDragging=false;
             cp=o;
             cp.isDragging=true;
             return;
+
            
 
 
        }
         // body...
     })
-
+   e.preventDefault()
       
       // body...
     });
 
  el.addEventListener("mousedown",function (e) {
-e.preventDefault()
+
     ps.forEach(function (o) {
             var dx=m.x-o.loc.x;
             var dy=m.y-o.loc.y;
             var len=dx*dx+dy*dy;
 
-       if(len<45) {
+       if(len<45*5) {
+            if(cp) cp.isDragging=false;
             cp=o;
             cp.isDragging=true;
             return;
@@ -216,6 +220,7 @@ e.preventDefault()
        }
         // body...
     })
+    e.preventDefault()
  });
 
  el.addEventListener("mousemove",function (e) {

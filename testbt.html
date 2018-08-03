@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/
+angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<style type="text/css">
+	
+.wrapper { 
+        
+        width: 820px;
+        margin:auto;
+
+       
+    }
+.scrolls { 
+	display: block;
+        overflow-x: scroll;
+        overflow-y: hidden;
+        height: 350px;
+        
+    white-space:nowrap;
+    overflow-x: hidden;
+    } 
+     ss { 
+       
+     width: 200px;
+     height: 200px;
+     background-color: red;
+         display:inline-block;
+
+ 
+  
+    }
+
+
+	.prev{
+		display: block;
+		width: 50px;
+		height: 200px;
+		background-color: blue;
+		float:left;
+	}
+	.holder{
+		display: block;
+		width: 700px;
+		height: 200px;
+
+		float:left;
+	}
+
+</style>
+<body ng-App="test">
+<div ng-controller="controll">
+
+<div class="wrapper">
+	<div class="prev" ng-click="next(-200)"" ></div>
+
+<div class="holder">
+	
+	  <div class="scrolls"  id="sc">
+       <ss></ss>
+      <ss></ss>
+      <ss></ss>
+   	 <ss></ss>
+   	  <ss></ss>
+   	   <ss></ss>
+   	    <ss></ss>
+   	     <ss></ss>
+   	      <ss></ss>
+  
+  </div>
+</div>
+      <div class="prev" ng-click="next(200)"></div>
+
+  </div>
+</div>
+<table>
+  <tr ng-repeat="x in names">
+    <td>{{ x.Name }}</td>
+    <td>{{ x.Country }}</td>
+  </tr>
+</table>
+
+
+<script type="text/javascript">
+	console.log("init")
+	var element=document.getElementById("sc");
+
+
+	angular.module('test', [])
+  .controller('controll',  function($scope,$http) {
+
+  	$http.get("https://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20google.books%20WHERE%20q=%22barack%20obama%22%20AND%20maxResults=1&format=json&env=store://datatables.org/alltableswithkeys").then(function (response) {
+  		console.log("yeeee")
+  		// body...
+  	})
+    $scope.count = 0;
+    $scope.next = function(p) {
+    	if(!$(element).is(':animated')){
+    $(element).animate({scrollLeft: parseInt(element.scrollLeft)+p}, 500);
+	}
+
+    };
+  });
+</script>
+</body>
+</html>

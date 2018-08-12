@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ellipsen</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+     <script type="text/javascript" src="dat.gui.js"></script>
+
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+var w=480;
+var h=480;
+var theta=0;
+var O={x:w/2,y:h/2};
+var m={x:0,y:0}
+var anchor={x:0,y:0}
+var isDown=false;
+var sf=6;
+var htx=[];
+var tt=2;
+var dots=[]
+var _a=[]
+var _b=[]
+var _c=[]
+var _d=[]
+var _e=[]
+var _f=[];
+var radii=0;
+var controls = new function() {
+this.speed = .04;
+this.tail = 150;
+this.rad=1.5;
+}
+
+var gui = new dat.GUI();
+gui.add(controls, 'speed', .0, .1);
+gui.add(controls, 'tail', 0, 250);
+
+ 
+  el.addEventListener("touchstart",md);
+
+
+
+  el.addEventListener("touchend", mu);
+  el.addEventListener("touchstart",md);
+el.addEventListener("touchcancel", mu);
+
+
+el.addEventListener("mousemove",mo);
+function mo(e) {
+  e.preventDefault();
+   m.x=e.clientX-e.target.offsetLeft;
+   m.y=e.clientY-e.target.offsetTop;
+}
+el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    })
+el.addEventListener("mousedown",md);
+el.addEventListener("mouseup",mu);
+function md(e) {
+  e.preventDefault();
+  if(e.changedTouches){
+ m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+}
+   anchor={x:m.x-O.x,y:m.y-O.y};
+
+  isDown=true;
+
+
+}
+function mu(e) {
+  e.preventDefault();
+  isDown=false;
+
+
+}
+
+
+
+ctx.font='12px Courier New';
+
+ reanimate();
+  var v=0;
+  function drawPath(_a) {
+  var cntr=0;
+       ctx.strokeStyle="orange";
+          var len=_a.length;
+          var last=_a[0];
+      
+        _a.forEach(function (o,idx) {
+         
+          var ti=(idx+1)/len;
+          ctx.beginPath();
+          ctx.moveTo(O.x+last.x,O.y+last.y)
+          
+          
+        ctx.lineWidth=ti*5;
+
+       ctx.lineTo(O.x+o.x,O.y+o.y)
+       last=o;
+       ctx.stroke()
+        })
+  // body...
+}
+
+    function reanimate() {
+    theta+=controls.speed;
+      v+=Math.PI/90;
+      if(isDown){
+        O.x=m.x-anchor.x;
+        O.y=m.y-anchor.y;
+      }
+
+
+        ctx.clearRect(0,0,w,h)
+
+
+       coord()
+       
+      var rad=200;
+      var nx=20;
+      
+      ctx.lineWidth=1;
+ 
+      ctx.beginPath()
+      radii+=(controls.rad-radii)*.1
+      var r=radii*w/sf;
+       ctx.strokeStyle="red";
+        ctx.arc(O.x,O.y,r,0,2*Math.PI);
+         ctx.stroke()
+        
+        var xx=Math.cos(theta)*r;
+        var yy=Math.sin(theta)*r;
+        ctx.beginPath()
+         ctx.strokeStyle="gray";
+         ctx.arc(O.x+xx,O.y+yy,r/2,0,2*Math.PI);
+             ctx.stroke()
+         ctx.beginPath()
+        // ctx.arc(O.x+xx,O.y+yy,3,0,2*Math.PI);
+         ctx.stroke()
+         ctx.beginPath()
+
+
+
+
+//--------------------------
+var tail=parseInt(controls.tail)
+     
+        if(_a.length>tail)  _a=_a.slice(_a.length-tail)
+     
+       if(_b.length>tail)  _b=_b.slice(_b.length-tail)
+        if(_c.length>tail)  _c=_c.slice(_c.length-tail)
+       if(_d.length>tail)  _d=_d.slice(_d.length-tail)
+       if(_e.length>tail)  _e=_e.slice(_e.length-tail)
+        if(_f.length>tail)  _f=_f.slice(_f.length-tail)
+  drawPath(_a)
+  ctx.beginPath()
+         xx2=Math.cos(-theta)*r/2;
+         yy2=Math.sin(-theta)*r/2;
+         var p={x:xx+xx2,y:yy+yy2};
+         _a.push(p);
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+
+         ctx.stroke()
+      
+  
+
+         ctx.beginPath()
+         xx2=Math.cos(-theta+Math.PI)*r/2;
+         yy2=Math.sin(-theta+Math.PI)*r/2;
+         p={x:xx+xx2,y:yy+yy2};
+         _b.push(p)
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+         ctx.stroke()
+         drawPath(_b)
+         ctx.beginPath()
+         xx2=Math.cos(-theta+Math.PI/3)*r/2;
+         yy2=Math.sin(-theta+Math.PI/3)*r/2;
+           p={x:xx+xx2,y:yy+yy2};
+         _c.push(p)
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+         ctx.stroke()
+         drawPath(_c)
+
+           ctx.beginPath()
+         xx2=Math.cos(-theta+2*Math.PI/3)*r/2;
+         yy2=Math.sin(-theta+2*Math.PI/3)*r/2;
+          p={x:xx+xx2,y:yy+yy2};
+         _d.push(p)
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+         ctx.stroke()
+        drawPath(_d)
+
+          ctx.beginPath()
+         xx2=Math.cos(-theta-Math.PI/3)*r/2;
+         yy2=Math.sin(-theta-Math.PI/3)*r/2;
+          p={x:xx+xx2,y:yy+yy2};
+         _e.push(p)
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+         ctx.stroke()
+        drawPath(_e)
+
+
+           ctx.beginPath()
+         xx2=Math.cos(-theta-2*Math.PI/3)*r/2;
+         yy2=Math.sin(-theta-2*Math.PI/3)*r/2;
+           p={x:xx+xx2,y:yy+yy2};
+         _f.push(p)
+         ctx.arc(O.x+p.x,O.y+p.y,3,0,2*Math.PI);
+         ctx.stroke()
+        drawPath(_f)
+     
+       
+
+
+          
+          
+      
+
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+    function coord() {
+
+      ctx.beginPath();
+        ctx.lineWidth=2;
+       ctx.strokeStyle="white";
+       ctx.moveTo(0,O.y);
+       ctx.lineTo(w,O.y);
+       ctx.moveTo(O.x,0);
+       ctx.lineTo(O.x,h);
+       ctx.stroke();
+
+       for(var i=0;i<6;i++){
+        var tx={x:(i)*(w/6),y:O.y};
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        tx.y=O.y+15;
+        tx.y=Math.max(tx.y,15);
+        tx.y=Math.min(tx.y,h)
+        var xt=(i/6)*sf-(O.x/w)*sf;
+        ctx.fillText(xt.toFixed(2),tx.x,tx.y);
+        tx={x:O.x,y:(i)*(h/6)};
+
+        ctx.beginPath();
+        tx.x=O.x;
+        tx.x=Math.max(tx.x,0);
+        tx.x=Math.min(tx.x,w-17)
+        var xt=(i/6)*sf-(O.y/w)*sf;
+        ctx.fillText(xt.toFixed(2),tx.x,tx.y);
+
+        ctx.closePath();
+       }
+    }
+           
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

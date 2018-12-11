@@ -2,11 +2,15 @@
 <html>
 <head>
 	<title>zoQol</title>
-	 <link rel="stylesheet" href="bootstrap.min.css">
+	 
 </head>
 <style type="text/css">
-	
-	body{background-color: #090807;}
+	:root{
+		--v:120px;
+	};
+	body{
+		background-color: white;
+		margin: 0}
 
 	.box{
 		float: left;
@@ -47,18 +51,24 @@
 	}
 
 	.container{
+		width: 600px;
+		margin: auto;
+
 	
 	}
 	.sdt{
+		background-size: cover;
 			background-image: url('bg.jpg');
-			height: 400px;
+			height: 200px;
 			padding: 0px;
+			width: calc(600px - 2em);
+			margin: auto;
 
 
 	}
 	overall{
 		text-align: center;
-		padding-top: 120px;
+		
 		background-color: rgba(0, 0, 0, 0.8);
 	display: block;
  
@@ -69,6 +79,7 @@ position: relative;
 
 	}
 	pre{
+
 		overflow: hidden;
 
 	}
@@ -80,10 +91,130 @@ position: relative;
 	a{
 		color:#9baec8;
 	}
+	div p{
+		display: block;
+	}
+	.item{
+		width: 100px;
+		height: auto;
+		float: left;
+		margin-left: 1em;
+		float:left;
+		margin-top:.9em;
+
+
+	}
+	.item + .item{
+
+	}
+
+	.item img{
+		box-sizing: border-box;
+
+		width: 100px;
+		height: 100px;
+		border:3px solid #101010;
+
+	}
+	.item p{
+		font-size: 9px;
+		line-height: 1;
+
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+
+	}
+
+	.item2 p{
+		font-size: 9px;
+		line-height: 1;
+		color:black;
+
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+
+	}
+	.item:hover p{
+		background-color: black;
+		color:white;
+	}
+.item2:hover p{
+		background-color: black;
+		color:white;
+	}
+
+
+
+	.item h4{
+		font-size: 9px;
+		line-height: 1;
+display: inline;
+float: line;
+float: left;
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+
+	}
+
+	.item-box{
+		width: calc(200px + 1em);
+		height: 100px;
+		background-color: white;
+		display: block;
+		 
+		float:left;
+		display: flex;
+		 box-sizing: border-box;
+		 margin-left: 1em;
+		 margin-top: 1em;
+
+	}
+	.big-item{
+
+		width: calc(200px + 1em);
+		height: calc(200px + .6em);
+		display: block;
+		float:left;
+		margin-left: 1em;
+		background-color: deeppink;
+		margin-top: 1em;
+		 
+	}
+	.big-item img{
+		width: 100%;
+		height: 100%;
+		border:3px solid #101010;
+	}
+	.item-box img{
+		box-sizing: border-box;
+float:left;
+		width: 100px;
+		height: 100px;
+		border:3px solid #101010;
+	}
+	.item-box:hover p{
+		background-color: black;
+		color:white;
+	}
+	 .item-box w{
+	 	width: : 100px;
+	 	height: 100px;
+	 	display: block;
+	 	font-size: 9px;
+	 	padding: 1em;
+	 	margin: 0px;
+	 	 
+	 	color:#888;
+	 	font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+	 }
+	 red{
+	 	background-color: darkred;
+	 	color: white;
+	 }
 </style>
 
 <body>
-<pre></pre>
+
 <div class="container">
 	<div class="row">
 	<div class="col-sm-12 sdt">
@@ -93,9 +224,7 @@ position: relative;
 			</div>
 			<div class="tex">
 				<pre>
-Here i share my Codes
-<a href="http://zoqol.blog.ir/">zoqol.blog.ir</a> (On philosophy)
-<a href="https://www.instagram.com/falsums/">instagram.com/falsums</a> (On History of Math)
+it's zoqol
 </pre>
 			</div>
 			
@@ -103,37 +232,188 @@ Here i share my Codes
 
 	</div>
 	</div>
-	<div class="row">
- 	<div class="col-md-12">
- 		<div class="box"><a href="Ellipsen.html"><img src="pics/ellipsen.png"><pre>Ellipsen</pre></div>
 
- 		<div class="box"><a href="sierpinski.html"><img src="pics/sierp.png"><pre>Sierpiński</pre></div>
- 		<div class="box"><a href="newton.html"><img src="pics/newton.png"><pre>Newton</pre></div>
- 		<div class="box"><a href="Torricelli.html"><img src="pics/Torricelli.jpg"><pre>Torricelli</pre></div>
+	<div></div>
 
- 			<div class="box"><a href="klein.html"><img src="pics/klein.jpg"><pre>klein</pre></div>
- 		<div class="box"><a href="8Queen.html"><img src="pics/8koin.png"><pre>8Queen</pre></div>
- 	<div class="box"><a href="sperm.html"><img src="pics/sperm.jpg"><pre>sperm</pre></div>
- 	<div class="box"><a href="balls.html"><img src="pics/balls.jpg"><pre>My Balls</pre></div>
- 	<div class="box"><a href="cardiod.html"><img src="pics/cardiod.jpg"><pre>cardioid</pre></div>
- 	 <div class="box"><a href="fluid.html"><img src="pics/fluid.jpg"><pre>fluid</pre></div>
- 	 <div class="box"><a href="cloth.html"><img src="pics/cloth.jpg"><pre>cloth</pre></div>
- 		 <div class="box"><a href="deer3d.html"><img src="pics/deer3d.jpg"><pre>3Deer</pre></div>
- 		 
+	<div class="row" style="margin-top: 1em;display:block;">
+	<div class="item-box ">
+		<a href='Tree2.html' target=' '>
+		<img src="pics/tree.jpg">
+		 </a>
+	
+		<w class="item2">
+				<p>[+] Fractal Tree <b>| 2016</b></p>
+				<hr>
+		 Simple fractal tree, generated recursively using trigonometric functions and beizer curves, originally written in <red>AS3</red> </w>
+		
+		
+	</div>
+		<div class="item-box ">
+		<a href='sierpinski.html' target=' '>
+		<img src="pics/sierp.png">
+		 </a>
+	
+		<w class="item2">
+				<p>[+] Distorted Sierpiński</p>
+				<hr>
+		 Famous Sirpinski's triangle or fractal, subdivided recursively by random intervals.
+		
+		
+	</div>
 
-   <div class="box"><a href="fraclll.html"><img src="pics/fracIII.jpg"><pre>FracTAAL</pre></div>
- <div class="box"><a href="dots.html"><img src="pics/dots.jpg"><pre>Dots</pre></div>
-<div class="box"><a href="fibo.html"><img src="pics/fibo.jpg"><pre>fibo.swf</pre></div>
-<div class="box"><a href="sinlaw.html"><img src="pics/sinlaw.jpg"><pre>sins.swf</pre></div>
- <div class="box"><a href="taylor.html"><img src="pics/taylor.jpg"><pre>taylor.swf</pre></div>
-<div class="box"><a href="limacon.html"><img src="pics/limacon.jpg"><pre>limacn.swf</pre></div>
-<div class="box"><a href="tree.html"><img src="pics/tree.jpg"><pre>tree.swf</pre></div>
-<div class="box"><a href="parabola.html"><img src="pics/parabola.JPG"><pre>parabola.swf</pre></div>
-<div class="box"><a href="fourier.html"><img src="pics/fourier.jpg"><pre>fourier.swf</pre></div>
 
- 	</div>
-  
 
+	<div class="item">
+			<a href="spirals.html" target="ـblank"><img src="pics/spiral.png"></a>
+			<p>[+] Spirals 	<b>| 2018 </b> </p>
+		
+		</div>
+
+
+
+
+	<div style="float:left;">
+
+	<div class="item-box ">
+		<a href='newton.html' target=' '>
+		<img src="pics/newton.png">
+		 </a>
+	
+		<w class="item2">
+			<p>[+] Newton  <b>| 2018 </b> </p>
+				<hr>
+		 This image generated by solving a complex equation using Newton's method.
+		
+		
+	</div>
+<div style="float:none;">
+		<div class="item"  >
+			<a href="Torricelli.html"><img src="pics/Torricelli.jpg"></a>
+			<p>[+] Test Title 	<b>| 2018 </b> </p>
+		
+		</div>
+
+		<div class="item"><a href="sperm.html"><img src="pics/sperm.jpg"></a><p>[+] Sperm</p></div>
+	</div>
+</div>
+<div class="item2">
+	<div class="big-item">
+		<a href="klein.html">
+		<img src="pics/klein.jpg">
+		 
+		 </a>
+		 	<p>[+] Klein Bottle	<b>| 2018 </b> </p>
+	</div>
+	
+</div>
+
+ 
+
+		<div class="item"><a href="balls.html"><img src="pics/balls.jpg"></a></div>
+	
+
+		
+
+		
+
+	
+
+	<div class="item"><a href="sinlaw.html"><img src="pics/sinlaw.jpg"></a><p>[+] sins.swf</p></div>
+		
+
+
+		<div class="item-box ">
+		<a href='fluid.html' target=' '>
+		<img src="pics/fluid.jpg">
+		 </a>
+	
+		<w class="item2">
+				<p>[+] Fluid  <b> | 2013</b></p>
+				<hr>
+		 This fluid-like simulation based on Vector fields, a function  is defined on vectors to make curvy motion, originally written in <red>AS3</red> </w>
+		
+		
+	</div>
+		
+<div class="item">
+			<a href="Ellipsen.html"><img src="pics/ellipsen.png"></a>
+			<p>[+] Ellipsen 	<b>| 2018 </b> </p>
+		
+		</div>
+ 	<div class="item"><a href="cardiod.html"><img src="pics/cardiod.jpg"></a><p>[+] cardioid</p></div>
+ 	 
+ 	
+ 		 <div class="item"><a href="deer3d.html"><img src="pics/deer3d.jpg"></a><p>[+] 3Deer</p></div>
+ 		
+
+
+
+
+
+
+<div class="item2">
+	<div class="big-item">
+		<a href="cloth.html">
+		<img src="pics/cloth.jpg">
+		 
+		 </a>
+		 	<p>[+] Cloth Simulation	<b>| 2013 </b> </p>
+	</div>
+	
+</div>
+
+<div style="float:left;">
+
+	<div class="item-box ">
+		<a href='taylor.html' target=''>
+		<img src="pics/taylor.jpg">
+		 </a>
+	
+		<w class="item2">
+			<p>[+] Taylor  <b>| 2017 </b> </p>
+				<hr>
+		 a visualization of taylor series, for the function exp(x).
+		
+		
+	</div>
+<div style="float:none;">
+		 <div class="item"><a href="dots.html"><img src="pics/dots.jpg"></a><p>[+] Dots</p></div>
+
+		<div class="item"><a href="fibo.html"><img src="pics/fibo.jpg"></a><p>[+] fibo.swf</p>
+</div>
+	</div>
+</div>
+
+ 
+
+  <div class="item"><a href="fraclll.html"><img src="pics/fracIII.jpg"></a></div>	
+
+		
+
+		
+
+	
+
+		<div class="item">
+			<a href="8Queen.html"><img src="pics/8koin.png"></a>
+			<p>[+] 8Queen 	<b>| 2016 </b> </p>
+		
+		</div>
+
+		
+ 		
+
+ 
+
+
+
+ 
+<div class="item"><a href="limacon.html"><img src="pics/limacon.jpg"></a><p>[+] limacn.swf</p></div>
+
+<div class="item"><a href="parabola.html"><img src="pics/parabola.JPG"></a><p>[+] parabola.swf</p></div>
+<div class="item"><a href="fourier.html"><img src="pics/fourier.jpg"></a><p>[+] fourier.swf</p></div>
+		
+	
 
 
   
@@ -144,3 +424,4 @@ Here i share my Codes
 
 </body>
 </html>
+

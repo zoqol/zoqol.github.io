@@ -1,0 +1,130 @@
+
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Spirals</title>
+   </head>
+   <body>
+   	<section>
+   		      <canvas id='canv' width="480"  height="480"></canvas>
+   		      <p>Click to regenrate</p>
+
+   	</section>
+      <style type="text/css">
+        body{
+         	display: flex;
+         	width: 100%;
+         	height: 100%;
+         }
+
+         #canv{
+         border: 1px solid black;
+         
+
+         }
+         section{
+         	margin: auto;
+
+         }
+
+      </style>
+   </body>
+   <script type="text/javascript">
+      var mx=1
+      var el=document.getElementById('canv')
+      el.addEventListener('mousemove',function (e) {
+      	mx=e.clientX
+      
+      	// body...
+      })
+      var ctx=el.getContext('2d')
+      var w=480;
+      var h=480
+      function Point(x,y) {
+      this.p={x:x,y:y}
+      this.v={x:0,y:-5};
+      this.a={x:.1,y:.3}
+      this.t=0;
+      this.i=0;
+      this.step=.01+Math.random()*.1
+      // body...
+      }
+      var po=new Point(w/2,h)
+      var p=po.p;
+      var ps=[]
+      var n=20;
+      generate()
+
+      function generate() {
+      	ps.length=0
+
+      	ctx.fillStyle='white'
+      	ctx.fillRect(0,0,w,h)
+      	 for(var i=0;i<n;i++) {
+      var pp=new Point(w/2,h)
+      pp.i=(i/n)*4;
+      pp.rnd=Math.random()*50;
+      ps.push(pp)}
+      	// body...
+      }
+     el.addEventListener('mousedown',generate)
+      
+      animate()
+      
+      function animate() {
+      	//ctx.fillRect(0,0,w,h)
+      	ps.forEach(function (po) {
+      		// body...
+      	p=po.p;
+      	ctx.beginPath()
+      ctx.moveTo(p.x,p.y)
+      
+      	var t=po.t;
+      	var lw=(1-t/3.5)
+      	if(t>3.5) return;
+      
+      	//ctx.fillRect(0,0,w,h)
+      	po.t+=po.step
+      	t=po.t;
+      	ctx.lineWidth=lw*3
+      	//ctx.strokeStyle = 'rgba(0,0,0,'+lw+')';
+      	var x=t*Math.PI*po.i
+      	;
+      	 var sign=Math.sin(x)/x
+      	 sign=sign/Math.abs(sign)
+      
+       	
+       	var v=po.v;
+       	var p=po.p;
+       	var a=po.a;
+      	var b=Math.PI*(t*t)/(po.rnd)*sign
+      	
+      
+      	var cosb=Math.cos(b)
+      	var sinb=Math.sin(b)
+      
+         var xx=v.x*cosb-v.y*sinb
+         var yy=v.y*cosb+v.x*sinb
+      
+             v.x=xx
+             v.y=yy
+      
+      	p.x+=v.x;
+      	p.y+=v.y;
+      
+      
+      	
+      	///ctx.moveTo(p.x,p.y)
+      	ctx.lineTo(p.x,p.y)
+      
+      	// ctx.arc(p.x,p.y,1,0,Math.PI*2)
+      	ctx.stroke()
+      	})
+      
+      	// body...
+      	requestAnimationFrame(animate)
+      }
+   </script>
+</html>
+

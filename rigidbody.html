@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cloth simulation</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: #101010;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+ /**
+     * @author javid jafari 
+     8-9-2013
+     ------------
+     ported to JS (7-4-2018)
+
+     Drag to tear apart
+
+     */
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+var w=480;
+var h=480;
+
+
+function Polygon(vertices) {
+    this.vertices=vertices;
+    this.transfrmedVrtx;
+    this.inertia;
+    this.center;
+    this.calc=function () {
+        // body...
+    }
+    this.testRayPolygon=function (o,dir,poly,pos,mat){
+
+        var len=poy.vertices.length;
+        var v=poly.vertices;
+        var c=0;
+        var dist=1000;
+        for (var i = 0;i<len;i++) {
+           var bu=v[i]
+           var kio=new Vec2D(bu.x,bu.y);
+           bu=(i+1)<len?v[i+1]:v[0];
+           var x,y;
+           var a=kio;
+            x=a.x*mat
+            x=a.x*mat.c+a.y*mat.d;
+            y=a.x*mat.a+a.y*mat.b;
+            a.x=x;
+            a.y=y;
+            a.x+=pos.x;
+            a.y+=pos.y;
+            a=p;
+            x=a.x*mat.c+a.y*mat.d;
+            y=a.x*mat.a+a.y*mat.b;
+            a.x=x;
+            a.y=y;
+            a.x+=pos.x;
+            a.y+=pos.y;
+            if(testLineIntersection(kio,p,o,dir)){
+                c++;
+                dist=Math.min(dist,Math.abs(parseFloat(dir.userData)));
+
+            }
+        }
+        if(c>0 && (c && 1)==0){
+            o.userData=dist;
+            return true;
+        }
+        return false
+    }
+    this.testLineIntersection=function (a,b,o,dir) {
+
+        var n=new Vec2D(-dir.y,dir.x);
+        var ab=new Vec2D((b.x-a.x),(b.y-a.y));
+        var t=((o.x*n.x+o.y*n.y)-(a.x*n.x+a.y*n.y))/(ab.x*n.x+ab.y*n.y);
+         if(t<=1 && t>=0){
+
+        var t1=((a.x+(ab.x*t))*dir.x+(a.y+(ab.y*t))*dir.y)
+        t1-=o.x*dir.x+o.y*dir.y
+      if(t1>0){
+        dir.userData=t1;
+      return true;}
+      }
+     return false;
+    }
+}
+function Vec2D(x,y) {
+    this.x=x
+    this.y=y;
+    this.userData;
+
+    // body...
+}
+function Matrix2X2(t) {
+    this.a;
+    this.b;
+    this.c;
+    this.d;
+
+    this.setAngle=function (t) {
+
+      a=-Math.sin(t);
+      b=Math.cos(t);
+      c=b;
+      d=-a;
+    }
+    this.setAngle(t)
+ 
+}
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

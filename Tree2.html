@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fractal Tree</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 620px;
+border:1px solid gray;
+background-color: white;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+<div class="code">
+    <pre><code  id="cd" class="language-javascript">
+    
+    </code></pre>
+
+</div>
+  <canvas id="canv" width="480" height="480" ></canvas>  
+<script id="sourcex">
+
+ /**
+     * @author javid jafari 
+     8-9-2013
+     ------------
+     ported to JS (7-4-2018)
+
+     Drag to tear apart
+
+     */
+var el=document.getElementById("canv");
+var ctx=el.getContext("2d");
+var w=480;
+var h=480;
+var si=0;
+var co=0;
+var cent={x:w/2,y:h/2+50}
+var omega=Math.PI/8
+si=Math.sin(omega)
+co=Math.cos(omega);
+drawSemiCircle(70,7,cent)
+drawSemiCircle(70,7,cent)
+
+ reanimate();
+ function drawTree(a,b,mag,si,co,cnt,th) {
+    if(cnt<0) return;
+    var ab={x:b.x-a.x,y:b.y-a.y}
+    var l=Math.sqrt(ab.x*ab.x+ab.y*ab.y);
+            var n={x:0,y:0};
+            var f=((.9+Math.random()/7)*mag / l);
+            n.x=ab.x*f;
+            n.y=ab.y*f;
+             var c={x:0,y:0};
+             var d={x:0,y:0};
+             var rand=Math.random();
+             c.x=(n.x*co+n.y*si);
+             c.y=(-n.x*si+n.y*co);
+             rand=Math.random();
+        //   d.x=(n.x*co-n.y*si)*rand+b.x;
+            // d.y=(n.x*si+n.y*co)*rand+b.y;
+            d.x=(2*n.x-c.x)*rand+b.x;
+            d.y=(2*n.y-c.y)*rand+b.y;
+            c.x=c.x*rand+b.x;
+            c.y=c.y*rand+b.y;
+             mag*=.8;
+             dwc(a, b,0,th);
+             dwc(b, c,0,th*.9);
+             dwc(b, d, 0, th * .9);
+             th*=.7;
+             cnt--;
+             drawTree(b, c, mag,si,co,cnt,th);
+             drawTree(b, d, mag,si,co,cnt,th);
+     
+    
+ }
+ function dwc(a, b,c = 0,th=1) {
+    var g=ctx;
+            if (a == null || b == null) return;
+           // g.lineStyle(th,0,th);
+           ctx.lineWidth=th;
+           ctx.strokeStyle='black'
+           ctx.beginPath()
+            g.moveTo(a.x, a.y);
+            g.bezierCurveTo((b.x - a.x) * Math.random() + a.x, (b.y - a.y) * Math.random() + a.y, 
+            (b.x - a.x) * Math.random() + a.x, (b.y - a.y) * Math.random() + a.y, b.x, b.y);
+            g.stroke();
+            }
+     function drawSemiCircle(r,n,cent){
+            var w=-Math.PI/n;
+            var s=Math.sin(w);
+            var c=Math.cos(w);
+            drawCirc(c, s,c,s, n, cent,r);
+        
+        }
+        function drawCirc(c,s,x,y,n,cent,r){
+                if(n<2) return;
+                var u={x:0,y:0}
+                u.x=x*r+cent.x;
+                u.y=y*r+cent.y;
+                var k=cent.x-u.x;
+                var l=cent.y-u.y;
+                drawTree(cent, u, Math.sqrt(k*k+l*l), si, co, 10, 3) ;   
+                n--;
+                drawCirc(c, s, c*x-s*y, s*x+c*y, n, cent,r)
+        }
+
+    function reanimate() {
+  
+       
+        requestAnimationFrame(reanimate);
+
+        // body...
+    }
+           
+  
+</script>
+<script type="text/javascript">
+
+    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>
+
+
+

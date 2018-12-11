@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sperm</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style >
+        
+        #canv{
+left: 0;
+border:1px solid gray;
+background-color: white;
+ position:absolute;
+ top: 10px;
+  
+        }
+        
+        body{
+            background-color: black
+        }
+        ::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+
+        .code{
+            padding: 0px;
+            position:relative;
+           width: 600px;
+           margin: 0px;
+            
+          
+           
+        }
+    </style>
+
+</head>
+
+
+
+  <canvas id="canv" width="800" height="480" ></canvas>  
+<script id="sourcex">
+var el=document.getElementById("canv");
+var w=800;
+var h=480;
+var isDown=false;
+var m={x:0,y:0}
+
+var r1=0
+var r2=0
+var r3=0
+
+var _r1=20
+var _r2=30
+var _r3=27
+//----math stuff
+function dot(v,u) {
+    return v.x*u.x+v.y*u.y;
+}
+
+var idCounter=0;
+function VerletPoint(x,y,rad=5) {
+    this.rrad=rad;
+    this.ignore=false;
+    this.loc={x:x,y:y};
+    this.damping=.95
+    this._loc={x:0,y:0}
+    this.acc={x:0,y:0};
+    this.fric=0;
+    this.elastic=.3;
+    this.rad=0;
+    this.mass=1;
+    this.setLocation({x:x,y:y});
+    this.id=idCounter++;
+    this.anchor=false;
+    this.fixed=false;
+    this.gravity=0;
+    this.drawable=true;
+
+}
+
+VerletPoint.prototype.update=function (argument) {
+    // body...
+}
+VerletPoint.prototype.setLocation=function (v) {
+     
+    this.loc.x=v.x;
+    this.loc.y=v.y;
+    this._loc.x=v.x;
+    this._loc.y=v.y;
+    // body...
+}
+VerletPoint.prototype.setVelocity=function (v) {
+    this._loc={x:this.loc.x-v.x,y:this.loc.y-v.y}
+
+}
+VerletPoint.prototype.getVelocity=function (v) {
+    return {x:this.loc.x-this._loc.x,y:this.loc.y-this._loc.y}
+
+}
+
+VerletPoint.prototype.update=function () {
+         var tmp={x:this.loc.x,y:this.loc.y}
+
+      this.rad+=(this.rrad-this.rad)*.1
+        var V=this.getVelocity()
+        this.setVelocity({x:V.x+this.acc.x,y:V.y+this.acc.y})
+        var v=this.cons(this.getVelocity(),8)
+         v.x*=this.damping
+         v.y*=this.damping;
+        this.loc.x+=v.x;
+        this.loc.y+=v.y;
+        this.acc.x*=0;
+        this.acc.y*=0;
+        this._loc=tmp;
+      //  var v:Vec2=cons(velo,8)
+    /*
+        loc.inc(v)
+        oldloc=tmp
+        acc.scale(0)*/
+}
+
+VerletPoint.prototype.cons=function (v,n) {
+
+    var len=Math.sqrt(v.x*v.x+v.y*v.y)
+    if(len>n){
+        return {x:n*v.x/len,y:n*v.y/len};
+    } 
+        return v;
+   
+}
+VerletPoint.prototype.constrain=function (rect) {
+
+        this.loc.x=Math.max(rect.left+this.rad,Math.min(rect.right-this.rad,this.loc.x))
+        this.loc.y=Math.max(rect.top+this.rad,Math.min(rect.bottom-this.rad,this.loc.y))
+   
+}
+
+VerletPoint.prototype.solveCollision=function (ps) {
+        if(this.anchor || this.fixed) return;
+
+        var p1=this;
+        if(p1.ignore) return
+
+        var p2;
+       var n=ps.length;
+           for(var i=0;i<n;i++){
+
+                p2=ps[i];
+                if(p2.ignore==true) continue
+                var d={x:p1.loc.x-p2.loc.x,y:p1.loc.y-p2.loc.y};
+                var l=Math.sqrt(d.x*d.x+d.y*d.y);
+                var radix=p1.rad+p2.rad;
+                if(l<radix && p1.id!=p2.id){
+
+                    var v1=p1.getVelocity();
+                    var v2=p2.getVelocity();
+                    var dx=l-radix;
+                    var dx_=dx/2;
+                    var norm={x:d.x/l,y:d.y/l};
+                    var mf={x:dx_*norm.x,y:dx_*norm.y};
+                    p1.loc.x-=mf.x;
+                    p1.loc.y-=mf.y;
+                    p2.loc.x+=mf.x;
+                    p2.loc.y+=mf.y;
+                    var tan={x:norm.y*-1,y:norm.x};
+
+                    var u=norm;
+                    var v=v1;
+                    var p1_normal= u.x*v.x+u.y*v.y;
+                    v=v2;
+                    var p2_normal=u.x*v.x+u.y*v.y;
+                    u=tan;
+                    var p2_tan=u.x*v.x+u.y*v.y;
+                    v=v1;
+                    var p1_tan=u.x*v.x+u.y*v.y;
+
+                    var u1,u2;
+                    var m1=p1.mass
+                    var m2=p2.mass
+                    u1=(p1_normal * (m1 - m2) +2 * m2 * p2_normal) / (m1 + m2);
+                    u2=(p2_normal * (m2 - m1) +2 * m1 * p1_normal) / (m1 + m2);
+
+                    var p1_normalafter_vec={x:norm.x*u1,y:norm.y*u1}
+                    var p2_normalafter_vec={x:norm.x*u2,y:norm.y*u2}
+                    var p1_tan_vec={x:tan.x*p1_tan,y:tan.y*p1_tan}
+                    var p2_tan_vec={x:tan.x*p2_tan,y:tan.y*p2_tan}
+                    p1_tan_vec.x+=p1_normalafter_vec.x;
+                    p1_tan_vec.y+=p1_normalafter_vec.y;
+                    p1.setVelocity(p1_tan_vec)
+
+                   // p1.velo=p1_tan_vec.addOf(p1_normalafter_vec)
+                   p2_tan_vec.x+=p2_normalafter_vec.x;
+                   p2_tan_vec.y+=p2_normalafter_vec.y;
+                   p2.setVelocity(p2_tan_vec);
+                   // p2.velo=p2_tan_vec.addOf(p2_normalafter_vec)
+                    
+
+                }
+
+
+           }
+   
+}
+//--------- joint
+
+function VerletJoint(a,b,len=-1) {
+
+    this.a=a;
+    this.b=b;
+    this.drawable=true;
+    if(a && b && len==-1){
+        var d={x:a.loc.x-b.loc.x,y:a.loc.y-b.loc.y};
+        var diff=Math.sqrt(d.x*d.x+d.y*d.y);
+        this.len=diff;
+    }else{
+        this.len=len;
+    }
+
+    console.log(this.len)
+    // body...
+}
+VerletJoint.prototype.update=function () {
+            var a=this.a;
+            var b=this.b;
+
+        if(a && b){
+
+            var dist={x:b.loc.x-a.loc.x,y:b.loc.y-a.loc.y}
+            var d=dist;
+            var l=Math.sqrt(d.x*d.x+d.y*d.y);
+            var diff=this.len-l;
+            var d2=diff/2;
+            var offset={x:d2*dist.x/l,y:d2*dist.y/l}
+           
+            a.loc.x-=offset.x;
+            a.loc.y-=offset.y;
+            b.loc.x+=offset.x;
+            b.loc.y+=offset.y;
+            }
+    // body...
+}
+var ctx=el.getContext("2d");
+ el.addEventListener("mouseup",tend);
+ el.addEventListener("touchend", tend);
+ el.addEventListener("touchstart",tstart);
+ el.addEventListener("touchcancel", tend);
+ function tend(e) {
+    releave()
+    e.preventDefault()
+    isDown=false;
+ }
+  el.addEventListener("mousedown",tstart)
+  function tstart(e) {
+    e.preventDefault()
+
+    isDown=true;
+    searchAnchor()
+  }
+ el.addEventListener("mousemove",function (e) {
+    e.preventDefault()
+        m.x=e.clientX-e.target.offsetLeft;
+
+        m.y=e.clientY-e.target.offsetTop;
+
+    })
+   el.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX-e.target.offsetLeft;
+    m.y=e.changedTouches[0].pageY-e.target.offsetTop;
+        
+    }, false)
+
+
+var rect={top:0,bottom:h,right:w,left:0};
+var ps=[]
+var js=[];
+var anchor=new VerletPoint(m.x,m.y,1);
+var leftAnchor=null;
+var joint=new VerletJoint(anchor,null);
+
+var ln=3; 
+for(var i=0;i<ln;i++){
+
+    
+    var angle=(i/ln)*Math.PI*2+Math.PI/4;
+    var r=80
+    if(i==0) r=120
+    var acx=Math.sin(angle)*r
+    var acy=Math.cos(angle)*r
+    var verlet=new VerletPoint(w/2+acx,h/2+acy,50);
+    ps.push(verlet)
+   
+}
+var a=ps[0]
+var b=ps[1]
+var c=ps[2]
+ 
+    
+var head=new VerletPoint((b.loc.x+c.loc.x)/2,(b.loc.y+c.loc.y)/2,18);
+ps.push(head)
+var jnt=new VerletJoint(b,head)
+js.push(jnt)
+
+jnt=new VerletJoint(c,head)
+js.push(jnt)
+
+jnt=new VerletJoint(a,head)
+js.push(jnt)
+
+var verlet=new VerletPoint(w/2,h/2,10);
+
+ps.push(verlet)
+head.gravity=-.06
+
+var holder=new VerletPoint(0,0,20);
+ps.push(holder)
+holder.damping=1
+holder.gravity=.1
+
+
+ var x={x:head.loc.x,y:head.loc.y}
+ holder.drawable=true;
+ console.log(x)
+ var n=30
+for(var i=1;i<n;i++){
+   
+    var t=i/n;
+    
+    var we=new VerletPoint(x.x*t,+x.y*t,1);
+    we.damping=1
+    we.drawable=false;
+    we.ignore=true;
+    ps.push(we)
+    
+}
+for(var i=ps.length;i>ps.length-n+1;i--){
+
+   var jnt=new VerletJoint(ps[i-1],ps[i-2])
+js.push(jnt)
+}
+
+ var jnt=new VerletJoint(ps[ps.length-1],head)
+js.push(jnt)
+holder.setLocation({x:200,y:400})
+/*
+
+var shkm=verlet;
+var dom=ps[0].loc;
+var main_dom={x:verlet.loc.x-dom.x,y:verlet.loc.y-dom.y};
+var main_dom2={x:main_dom.x,y:main_dom.y};
+main_dom.x/=-2;
+main_dom.y/=-2;
+
+main_dom.x+=verlet.loc.x
+main_dom.y+=verlet.loc.y;
+var sf=1.5;
+var sf2=1.2
+var sar2c={x:main_dom2.x/sf2+verlet.loc.x,y:main_dom2.y/sf2+verlet.loc.y}
+main_dom2.x/=sf;
+main_dom2.y/=sf;
+main_dom2.x+=verlet.loc.x
+main_dom2.y+=verlet.loc.y;
+
+var sar=new VerletPoint(main_dom2.x,main_dom2.y,30)
+ps.push(sar)
+
+var sar2=new VerletPoint(sar2c.x,sar2c.y,27)
+sar2.dash=true;
+ps.push(sar2)
+
+var domVerlt=new VerletPoint(main_dom.x,main_dom.y,30)
+ps.push(domVerlt)
+
+var domshkm=new VerletJoint(ps[0],shkm)
+js.push(domshkm)
+for(var i=0;i<6;i++){
+    var phi=(i/6)*(Math.PI/3)+Math.PI/9;
+    var r=200;
+    var x=Math.cos(phi)*r;
+    var y=Math.sin(phi)*r;
+    verlet=new VerletPoint(w/2+x,w/2+y,3)
+    ps.push(verlet)
+    var j=new VerletJoint(shkm,verlet)
+    js.push(j)
+     j=new VerletJoint(ps[0],verlet)
+     j.dash=true;
+    js.push(j)
+}
+var lft=ps[2];
+var lc=lft.loc;
+var shc=shkm.loc;
+var shkmToDas={x:lc.x-shc.x,y:lc.y-shc.y};
+var sf=1.8
+var sf2=2.5
+var epsilon=10
+var shkm2das2={x:shkmToDas.x*sf2+shc.x,y:shkmToDas.y*sf2+shc.y+epsilon}
+shkmToDas.x*=sf
+shkmToDas.y*=sf;
+shkmToDas.x+=shc.x
+shkmToDas.y+=shc.y
+
+var leftBaal=new VerletPoint(shkmToDas.x,shkmToDas.y,30)
+leftBaal.dash=true;
+ps.push(leftBaal)
+
+var leftBaal2=new VerletPoint(shkm2das2.x,shkm2das2.y,20)
+ps.push(leftBaal2)
+
+
+
+var rht=ps[1];
+ lc=rht.loc;
+ shc=shkm.loc;
+ shkmToDas={x:lc.x-shc.x,y:lc.y-shc.y};
+sf=1.8
+sf2=2.5
+ 
+var shkm2das2={x:shkmToDas.x*sf2+shc.x+epsilon,y:shkmToDas.y*sf2+shc.y}
+shkmToDas.x*=sf
+shkmToDas.y*=sf;
+shkmToDas.x+=shc.x
+shkmToDas.y+=shc.y
+
+var rightBaal=new VerletPoint(shkmToDas.x,shkmToDas.y,30)
+ps.push(rightBaal)
+
+var rightBaal2=new VerletPoint(shkm2das2.x,shkm2das2.y,20)
+ps.push(rightBaal2)
+
+
+var j=new VerletJoint(sar,rightBaal2)
+j.dash=true;
+js.push(j)
+
+
+j=new VerletJoint(sar,leftBaal2)
+ j.dash=true;
+//js.push(j)
+
+
+for(var i=0;i<8;i++){
+    var ix=(i/8)
+    var phi=(ix)*Math.PI/1.7+Math.PI/4;
+    var r=140+(ix*ix)*95;
+    var x=Math.cos(phi)*r;
+    var y=Math.sin(phi)*r;
+    verlet=new VerletPoint(x+sar.loc.x,y+sar.loc.y,2)
+    ps.push(verlet)
+    j=new VerletJoint(sar,verlet)
+    js.push(j)
+
+    j=new VerletJoint(shkm,verlet)
+    j.dash=true;
+    js.push(j)
+
+     j=new VerletJoint(leftBaal2,verlet)
+    j.drawable=false;
+    js.push(j)
+
+    j=new VerletJoint(lft,verlet)
+    j.drawable=false;
+    js.push(j)
+
+}
+
+j=new VerletJoint(sar,shkm)
+j.drawable=false;
+js.push(j)
+
+
+j=new VerletJoint(sar,lft)
+js.push(j)
+
+j=new VerletJoint(lft,leftBaal)
+js.push(j)
+
+j=new VerletJoint(shkm,leftBaal2)
+
+js.push(j)
+j=new VerletJoint(leftBaal,leftBaal2)
+js.push(j)
+
+j=new VerletJoint(shkm,lft)
+j.drawable=false;
+js.push(j)
+
+j=new VerletJoint(shkm,rht)
+j.drawable=false;
+js.push(j)
+j=new VerletJoint(lft,leftBaal)
+j.drawable=false;
+js.push(j)
+
+
+for(var i=0;i<8;i++){
+    var ix=(i/8)
+    var phi=(ix)*-Math.PI/1.7+Math.PI/4;
+    var r=140+(ix*ix)*95;
+    var x=Math.cos(phi)*r;
+    var y=Math.sin(phi)*r;
+    verlet=new VerletPoint(x+sar.loc.x,y+sar.loc.y,2)
+    ps.push(verlet)
+   j=new VerletJoint(sar,verlet)
+    js.push(j)
+
+    j=new VerletJoint(shkm,verlet)
+    j.dash=true;
+    js.push(j)
+
+    j=new VerletJoint(rht,verlet)
+    j.drawable=false;
+    js.push(j)
+    j=new VerletJoint(rightBaal2,verlet)
+   j.drawable=false;
+    js.push(j)
+
+}
+
+j=new VerletJoint(ps[0],ps[1])
+j.drawable=false;
+js.push(j)
+
+j=new VerletJoint(ps[0],ps[2])
+j.drawable=false;
+js.push(j)
+
+j=new VerletJoint(ps[1],ps[2])
+j.drawable=false;
+js.push(j)
+
+
+*/
+
+
+function releave() {
+    joint.b=null;
+    
+    // body...
+}
+function searchAnchor() {
+    ps.forEach(function (o) {
+        var u=o.loc;
+        var d={x:m.x-u.x,y:m.y-u.y};
+        var dx=Math.sqrt(d.x*d.x+d.y*d.y);
+        if(dx<o.rad){
+           
+            
+            joint=new VerletJoint(o,anchor);
+            return;
+
+        }
+        
+    })
+
+  
+}
+
+ctx.strokeStyle='black'
+
+ verlet.name='verlet'
+function drawDetails(){
+    var t=a.loc,u=head.loc
+
+
+var epsilon=10
+
+    var rwing=b.loc;
+    var lwing=c.loc;
+
+
+  
+
+    var shkm={x:(t.x+u.x)/2,y:(t.y+u.y)/2}
+    ctx.beginPath()
+    ctx.arc(shkm.x,shkm.y,r2*2,0,Math.PI*2,5);
+    ctx.stroke()
+    var sf=.7
+    B={x:t.x-u.x,y:t.y-u.y};
+    sf=.15
+    var B_inv={x:-B.y*sf,y:B.x*sf}
+     sf=.7
+    shkm={x:t.x-B.x*sf,y:t.y-B.y*sf}
+
+    sf=1.2
+    var UpperHead={x:t.x-B.x*sf,y:t.y-B.y*sf}
+    sf=1.1
+    var UpperHead2={x:t.x-B.x*sf,y:t.y-B.y*sf}
+
+    var rhd={x:UpperHead2.x+B_inv.x,y:UpperHead2.y+B_inv.y}
+    var rhd2={x:UpperHead2.x-B_inv.x,y:UpperHead2.y-B_inv.y}
+    drawCirc(UpperHead.x,UpperHead.y,r2)
+    drawCirc(UpperHead2.x,UpperHead2.y,r3,true)
+     //drawCirc(rhd.x,rhd.y,5,false)
+    sf=1.5
+    var loc={x:t.x-B.x*sf,y:t.y-B.y*sf}
+     verlet.setLocation(loc)
+     drawline(rhd.x,rhd.y,loc.x,loc.y)
+     drawline(rhd2.x,rhd2.y,loc.x,loc.y)
+
+
+
+     sf=1.8
+    var sf2=2.5
+    var rwing_head={x:(rwing.x-u.x),y:(rwing.y-u.y)}
+    var rwing2={x:rwing_head.x*sf+u.x+(rwing_head.y/2.8),y:rwing_head.y*sf+u.y+(-rwing_head.x/2.8)}
+    var rwing3={x:rwing_head.x*sf2+u.x+(rwing_head.y/2),y:rwing_head.y*sf2+u.y+(-rwing_head.x/2)}
+
+    drawCirc(rwing2.x,rwing2.y,r2,true)
+
+    ctx.beginPath()
+    ctx.arc(rwing3.x,rwing3.y,r1,0,Math.PI*2,5);
+    ctx.stroke()
+
+
+    var lwing_head={x:(lwing.x-u.x),y:(lwing.y-u.y)}
+    var lwing2={x:lwing_head.x*sf+u.x+(-lwing_head.y/2.8),y:lwing_head.y*sf+u.y+(lwing_head.x/2.8)}
+    var lwing3={x:lwing_head.x*sf2+u.x+(-lwing_head.y/2),y:lwing_head.y*sf2+u.y+(lwing_head.x/2)}
+
+    ctx.beginPath()
+    ctx.arc(lwing2.x,lwing2.y,r2,0,Math.PI*2,5);
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.arc(lwing3.x,lwing3.y,r1,0,Math.PI*2,5);
+    ctx.stroke()
+
+
+   var A=rwing_head;B={x:t.x-u.x,y:t.y-u.y};
+   var Aangle=Math.atan2(A.y,A.x)
+   var _A=Math.sqrt(A.x*A.x+A.y*A.y);
+   var _B=Math.sqrt(B.x*B.x+B.y*B.y);
+   var AdotB=(A.x*B.x+A.y*B.y)
+   var cross= A.x*B.y-A.y*B.x
+
+
+   var sign=AdotB/Math.abs(AdotB)
+   var theta=Math.acos(AdotB/(_A*_B))
+   if(cross<0) theta=Math.PI*2-theta
+
+    for(var i=0;i<9;i++){
+
+       
+         var ix=(i/8)
+        var phi=ix*(theta+Math.PI/23)+Aangle-Math.PI/20
+         ix=1-ix
+          var radi=140+(ix*ix)*95;
+
+        var xx=Math.cos(phi)*radi+u.x;
+        var yy=Math.sin(phi)*radi+u.y;
+
+         ctx.beginPath()
+            ctx.arc(xx,yy,3,0,Math.PI*2,5);
+             ctx.fill()
+            ctx.stroke()
+
+         if(i<8)   drawline(UpperHead.x,UpperHead.y,xx,yy)
+         drawline(shkm.x,shkm.y,xx,yy,true)
+
+    }
+
+
+   var A=lwing_head;B={x:t.x-u.x,y:t.y-u.y};
+   var Aangle=Math.atan2(B.y,B.x)
+   var _A=Math.sqrt(A.x*A.x+A.y*A.y);
+   var _B=Math.sqrt(B.x*B.x+B.y*B.y);
+   var AdotB=(A.x*B.x+A.y*B.y)
+   var cross= A.x*B.y-A.y*B.x
+   
+
+   
+   var theta=Math.acos(AdotB/(_A*_B))
+   if(cross>0) theta=Math.PI*2-theta
+
+    for(var i=0;i<9;i++){
+        if(i==0) continue
+       
+       var ix=(i/8)
+        var phi=ix*(theta+Math.PI/20)+Aangle
+        
+          var radi=140+(ix*ix)*95;
+
+        var xx=Math.cos(phi)*radi+u.x;
+        var yy=Math.sin(phi)*radi+u.y;
+
+         ctx.beginPath()
+            ctx.arc(xx,yy,3,0,Math.PI*2,5);
+             ctx.fill()
+            ctx.stroke()
+
+          drawline(UpperHead.x,UpperHead.y,xx,yy)
+           drawline(shkm.x,shkm.y,xx,yy,true)
+
+    }
+
+     for(var i=0;i<6;i++){
+        
+       
+       
+        var phi=(i/6)*(Math.PI/3)+Aangle-(Math.PI/7);
+        var r=200;
+        var xx=Math.cos(phi)*r+shkm.x;
+        var yy=Math.sin(phi)*r+shkm.y;
+         ctx.beginPath()
+            ctx.arc(xx,yy,3,0,Math.PI*2,5);
+
+            ctx.stroke()
+   drawline(xx,yy,t.x,t.y,true)
+            drawline(xx,yy,shkm.x,shkm.y)
+
+
+    }
+   
+
+
+
+
+}
+
+
+function renderx(v) {
+
+   
+     ctx.beginPath()
+    if(v.dash) ctx.setLineDash([5, 5]);
+    ctx.arc(v.loc.x,v.loc.y,v.rad,0,Math.PI*2,5);
+      ctx.stroke()
+    ctx.closePath();
+    ctx.setLineDash([ ]);
+  
+    // body...
+}
+
+function drawCirc(x,y,rad,dash=false) {
+
+   
+     ctx.beginPath()
+    if(dash) ctx.setLineDash([5, 5]);
+    ctx.arc(x,y,rad,0,Math.PI*2,5);
+      ctx.stroke()
+    ctx.closePath();
+    ctx.setLineDash([ ]);
+  
+    // body...
+}
+function drawline(x,y,u,z,dash=false) {
+    ctx.beginPath()
+    if(dash) ctx.setLineDash([5, 5]);
+    ctx.moveTo(x,y);
+    ctx.lineTo(u,z)
+    ctx.stroke()
+     ctx.closePath();
+     ctx.setLineDash([ ]);
+    // body...
+}
+function renderj(joint) {
+    if(joint.drawable==false) return;
+    if(joint.a && joint.b){
+    ctx.beginPath()
+    if(joint.dash) ctx.setLineDash([5, 5]);
+    ctx.moveTo(joint.a.loc.x,joint.a.loc.y);
+    ctx.lineTo(joint.b.loc.x,joint.b.loc.y)
+    ctx.stroke()
+     ctx.closePath();
+     ctx.setLineDash([ ]);
+     }
+    // body...
+}
+  //renderx(verlet);
+  var t=0;
+animate()
+  function animate() {
+    t+=.1;
+    ctx.fillStyle='red'
+    ctx.fillRect(0,0,w,h);
+     ctx.fillStyle='black'
+     var ht={x:a.loc.x-head.loc.x,y:a.loc.y-head.loc.y}
+
+     var rx=.007;
+     var mg=Math.sin(t)*rx
+    var xx=ht.x*mg
+    //Math.sin(t)*rx;
+    var yy=ht.y*mg
+    //Math.cos(t)*rx;
+    head.acc.x+=xx
+    head.acc.y+=yy
+
+    r1+=(_r1-r1)*.1
+    r2+=(_r2-r2)*.1
+    r3+=(_r3-r3)*.1
+
+     anchor.setLocation(m)
+
+     joint.update()
+      renderj(joint)
+      renderx(anchor)
+
+    js.forEach(function (jnt) {
+        jnt.update()
+
+        // body...
+    })
+    drawDetails()
+    ps.forEach(function (verlet) {
+
+    verlet.acc.y+=verlet.gravity
+   // verlet.acc.x-=.4
+   verlet.solveCollision(ps)
+    verlet.constrain(rect)
+    verlet.update()
+
+  if(verlet.drawable) renderx(verlet)
+
+
+        // body...
+    })
+    js.forEach(function (jnt) {
+         renderj(jnt)
+      
+        
+        // body...
+    })
+   
+
+    
+    requestAnimationFrame(animate);
+      // body...
+  }
+</script>
+<script type="text/javascript">
+    //document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+
+</script>
+<body>
+
+</body>
+</html>

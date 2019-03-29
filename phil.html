@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>History Of Philosophy</title>
+    <style>
+
+h1 {
+            font-family: 'impactreg';
+        }
+        html,body{
+            margin:0;
+        }
+        canvas{
+
+            display: block;
+
+        }
+        .par{
+             display: block;
+        -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+            position: fixed;
+            z-index: 100;
+            text-align: center;
+           
+        }
+        .itemHolder{
+
+      
+           float: left;
+            width: 50px;
+            height: 100px;
+             display:block;
+             overflow: hidden;
+             font-size: 10px;
+             color: white;
+             background-color: #000000aa;
+           
+        }
+        .imgC{
+          background-size: 100% 100%;
+          width: 100%;
+        }
+        .item {
+             float: left;
+            display: block;
+          
+            background-color: black;
+           
+            width: 50px;
+            height: 50px;
+            z-index: 200;
+            clip-path: circle(45% at center);
+           border-radius: 50%;
+           border-width: 50px;
+           border-color: black;
+            background-size: 100% 100%;
+
+         
+              
+
+  }
+  .btns{
+    left: 0px;
+    top: 0px;
+    position: fixed;
+    display: block;
+  }
+  .btn:hover{
+    background-color: black;
+    color: white;
+  }
+#scroller{
+  display: block;
+
+  width: 15px;
+  height:100%;
+  background-color: white;
+
+
+
+}
+#rankholder{
+  z-index: 90000;
+direction: rtl;
+  width: 50px;
+  height: 100%;
+
+
+ 
+}
+.rankItem{
+  display: block;
+  width: 10px;
+  height: 5px;
+  background-color: deeppink;
+  cursor: pointer;
+  box-sizing: content-box;
+
+ 
+
+ 
+}
+.rankItem:hover{
+ width: 150px !important;
+background-color: red !important;
+
+}
+#scroller-holder{
+    display: block;
+
+position: absolute;
+  width: 100px;
+  height:50%;
+  
+  z-index: 10000;
+  top:25%;
+ right: 15px;
+display: flex;
+
+
+
+}
+#scroller-handle{
+  width: 15px;
+  height: 15px;
+  display: block;
+  position: relative;
+  background-color: rgba(28,153,143,10);
+  user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+
+}
+
+
+.submenu{
+
+          
+
+        }
+        .gh{
+        	
+        clear: left;
+            display: block;
+           background-color: black;
+             overflow: hidden;
+             text-align: center;
+ 
+    font-size: 20px;
+    font-family: "Courier New", Courier, monospace;
+    
+    color:white;
+
+
+     -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor:default
+        }
+        subm{
+          background-color: white;
+          
+          position: fixed;
+          bottom: 0px;
+          display: inline;
+          text-align: center;
+
+        }
+        subm2{
+          background-color: #aa0000;
+          width: 100%;
+          height: 5px;
+          display: block;
+
+        }
+        .box{
+          float:left;
+          background-color: gray;
+         
+        background-size: 100% 100%;
+          width:39px;
+          height: 35px;
+          display: inline-block;
+        }
+        body{
+         background-color: #225358;
+              font-family: "Courier New", Courier, monospace;
+              overflow: hidden;
+
+font-size: x-large;
+        }
+        .mytem{
+            clip-path: circle(48% at center);
+          background-color: rgba(28,153,143,10);
+        display: inline-block;
+
+
+
+        }
+        .hldr{
+          width: 70%;
+          height: 100%;
+         
+          margin: 0 auto;
+          display: block;
+          position: relative;
+
+        }
+        overall{
+          position: fixed;
+            width: 100%;
+            height: 100%;
+            
+
+        }
+        hed{
+          height: 0%;
+     
+          display: block;
+
+
+        }
+        foot{
+          height: 100%;
+          display: block;
+         background-image: url('poorak.png');
+         background-repeat: repeat-x;
+         background-position: bottom;
+
+        }
+        leftbox{
+          font-size: large;
+          padding: 10px;
+          color:white;
+          display: block;
+          width: 300px;
+          height: auto;
+          background-color: #000000;
+          left:50px;
+          top:50px;
+          z-index: 1001;
+          position: fixed;
+
+        }
+        tarikh{
+          padding-top: 5px;
+          font-size: xx-large;
+          text-align: center;
+          width: 100%;
+          background-color: #aa0000;
+          display: block;
+          height: 50px;
+        }
+        onvan{
+          text-align: center;
+          margin-top: 10px;
+           width: 100%;
+          background-color: rgba(28,153,143,10);
+          display: block;
+          height: 40px;
+          margin-bottom: 10px;
+
+
+        }
+        bgbtn{
+          display: block;
+          width: 35px;
+          height:35px;
+          background-color: white;
+          margin: 5px;
+          float: left;
+          border-radius: 34px;
+          background-size: 100% 100%;
+         
+         
+         cursor: pointer;
+
+
+
+        }
+        bgbtn:hover{
+         opacity: .5;
+        }
+       
+        btnholder{
+          float:left;
+          display: block;
+          position: fixed;
+          width: 150px;
+          height: 100%;
+       
+          right: 0px;
+          text-align: center;
+          padding: 15px;
+          z-index: 9000;
+          
+        }
+        timeholder{
+
+          
+          display: block;
+          position: fixed;
+          width: 50px;
+          height: 100%;
+       
+          right: 0px;
+          text-align: center;
+          
+          z-index: 9000;
+         
+          padding-top: 0px;
+         
+          margin:0 auto;
+
+        }
+        line{
+          display: block;
+          width: 5px;
+          height: 100%;
+           background-color: black;
+           margin: auto;
+
+
+
+        }
+        circle{
+         
+          background-color: white;
+          clip-path: circle(45% at center);
+      
+          width: 50px;
+          height: 50px;
+           display: block;
+           position:fixed;
+          
+
+        }
+        fix{
+          position: fixed;
+      
+         
+          font-size: 12px;
+          display: block;
+          width: auto;
+          right: 10px;
+        color:white;
+         background-color:black;
+          
+        }
+        pre{
+         
+          margin: 0px;
+        }
+        #bgCircle{
+          width: 200px;
+          height: 200px;
+          background-color:#18a283;
+          display: block;
+          position: relative;
+
+          border-radius: 50%;
+        margin: 0 auto;
+        top:calc(50% - 100px);
+
+        }
+       #bgholder{
+        background-color: #225358;
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        justify-content: center;
+        text-align: center;
+       }
+       #hover-rect{
+        display: none;
+        position: fixed;
+        padding: 1em;
+        background-color: black;
+        z-index: 1012100;
+        color:white;
+        font-size: 12px;
+        transition: opacity .1s linear;
+       }
+       #hover-rect:after{
+          font-size: 12px;
+        content: " ";
+        display: block;
+        background-color: transparent;
+          
+        position: absolute;
+        right: -2.2em;
+        top: 0;
+      
+          border: 1.6em solid;
+    border-color:  transparent transparent transparent black;
+    box-sizing: border-box;
+
+       }
+       
+
+    </style>
+
+</head>
+<body>
+  <div id="hover-rect">salam</div>
+  <div id="bgholder">
+    <div id="bgCircle"></div>
+  </div>
+
+<btnholder>
+  <a href="http://zoqol.github.io" target="blank">
+  <bgbtn  name="blue.jpg" style="float:right;background-image:url('https://avatars0.githubusercontent.com/u/37377691?s=96&v=4');"></bgbtn>
+</a>
+   
+</btnholder>
+<div id="scroller-holder">
+<div id="rankholder">
+
+
+</div>
+  <div id="scroller">
+
+<div id="scroller-handle"></div>
+</div>
+</div>
+
+<leftbox >
+<tarikh id="tarikh"></tarikh>
+<onvan id="onvan" ></onvan>
+<div id="leftbox">Welcome to TimeLine of Philosophy</div>
+
+
+</leftbox>
+<overall><hed></hed>
+
+</overall>
+  
+ 
+
+<div>
+    <canvas id="canvas"/>
+</div>
+
+<div class="gh" id="dt">
+
+</div>
+
+<div class="btns" id="btn">
+ 
+</div>
+
+<script type="text/javascript">
+all()
+
+function all() {
+  var dvs={}
+  var last=null;
+
+window.onload=function () {
+    //-----------FUCKY TEXT
+    var alphabets="ABCDEFGHIJKLMNOPQRSabcdefghijklmnopqrs";
+    var ages=[["IONIAN PHILOSOPHERS","640-475 BCE","Thales of Miletus,Anaximander of Miletus,Anaximenes,Hericlitus of Ephasus","Sought the principle of things, and the mode of their origin and disappearance"],
+    ["PYTHAGORREANS","582 BCE-5th BCE","Pythagoras of Samos,Damon","Gave philosophy its name:Love of wisdom. Mathematics,Mysticism,Science"],
+    ["ELEATIC PHILOSOPHERS","570 BCE-5th  BCE","Xenophanes,Parmenides,Zeno of Elea,Anaxagoras,Empedocles"],
+    [
+"ATOMISTS","5th cntury BCE","Leucippus,Democritus","Believed in the doctrine of atoms, or small primary bodies infinite in number, indivisble and imperishable"],
+    ["OLDER SOPHISTS","5th century BCE-375 BCE","Protagoras,Gorgias,Hippias,Prodicus","Grammer, Relativity, Agnosticism"],
+    ["GOLDEN AGE OF ATHENIAN PHILOSOPHY"],
+    ["PLATONISM","469-Present Day","Socrates,Plato","The theory of forms, as well as a threefold divison of philosophy into dialectic, ethics, and physics"],
+    ["ARISTOTLE","384 BC","Aristotle","Works scientifically from the particular to the universal. Philosophy as science. Ethics"],
+    ["STOICS","310-180 AD","Zeno of Citium,Cleanthes of Assos,Chrysippus","Continues in ancient Rome, Practical application of previus thought. Virtue is good, vice is bad, everytthing else in the world is indifferent"],
+    ["EPICUREANISM","342-BCE","Epicurus","Continues in ancient rome and the renaissance, Belief in atoms, materialistic metaphysics, empricist epistomology, hedonistic ethics"],
+    ["PYRRHONIAN SKEPETICISM","365 BCE","Pyrrho,Timon,Arcesilaus and Carneades","Continus in roman empire. Skepeticsim, or the suspension of judgement on things"],
+    ["NEOPLATONISM","205 CE","Plotonius of Lycopolis,Porphyry,Proclus,Disciples","Justinian forbids teaching of philosophy at Athens(529 CE). A fusion of Greek philosophy and eastern religion Septuagint. Sought to right relation between God and humans"],
+    ["ROMAN PHILOSOPHY", "155 BCE-525CE","Sextus Empricus,Cicero,Apuleius of Madaura,Seneca the Younger,Cornutus,Marcus Aurelius,Lucretius"],
+    ["EARLY CHRISTIAN THOUGHT","100-525CE","Justin Martyr,Tertullian,Saint Irenaeus,Clement Of Alexandria,Origen,Athanasius of Alexandria,Saint Augustine,Pseudo-Dionysius the Areopagite","Fleshing out of basic Chrisitan concepts. The soul, the trinity, and justifying Christian views of science and history"],
+    ["THE MIDDLE AGES","5th-16th century CE"],
+
+    ["NEOPLATONISM","475-526 CE","Boethius","Platonic reverence of reason adn truth coupled with Chrisitan allegoris"],
+
+    ["SCHOLASTICISM","1100-1700","Anselm,Peter Abelard,Thomas Aquinas,John Duns Scotus,William of Ockham","Use of Logic, dialectic, and analysis techniques of ancient thinkers to explore theological issues and defend dogma"],
+    ["THE RENAISSANCE","14th-17th century"],
+    ["ARISTOTELIANISM-AVERROSIM","1429-1538","Paul of Venice,Alessandro Achillini,Elijah del Medigo,Nicoletto Vernia,Agostino Nifo","Immortality of the soal as justified in Aristotelian texts and commentaries"],
+    ["SCIENTIFIC & SECULAR ARISTOTELIANS","1462-1589","Pomponazzi,Jacopo Zabarella","A scientific look at the intellect as part of the body, developent of logic and scientific method"],
+    ["HUMANISM","1304-1536","Niccolo Machiavelli,Erasmus,Petrus Ramus,Lorenzo Valla","Heightened emphasis on moral philosophy, reform, and the good life instead f purely scholastic Aristotelianism"],
+    ["SKEPTICISM","1469-1623","Mirandola,Nettesheim,Montaigne,Sanches","The unreliablitiy of the senses and the inability to justfy what is knowledge. Used for attacks on paganim, sience and Aristotelianism"],
+    ["NEW NATURAL PHILOSOPHERS","1473-1639","Copernicus,Telesio,Petrizi,Giordano Bruno,Campanella","Rejection of Aristotelian science and attempts at a more honest scientific inquiry into the natural world"],
+    ["MODERN PHILOSOPHY"],
+    ["RATIONALISTS","1596-1716","Rene Descartes,Baruch Spinoza,Nicolas Malebranche,Gottfried Leibniz","A response to scholasticism through skepeticism. Ordinary methods of science and reasoning are fallible but not false"],
+    ["EMPIRICISTS","1632-1776","John Locke,George Berkeley,David Hume","Theries of knowledge should be grounded in exprience and physical evidence. Sensory perception is involved in the formation of ideas, rahter than innate notions"],
+    ["POLITICAL PHILOSOPHY","1588-1895","Thomas Hobbes,John Locke,Jean Jacues Rousseau,Jermy bentham,James Mill,John Stuart Mill,Karl MArx,Friedrich Engels","Rethought the need for political structures, discussed what makes a goverment good, what rights and freedoms we have, and what duties citizens have"],
+    ["GERMAN IDEALISM","1724-1924","Imannuel Kant,Johan Fichte,G.W. Friedrich Hegel,Joseph Schelling,Arthur Schopenhauer,Herbert Bradley","Related to skepeticism in assertion that reality is but a construckt of our mind, and probably immaterial"],
+    ["EXISTENTIALISTS","1813-1980","Soren Kierkegaard,Friedrich Nietzsche,Karl Jaspers,Gabriel Marcel,Martin Heidegger,Jean-Paul Sartre","Exprience of the individual are centeral. Moral and scientific thinking are not enough, a further set of catagories based on authenticity is necessary"],
+    ["PRAGMATISM","1839-2007","Charles Sanders Piercse,William James,John Dewey,Richard Rorty","The function of thought is not to describe, reperesent or mirror reality, instead thought is a tool for prediication, action, and problem solving"],
+    ["PHENOMENOLOGY","1859-1961","Edmund Husserl,Martin Heidegger,Maurice Merleau Ponty","Creating a scientific and objective-centered method for looking at topiics normally regarde as subjective. Namely, our Exprienes and consciousness"],
+    ["ANALYTIC PHILOSOPHY","1848-1970","Gottlob Frege,Bertrand Russell,G.E Moore,Moritz Schilick,Rudolf Carnap,Ludwig Wittgensteiin","Emphasis on clarity,formal logic,analysis of language,and the natrual sciences"],
+    ["ORDINARY LANGUAGE","1889-1976","Ludwig Wittgensteiin,J.L Austin,Gilbert Ryle","Push to eschew traditional philosophical theries. Belief that traditional philosophical programs are rooted in linguistic mistakes committed by philosophers. Remedied by the way words are used in everyday use"],
+    ["POST-STRUCTURALISTS","1901-2009","Jacques Lacan,Clude Levi-Strauss,Gilles Deleuze,Michel Foucault,Jacques Derrida","One major theme is the instablitiy of the human science. Humans are exceedingly complex, and it is impossible to escape  human structures so as to study them."],
+    ["POSTANALYTIC PHILOSOPHY","1908-present","W.V. quine,Donald Davidson,Richard Rorty,Hilary Putnam","Closely associated to American Pragmatism. Advocates a detachment from objective truth with an emphasis on utility, convention and social progress"]
+
+
+
+    ]
+
+function FuckyText(el) {
+    var orig=el.innerHTML;
+
+    var str=el.innerHTML;
+    var ar=str.split("");
+    var p=FuckyText.prototype;
+    p.duration=600;
+    var startTime=0;
+    var timeIndex=[];
+    var isRunning=false;
+    var eps=.2
+    for(var i=0;i<str.length;i++){
+        var dx=i/str.length;
+        timeIndex[i]=dx+Math.random()*(1-dx);
+    }
+    var iid=0;
+    this.start=function () {
+        if(isRunning==true) return;
+        isRunning=true;
+
+        startTime=new Date().getTime()
+       iid=setInterval(function () {
+            var currentTime=new Date().getTime()-startTime;
+           var px=currentTime/p.duration;
+
+           var ch=""
+            for(var i=0;i<str.length;i++){
+               var tx=timeIndex[i];
+                if(px>tx) ch+=str[i]
+                else if(px<tx/3) ch+="-"
+                else ch+=alphabets[Math.floor(Math.random()*(alphabets.length-1))]
+
+                //alphabets[Math.floor(Math.random()*(alphabets.length-1))]
+            }
+           el.innerHTML=ch;
+
+          if(px>1){
+            isRunning=false;
+              clearInterval(iid);
+          }
+       },1000/60)
+    }
+
+}
+//-----------------------------------
+
+  var O;
+    function Vect3(x,y,z) {
+        this.x=x;
+        this.y=y;
+        this.z=z;
+    }
+    Vect3.prototype.to=function (v) {
+        return new Vect3(v.x-this.x,v.y-this.y,v.z-this.z)
+
+    }
+    Vect3.prototype.dot=function (v) {
+        return new this.x*v.x+this.y*v.y+this.z*v.z;
+
+    }
+//-------------------------------------
+  function Obj3D(p) {
+    this.visible=true;
+    this.fl=250;
+    this.position=p;
+    this.oldp=new Vect3(p.x,p.y,p.z);
+    this.oldZ=p.z
+    this.x=0;
+    this.y=0;
+    this.scale=1;
+
+    // body...
+  }
+  Obj3D.prototype.update=function () {
+    var fl=this.fl;
+    var p = this.position;
+
+        if(p.z>-(fl)){
+        var k = O.to(p);    
+        var sc = fl / (fl + p.z);
+        this.scale = sc;
+        
+        this.x = O.x + k.x * sc;
+        this.y =O.y + k.y * sc;
+       
+        this.visible = true;
+       // this.alpha = sc; 
+        } else {
+        this.visible = false;    
+
+        }
+
+    // body...
+  }
+    //------------------------------
+
+    
+     var dt=document.getElementById("dt");
+     document.body.color={r:0,g:0,b:0}
+     var curCol={r:255,g:255,b:32}
+     var colors=[[214,181,0],[28,153,143],[135,8,8],[150,0,228]]
+   
+    var anchorY=0;
+    var m={x:0,y:0}
+    var w=window.innerWidth;
+    var h=window.innerHeight;
+    var isDown=false;
+    var scrollDown=false;
+    var scaleFactor=0;
+    var lastSec=1;
+    var bgColors=["#225358","#18a283","#101010","#c708aa","#ff3636","#ee7e1a","#aa0000","#e0e0e0","deeppink","#e0d800","black"]
+
+    var hoverRect=document.getElementById('hover-rect')
+
+     var scroller=document.getElementById('scroller')
+     var rankholder=document.getElementById('rankholder')
+      var scrollerHolder=document.getElementById('scroller-holder')
+      var scrollerHandler=document.getElementById('scroller-handle')
+      var bgcirc=document.getElementById('bgCircle')
+        var bgholder=document.getElementById('bgholder')
+      console.log(scroller)
+     var initPos=parseInt(window.getComputedStyle(scrollerHolder,null).getPropertyValue('top'));
+        var initH=parseInt(window.getComputedStyle(scrollerHolder,null).getPropertyValue('height'));
+
+
+        addEventListener("touchstart",scrollStarted)
+       scroller.addEventListener('mousedown',scrollStarted)
+       function scrollStarted(e) {
+
+        console.log('md')
+        scrollDown=true;
+        
+      // var perecentage=(e.clientY-initPos)/initH;
+    //  scrollerHandler.style.top=perecentage*100+"%"
+        // body...
+      
+         // body...
+       }
+     
+
+  
+
+ bgholder.style.backgroundColor=bgColors[lastSec-1]
+      bgCircle.style.backgroundColor=bgColors[lastSec]
+
+    window.addEventListener("touchend", tend);
+    window.addEventListener("touchcancel", tend);
+    window.addEventListener("touchstart", function (e) {
+
+      anchorY=e.changedTouches[0].pageY;
+       isDown=true;
+        m.x=e.changedTouches[0].pageX;
+    m.y=e.changedTouches[0].pageY;
+      
+      // body...
+    });
+    window.addEventListener('touchmove', function(e){
+    //  console.log()
+    m.x=e.changedTouches[0].pageX;
+    m.y=e.changedTouches[0].pageY;
+        
+    }, false)
+
+    window.addEventListener("mousemove",tmove);
+    function tmove(e) {
+      m.x=e.clientX;
+      m.y=e.clientY;
+
+    }
+    window.addEventListener("mousedown",tstart);
+    function tstart(e) {
+      console.log("start")
+        anchorY=e.clientY;
+     //   isDown=true;
+
+      // body...
+    }
+    window.addEventListener("mouseup",tend);
+    function tend(e) {
+        console.log("end")
+        isDown=false;
+      scrollDown=false;
+
+      // body...
+    }
+
+   // window.addEventListener("mousewheel", wheel, false);
+    var len=ages.length;
+    O=new Vect3(w/2,h/2,0);
+    this.width=w;
+    this.height=h;
+    var v=new Vect3(0,2,3);
+    var ww=new Vect3(20,30,45)
+    var p=v.to(ww);
+  
+    var obs=[];
+    var submenu=document.getElementById("submenu");
+    var hei=h/len;
+    var stholder=0;
+    console.log(len)
+    for(var i=0;i<len;i++){
+        var par=document.createElement("div");
+        par.setAttribute("class","par");
+        var elm=document.createElement("div");
+        elm.setAttribute("class","gh");
+  var holder=document.createElement("div");
+  var an=Math.floor(Math.random()*10);
+
+  var philosophers=ages[i][2];
+  var textphilosopher=ages[i][3]
+
+
+  if(philosophers!=null) philosophers=philosophers.split(",");
+  var n=0;
+  if(philosophers!=null && ages.length>=3) n=philosophers.length;
+
+
+   var rankItem=document.createElement('div');
+   rankItem.textData=ages[i][0]
+         
+           rankItem.style.width=10+n*15+"px"
+          rankItem.style.height=(initH/len)+'px'
+         rankItem.style.backgroundColor=bgColors[i%10]
+ rankItem.setAttribute('class','rankItem');
+           rankholder.insertBefore(rankItem,rankholder.childNodes[0])
+  
+  var timeholder=document.getElementById("timeholder");
+  for(var j=0;j<n;j++){
+        var itemHolder=document.createElement("div");
+        var elm2=document.createElement("div");
+        itemHolder.setAttribute("class","itemHolder");
+       elm2.setAttribute("class","mytem");
+      //elm2.style.backgroundImage="url('bgg2.jpg');"
+        elm2.innerHTML="<div class='item'><img class='imgC' src='philosophersPics/"+philosophers[j]+".jpg'></div>";
+       // elm2.style.backgroundPosition =Math.floor(Math.random()*400)+"px "+Math.floor(Math.random()*400)+"px";
+       itemHolder.append(elm2)
+        holder.append(itemHolder)
+
+          itemHolder.innerHTML+=philosophers[j];
+        
+          
+  }
+  var btn2=document.createElement("div");
+  btn2.setAttribute("class","box");
+
+ // submenu.append(btn2)
+
+ btn2=rankItem;
+ btn2.addEventListener('mouseleave',function () {
+hoverRect.style['display']="none"
+   // body...
+ })
+ btn2.addEventListener('mouseover',function (e) {
+   hoverRect.style['display']="block"
+ hoverRect.innerHTML=e.target.textData
+  var rect=(e.target.getBoundingClientRect())
+var hrect=hoverRect.getBoundingClientRect()
+  console.log(rect)
+  hoverRect.style.top=(rect.y-hrect.height/2+rect.height/2)+"px";
+  hoverRect.style.left=(rect.x-hrect.width)+"px"
+ 
+ 
+   // body...
+ })
+             btn2.addEventListener("click",function (e) {
+
+                var t=-90-e.target.obj.position.z;
+                var dt=t
+
+        obs.forEach(function (o) {
+            
+           
+                o.oldp.z+=dt;
+           
+            
+            // body...
+        })
+
+        var p=((e.target.obj.oldZ-200)*100/6800)
+
+         
+           
+                 scrollerHandler.style.top=p+"%"
+
+                   if(Math.ceil(10*p/100)==lastSec){
+
+         scaleFactor+=(p%10-scaleFactor)*.1
+        
+         
+       }else{
+
+         scaleFactor=p%10
+         //bgholder.style.backgroundColor=bgColors[lastSec]
+
+       }
+       
+
+        lastSec=Math.ceil(10*p/100);
+
+   if((p%10-scaleFactor)>5) scaleFactor=0;
+    
+      bgcirc.style.transform="scale("+scaleFactor/10*10+")"
+
+   bgholder.style.backgroundColor=bgColors[lastSec-1]
+      bgCircle.style.backgroundColor=bgColors[lastSec]
+
+              //  var t=-100-e.target.pos.z;
+               // e.target.pos.z+=t;
+                // body...
+            })
+           /* button.addEventListener("click",function (e) {
+                var t=-100-e.target.obj.position.z;
+                var dt=t
+        obs.forEach(function (o) {
+            
+           
+                o.oldp.z+=dt;
+           
+            
+            // body...
+        })
+              //  var t=-100-e.target.pos.z;
+               // e.target.pos.z+=t;
+                // body...
+            })*/
+        holder.style.visibility="hidden"
+       
+
+        var n=Math.random();
+        //
+        
+
+        par.append(elm)
+          par.append(holder)
+        elm.innerHTML=ages[i][0];
+        if(ages[i].length<=2) elm.style.backgroundColor="red"
+
+        //par.innerHTML+=ages[i][1];
+         
+        //"<br>"+ages[i][1];
+        document.body.append(par);
+
+        /*   var fc=new FuckyText(elm)
+           elm.fc=fc;
+            elm.addEventListener("mouseover",function (e) {
+                console.log("sdsds")
+                e.target.fc.start();
+            })*/
+
+      var obj1=new Obj3D(new Vect3(w/2+Math.random()*400-200,h/2+Math.random()*400-200,(len-i)*200));
+        obj1.element=par;
+        obj1.text=textphilosopher;
+
+        obj1.onvan=ages[i][0];
+        obj1.tarikh=ages[i][1]
+        obj1.idx=i;
+
+var clr=colors[parseInt(Math.random()*colors.length)];
+
+        obj1.color={r:clr[0],g:clr[1],b:clr[2]};
+          
+          btn2.obj=obj1;
+         //holder.style.visibility="visible"
+         holder.style.opacity=0;
+        obj1.phils=holder
+        obj1.oldp.z-=300;
+      obs.push(obj1);
+
+    }
+
+
+    
+    function wheel(e) {
+      var e = window.event || e; // old IE support
+    var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    var dt=20;
+    console.log(delta)
+    console.log(obs[0].oldp.z)
+     console.log(obs[obs.length-1].oldp.z)
+      if(obs[0].oldp.z>6700){
+           
+           }
+           var sign=Math.abs(delta)/delta;
+           if(delta<0){
+            if(obs[0].oldp.z>6700){
+           //   dt=0;
+            }
+
+           }
+      obs.forEach(function (o) {
+        
+      
+
+           o.oldp.z-=sign*dt;
+          
+
+       // o.oldp.z=Math.min(Math.max(o.oldp.z,-100),6700);
+        
+        // body...
+      })
+      // body...
+    }
+
+
+
+step()
+var leftbox=document.getElementById("leftbox");
+var onvan=document.getElementById("onvan");
+var tarikh=document.getElementById("tarikh")
+function step(timestamp) {
+
+  if(last && last.idx>20){
+console.log(last.idx)
+    return;
+  } 
+
+if(scrollDown){
+  var perecentage=(m.y-initPos)/initH;
+  var p=Math.min(Math.max(perecentage*100,0),100);
+      scrollerHandler.style.top=p+"%"
+   
+//console.log(lastSec)
+    //(p/100)*10
+      if(Math.ceil(10*p/100)==lastSec){
+
+         scaleFactor+=(p%10-scaleFactor)*.1
+        
+         
+       }else{
+
+         scaleFactor=p%10
+         //bgholder.style.backgroundColor=bgColors[lastSec]
+
+       }
+       
+
+        lastSec=Math.ceil(10*p/100);
+
+   if((p%10-scaleFactor)>5) scaleFactor=0;
+    
+      bgcirc.style.transform="scale("+scaleFactor/10*10+")"
+
+   bgholder.style.backgroundColor=bgColors[lastSec-1]
+      bgCircle.style.backgroundColor=bgColors[lastSec]
+
+obs.forEach(function (o) {
+        
+        o.oldp.z=(o.oldZ-(p/90)*6600);
+        
+        // body...
+      })
+}
+   if(isDown){
+
+    var dt=(anchorY-m.y)*.1;
+    obs.forEach(function (o) {
+        
+        //o.oldp.z-=dt;
+        
+        // body...
+      })
+   }
+  
+  
+
+
+  
+   obs.forEach(function (o,i) {
+
+    var xx=(m.x-w/2)+o.oldp.x
+    var yy=(m.y-h/2)+o.oldp.y
+   //  o.position.x+=(xx-o.position.x)*.3;
+  //  o.position.y+=(yy-o.position.y)*.3;
+    o.position.z+=(o.oldp.z-o.position.z)*.06;
+
+    o.update();
+   
+     o.element.style.left = (o.x-o.element.offsetWidth/2)+'px';
+      o.element.style.top = (o.y-o.element.offsetHeight/2)+'px';
+      o.element.style.transform = "scale("+o.scale+")"; 
+    // if(o.visible) c.arc(o.x,o.y,50*o.scale,0,Math.PI*2);
+     var op=parseFloat(o.phils.style.opacity);
+
+    if(o.position.z<100 && o.position.z>-100){
+      if(o.position.z<50 && o.text){
+        leftbox.innerHTML=o.text;
+        onvan.innerHTML=o.onvan;
+        tarikh.innerHTML=o.tarikh;
+        if(last){
+          last.style.backgroundColor="black";
+        }
+
+        if(dvs[o.idx]){
+            dvs[o.idx].style.backgroundColor="red";
+            last=dvs[o.idx];
+            
+         // console.log("yes thrs")
+        }
+      }
+
+        o.phils.style.visibility="visible";
+       
+      o.phils.style.opacity=op+(1-op)*.1;
+      curCol=o.color;
+    }else{
+        o.phils.style.opacity=op+(0-op)*.1;
+        if(op<.3){ o.phils.style.visibility="hidden"
+         o.phils.style.opacity=0;
+
+     }
+
+    }
+
+     if(o.visible==false || o.position.z>500) {o.element.style.visibility="hidden"; o.phils.style.visibility="hidden"}
+        else{ o.element.style.visibility="visible"}
+     
+   })
+   /*var col=document.body.color;
+   var fc=.1
+   col.r+=(curCol.r-col.r)*fc;
+col.g+=(curCol.g-col.g)*fc;
+col.b+=(curCol.b-col.b)*fc;
+   
+     document.body.style.backgroundColor="rgb("+parseInt(col.r)+","+parseInt(col.g)+","+parseInt(col.b)+")"*/
+
+    
+     /*for(var i=0;i<50-1;i++){
+        var a=obs[i];
+        var b=obs[i+1];
+
+        if(b.visible){
+            c.beginPath();
+            c.strokeStyle = "gray";
+          //  c.setLineDash([5,5]);
+            c.moveTo(a.x,a.y);
+            var cd=new Obj3D(new Vect3(b.position.x,a.position.y,b.position.z));
+            var bd=new Obj3D(new Vect3(b.position.x,a.position.y,a.position.z));
+            bd.update();
+            cd.update();
+             c.lineTo(bd.x,bd.y);
+            c.lineTo(cd.x,cd.y);
+            c.lineTo(b.x,b.y);
+            c.stroke();
+        }
+     }*/
+    //dt.style.transform = "scale("+os.scale+")"; 
+ window.requestAnimationFrame(step);
+}
+}
+
+
+  // body...
+}
+
+
+</script>
+</body>
+</html>

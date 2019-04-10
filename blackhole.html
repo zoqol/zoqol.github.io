@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Black Hole</title>
+</head>
+<body>
+	<style type="text/css">
+	
+	#canv{
+		margin:0  auto;
+		display: block;
+		filter:brightness(1.8) saturate(1.8) blur(5px) ;
+	}
+	body{
+		background-color: black;
+	 
+	} 
+	</style>
+	<canvas width="580" height="580" id="canv"></canvas>
+<script type="text/javascript">
+	
+	var el=document.getElementById('canv'),
+	ctx=el.getContext('2d'),theta=0,pos={x:580/2,y:580/2},r=50 ;
+	ctx.beginPath();
+	ctx.fillStyle='black'
+	ctx.rect(0,0,pos.x*2,pos.y*2);
+	ctx.fill();
+	ctx.filter="blur(10px)"
+	requestAnimationFrame(render)
+	function render(ev) {
+		theta+=.01
+		 ctx.fillStyle='darkorange'
+		ctx.beginPath();
+		[{x:pos.x+Math.cos(theta)*r,y:pos.y+Math.sin(theta)*r,z:20*Math.abs(Math.sin(theta))},{x:pos.x+Math.cos(theta+Math.PI*4)*r,y:pos.y+Math.sin(theta+Math.PI*3)*r,z:40*Math.abs(Math.sin(theta))+1},{x:pos.x+Math.cos(theta*2+Math.PI*5)*r,y:pos.y+Math.sin(theta*2+Math.PI*5)*r,z:20*Math.abs(Math.sin(theta))+1},{x:pos.x+Math.cos(theta*3+Math.PI)*r,y:pos.y+Math.sin(theta*3+Math.PI)*r,z:20},{x:pos.x+Math.cos(theta*4+Math.PI*3)*r,y:pos.y+Math.sin(theta*3+Math.PI*3)*r,z:20},{x:pos.x+Math.cos(theta+Math.PI*3)*r,y:pos.y+Math.sin(theta+Math.PI*3)*r,z:20},{x:pos.x,y:pos.y,z:40}].forEach((o)=> {
+			ctx.arc(o.x,o.y,o.z,0,Math.PI*2)
+			})
+		  ctx.fill();
+		ctx.beginPath();
+		ctx.fillStyle='black'
+		ctx.arc(pos.x,pos.y,40,0,Math.PI*2)
+		ctx.fill();
+		 ctx.drawImage(el,0,0)
+		 	ctx.beginPath();
+		ctx.fillStyle='black'
+		ctx.arc(pos.x,pos.y,40,0,Math.PI*2)
+		ctx.fill();
+		 	requestAnimationFrame(render)
+
+		// body...
+	}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MPL Model Checker</title>
+    <link rel="stylesheet" href="prism.css" />
+
+    <style>
+        #canv {
+            left: 0;
+            background-color: white;
+            top: 10px;
+        }
+        
+        body {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .container {
+            width: 480px;
+            margin: auto;
+            position: relative;
+            margin-top: 1em;
+        }
+        
+        input[type="button"] {
+            background-color: white;
+            border: 2px solid black;
+            outline: none;
+            cursor: pointer;
+            padding: .4em;
+            box-sizing: border-box;
+        }
+        
+        input[type="button"]:hover {
+            background-color: darkred;
+        }
+        
+        input[type="button"]:hover {
+            background-color: #202020;
+            color: white;
+        }
+        
+        .text-container {
+            width: 480px;
+            margin: auto;
+            height: auto;
+            background-color: white;
+            padding: 2em;
+            box-sizing: border-box;
+            color: #202020;
+            font-family: 'fontello', sans-serif;
+            font-size: 14px;
+        }
+        
+        .code {
+            padding: 0px;
+            position: relative;
+            width: 600px;
+            margin: 0px;
+        }
+        
+        #variable-dashboard {
+            padding: .4em;
+            position: absolute;
+            width: auto;
+            height: 30px;
+            background-color: #101010;
+            text-align: center;
+            border-radius: 20px;
+            opacity: 0;
+            transform-origin: 0% 100%;
+            user-select: none;
+            z-index: 200;
+        }
+        
+        #variable-dashboard:after {
+            content: " ";
+            position: absolute;
+            display: block;
+            width: 16px;
+            height: 14px;
+            background-color: #101010;
+            right: calc(50% - 8px);
+            bottom: -8px;
+            transform: rotate(45deg) translateY(-3px);
+            z-index: -1;
+        }
+        
+        .footer {
+            background-color: black;
+            color: gray;
+            text-align: center;
+            padding: 1em;
+            font-size: 11px;
+            margin: 0;
+        }
+        
+        @font-face {
+            font-family: 'fontello';
+            src: url('./font/fontello.eot?59511465');
+            src: url('./font/fontello.eot?59511465#iefix') format('embedded-opentype'), url('./font/fontello.woff?59511465') format('woff'), url('./font/fontello.ttf?59511465') format('truetype'), url('./font/fontello.svg?59511465#fontello') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        .icon-pack {
+            font-family: "fontello";
+            font-style: normal;
+            color: gray;
+        }
+        
+        #variable-dashboard > div {
+            font-size: 12px;
+            display: inline-block;
+            background-color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-weight: bold;
+            z-index: 2;
+            padding: .5em;
+            margin: .2em;
+            border: 3px solid darkgray;
+            transform: translateY(-2px);
+            font-weight: bold;
+            font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        
+        #variable-dashboard > div:hover {
+            background-color: darkgray;
+            cursor: pointer;
+            border-color: #ff9000;
+        }
+        
+        #tx {
+            position: absolute;
+            color: black;
+            top: 0;
+            padding: 0;
+            margin: 0;
+            left: 1px;
+            right: 1px;
+            user-select: none;
+            pointer-events: none;
+            display: none;
+        }
+        
+        .selected {
+            background-color: gray !important;
+        }
+        
+        .btn-container {
+            position: absolute;
+            width: 50px;
+            height: 400px;
+            background-color: transparent;
+            top: 0;
+            right: -52px;
+        }
+        
+        .btn {
+            background-color: gray;
+            font-family: "fontello";
+            font-style: normal;
+            font-size: 24px;
+            padding: .5em;
+            padding-left: .6em;
+            user-select: none;
+            cursor: pointer;
+        }
+        
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        
+        .selected-btn {
+            background-color: black;
+            color: white;
+        }
+        
+        :target div {
+            background-color: black;
+            color: white;
+        }
+        
+        .head {
+            text-align: center;
+        }
+        
+        #inpt {
+            border: 2px gray solid;
+            font-size: 18px;
+            background-color: transparent;
+            outline: none;
+            margin-bottom: .4em;
+            color: gray;
+            padding: .1em;
+            padding-left: .2em;
+            font-family: monospace;
+        }
+        
+        .circle {
+            background-color: lightgray;
+            padding: 1em;
+            border-radius: 50%;
+            display: inline-block;
+            border: 2px solid black;
+        }
+        
+        .label {
+            display: inline-block;
+            transform: translateY(-.9em);
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<div id="variable-dashboard">
+
+</div>
+
+<div>
+
+</div>
+
+</div>
+
+<div class="container">
+
+    <canvas id="canv" width="480" height="480"></canvas>
+    <h2 id="tx">
+$${}$$
+</h2>
+    <div class="btn-container">
+        <div class="btn" id='addbtn'></div>
+        <div class="btn" id='removeaccessbtn'></div>
+        <div class="btn" id='movebtn'></div>
+        <div class="btn" id='connectbtn'></div>
+        <div class="btn" id='editbtn'></div>
+    </div>
+    <div class="text-container">
+
+        <div class="head">
+            <input type="button" value="evaulate" onClick="evalu()">
+            <input placeholder="enter formula" id="inpt" />
+        </div>
+
+        This is a Model Checker for Propositonal Modal logic(PML), you can easily design models and evaulate modal propositions under different interpretation.
+        <br>
+        <div style="margin-bottom: 1em">Color of circles represents propositions value in different worlds:</div>
+        <div>
+            <div class="circle"></div>
+            <div class="label">True</div>
+            <div class="circle" style="background-color: white;"></div>
+            <div class="label">False</div>
+        </div>
+        <br>
+        <b> Note:</b> use parentheses around each subformula with binary operator to disambiguate operator priority, for example use $(p \land (r \lor \Diamond u))$ instead of $ p \land r \lor \Diamond u$.
+        <div>
+            <ul>
+                use :
+                <li> "[]" for $\Box$</li>
+                <li> "
+                    <>" for $\Diamond$ </li>
+                <li> "*" for $\land$</li>
+                <li> "+" for $\lor$</li>
+                <li> ">" for $\supset$</li>
+
+                <li> "-" for $\sim$</li>
+        </div>
+        </ul>
+        <b> To add a new world:</b> click the  button, then click somewhere on stage.
+        <br>
+        <b> To remove a world:</b> click the  button, then click on the world you want to remove.
+        <br>
+        <b> To move a world: </b>click the  button, then drag the world you want to move.
+        <br>
+        <b> To link the worlds:</b> click the  button, start drag on a world, then connect the arrow to another world. if you want a <b>reflexive</b> world after selecting  just click on the world you want.
+        <br> <b> To remove a link:</b> click the  button, then click on the arrow between the worlds, or a world to itself.
+        <br>
+        <b> To change valuation:</b> click the  button, then click the world you want to changse it's propositional values. A box with a list of propostional letters will appear (which occurred in formula), click the variables to change it's value.(before changing valuation make sure the input text field is not empty)
+        <br> Enter forumla, then click "evaluation", the color of worlds at which the formula is true will be gray, otherwise remains white.
+
+        <div>
+            <h2>What are possible worlds?</h2>
+            <div style="text-align: justify;">
+                Possible worlds are at the core of Modal logic, they are perhaps some kind of philosophical or logical posit to evaluate certain category of sentences of ordinary lanugage, Modal sentences. They are sentences about <i>possiblity</i> and <i>necessity</i>.
+                <figure style="float: right;margin: 1em">
+                    <img style="" src="krip.jpg">
+                    <figcaption style="font-size: 9px;color:#404040;">S. Kripke, The guy behind possible world
+                        <br> semantic </figcaption>
+                </figure>
+                These concepts were not so clear until the early 1960s, Soul Kripke introduced Possibe worlds semantic as a mathematical model to study formal structure of such sentences. A Possible World model $M=\langle W,R,V\rangle$ is an ordered triple consisting of a set of possible worlds $W \neq \emptyset$. A two-place relation $R$ called accessibility is a subset of $W \times W$ and a function $V$ which assigns to each atomic proposition a subset of $W$. It can be thought of as a special directed Graph with labelled nodes plus some more information. In above visualization the circles represent the possible worlds in the set $W$. The links between them indicate the relation $R$. <i>Truth</i> of a complex well-formed formula respect to a possible world $\omega$ can be evaluted recursively by these rules:
+                <div style="text-align: left;padding: 1em">
+                    $(M,\omega)\models p$ iff $\omega$ is a member of $V(p)$, if $p$ is atomic.
+                    <br> $(M,\omega)\models \sim p$ iff not $(M,\omega)\models p$.
+                    <br> $(M,\omega)\models p \supset q$ iff either not $(M,\omega)\models p$ or $(M,\omega)\models q$.
+                    <br> $(M,\omega)\models \Box p $ iff for every $x \in W$ such that $R \omega x$,$(M,x)\models p$.
+                    <br>
+                </div>
+                The operator $\Box$ stands for necessity. Other connectives such $\land $ and $\lor $ can be defined by $\supset$ and $\sim$, for example $(p \lor q) =_{df}(\sim p \supset q)$ and $(p \land q) =_{df}\sim ( p \supset \sim q)$ and the operator possiblity $\Diamond$ can be defined as $\sim \Box \sim$.
+
+            </div>
+
+        </div>
+    </div>
+    <div class="footer"> Copyright 2019 - Javid Jafari</div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML-full">
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}}); loadAll()
+</script>
+
+<script id="sourcex">
+    function convert(raw) {
+
+        return raw.replace(/<>/g, '\\Diamond ').replace(/\[\]/g, '\\Box ').replace(/\*/g, '\\land ').replace(/\+/g, '\\lor ').replace(/\-/g, '\\sim ').replace(/>/g, '\\supset ')
+
+        // body...
+    }
+
+    function loadAll() {
+        setTimeout(function() {
+            document.querySelector('#tx').style['display'] = "block"
+                // body...
+        }, 400)
+
+        //console.log('loadall')
+            //window.location.hash = "connect"
+        var math = null;
+        MathJax.Hub.queue.Push(function() {
+            math = MathJax.Hub.getAllJax("tx")[0];
+        });
+        changeInput = function(str) {
+
+            MathJax.Hub.queue.Push(["Text", math, convert(str)]);
+        }
+    }
+    var selectedBtn = document.querySelector("#connectbtn");
+    selectedBtn.classList.toggle('selected-btn')
+    var btncontainer = document.querySelector('.btn-container')
+    btncontainer.addEventListener('mousedown', function(e) {
+        selectedBtn.classList.toggle('selected-btn')
+        selectedBtn = e.target
+        selectedBtn.classList.toggle('selected-btn')
+        
+
+         
+    })
+
+    //--------------------------
+    var variableDashboard = document.querySelector("#variable-dashboard");
+    var input = document.querySelector('#inpt');
+    // variableDashboard.style.cssText="width:500px"
+    var el = document.getElementById("canv");
+    var w = 480;
+    var h = 480;
+    var isDown = false;
+    var m = {
+        x: 0,
+        y: 0
+    }
+    var deltam = {
+        x: 0,
+        y: 0
+    };
+    var deltaChangeFactor = 0;
+    var state = 2;
+
+    var r1 = 0
+    var r2 = 0
+    var r3 = 0
+
+    var _r1 = 20
+    var _r2 = 30
+    var _r3 = 27;
+    var SCALE = 1;
+    var _SCALE = .1;
+    //----math stuff
+    function dot(v, u) {
+        return v.x * u.x + v.y * u.y;
+    }
+
+    var idCounter = 0;
+
+    function VerletPoint(x, y, rad = 5) {
+        this.id = VerletPoint.COUNTER++;
+        this.label = {}
+        this.to = [];
+        this.in = []
+        this.connectedTo = []
+        this.connectedIn = []
+        this.type = 'none'
+        this.vars = null;
+        this.rrad = rad;
+        this.ignore = false;
+        this.loc = {
+            x: x,
+            y: y
+        };
+        this.damping = .95
+        this._loc = {
+            x: 0,
+            y: 0
+        }
+        this.acc = {
+            x: 0,
+            y: 0
+        };
+        this.fric = 0;
+        this.elastic = .3;
+        this.rad = 0;
+        this.mass = 1;
+        this.setLocation({
+            x: x,
+            y: y
+        });
+        this.id = idCounter++;
+        this.anchor = false;
+        this.fixed = false;
+        this.gravity = 0;
+        this.drawable = true;
+        this.isTrue = false;
+
+    }
+    VerletPoint.COUNTER = 0;
+    VerletPoint.prototype.update = function(argument) {
+        // body...
+    }
+    VerletPoint.prototype.setLocation = function(v) {
+
+        this.loc.x = v.x;
+        this.loc.y = v.y;
+        this._loc.x = v.x;
+        this._loc.y = v.y;
+        // body...
+    }
+    VerletPoint.prototype.setVelocity = function(v) {
+        this._loc = {
+            x: this.loc.x - v.x,
+            y: this.loc.y - v.y
+        }
+
+    }
+    VerletPoint.prototype.getVelocity = function(v) {
+        return {
+            x: this.loc.x - this._loc.x,
+            y: this.loc.y - this._loc.y
+        }
+
+    }
+
+    VerletPoint.prototype.update = function() {
+        var tmp = {
+            x: this.loc.x,
+            y: this.loc.y
+        }
+
+        this.rad += (this.rrad - this.rad) * .1
+        var V = this.getVelocity()
+        this.setVelocity({
+            x: V.x + this.acc.x,
+            y: V.y + this.acc.y
+        })
+        var v = this.cons(this.getVelocity(), 8)
+        v.x *= this.damping
+        v.y *= this.damping;
+        this.loc.x += v.x;
+        this.loc.y += v.y;
+        this.acc.x *= 0;
+        this.acc.y *= 0;
+        this._loc = tmp;
+        //  var v:Vec2=cons(velo,8)
+        /*
+            loc.inc(v)
+            oldloc=tmp
+            acc.scale(0)*/
+    }
+
+    VerletPoint.prototype.cons = function(v, n) {
+
+        var len = Math.sqrt(v.x * v.x + v.y * v.y)
+        if (len > n) {
+            return {
+                x: n * v.x / len,
+                y: n * v.y / len
+            };
+        }
+        return v;
+
+    }
+    VerletPoint.prototype.constrain = function(rect) {
+
+        this.loc.x = Math.max(rect.left + this.rad, Math.min(rect.right - this.rad, this.loc.x))
+        this.loc.y = Math.max(rect.top + this.rad, Math.min(rect.bottom - this.rad, this.loc.y))
+
+    }
+
+    VerletPoint.prototype.solveCollision = function(ps) {
+            if (this.anchor || this.fixed) return;
+
+            var p1 = this;
+            if (p1.ignore) return
+
+            var p2;
+            var n = ps.length;
+
+            for (var i = 0; i < n; i++) {
+
+                p2 = ps[i];
+                if (p1.type == 'var' && p2.type == 'var' || p1.type == 'none' && p2.type == 'none') {
+                    if (p2.ignore == true) continue
+                    var d = {
+                        x: p1.loc.x - p2.loc.x,
+                        y: p1.loc.y - p2.loc.y
+                    };
+                    var l = Math.sqrt(d.x * d.x + d.y * d.y);
+                    var radix = p1.rad + p2.rad;
+
+                    var radOffset = 20;
+                    var ratio = 2
+                    if (p1.type == 'var' && p2.type == 'var') {
+                        radOffset = 2;
+                        ratio = .1
+                    }
+                    /* if(l<radix+radOffset && p1.id!=p2.id){
+
+                         var ds={x:d.x*ratio/l,y:d.y*ratio/l}
+                         var vl=p1.getVelocity()
+                         vl.x+=ds.x;
+                         vl.y+=ds.y;
+                         p1.setVelocity(vl)
+                         ds.x*=-1;
+                         ds.y*=-1
+                         vl=p2.getVelocity()
+                         vl.x+=ds.x;
+                         vl.y+=ds.y;
+                         p2.setVelocity(vl)
+
+                     }
+                     continue;*/
+                    if (l < radix && p1.id != p2.id) {
+
+                        var v1 = p1.getVelocity();
+                        var v2 = p2.getVelocity();
+                        var dx = l - radix;
+                        var dx_ = dx / 2;
+                        var norm = {
+                            x: d.x / l,
+                            y: d.y / l
+                        };
+                        var mf = {
+                            x: dx_ * norm.x,
+                            y: dx_ * norm.y
+                        };
+                        p1.loc.x -= mf.x;
+                        p1.loc.y -= mf.y;
+                        p2.loc.x += mf.x;
+                        p2.loc.y += mf.y;
+                        var tan = {
+                            x: norm.y * -1,
+                            y: norm.x
+                        };
+
+                        var u = norm;
+                        var v = v1;
+                        var p1_normal = u.x * v.x + u.y * v.y;
+                        v = v2;
+                        var p2_normal = u.x * v.x + u.y * v.y;
+                        u = tan;
+                        var p2_tan = u.x * v.x + u.y * v.y;
+                        v = v1;
+                        var p1_tan = u.x * v.x + u.y * v.y;
+
+                        var u1, u2;
+                        var m1 = p1.mass
+                        var m2 = p2.mass
+                        u1 = (p1_normal * (m1 - m2) + 2 * m2 * p2_normal) / (m1 + m2);
+                        u2 = (p2_normal * (m2 - m1) + 2 * m1 * p1_normal) / (m1 + m2);
+
+                        var p1_normalafter_vec = {
+                            x: norm.x * u1,
+                            y: norm.y * u1
+                        }
+                        var p2_normalafter_vec = {
+                            x: norm.x * u2,
+                            y: norm.y * u2
+                        }
+                        var p1_tan_vec = {
+                            x: tan.x * p1_tan,
+                            y: tan.y * p1_tan
+                        }
+                        var p2_tan_vec = {
+                            x: tan.x * p2_tan,
+                            y: tan.y * p2_tan
+                        }
+                        p1_tan_vec.x += p1_normalafter_vec.x;
+                        p1_tan_vec.y += p1_normalafter_vec.y;
+                        p1.setVelocity(p1_tan_vec)
+
+                        // p1.velo=p1_tan_vec.addOf(p1_normalafter_vec)
+                        p2_tan_vec.x += p2_normalafter_vec.x;
+                        p2_tan_vec.y += p2_normalafter_vec.y;
+                        p2.setVelocity(p2_tan_vec);
+                        // p2.velo=p2_tan_vec.addOf(p2_normalafter_vec)
+
+                    }
+
+                }
+            }
+
+        }
+        //--------- joint
+
+    function VerletJoint(a, b, len = -1, ms = '') {
+        this.id = VerletJoint.COUNTER++
+            if (!a || !b) return null;
+
+        this.a = a;
+        this.b = b;
+        if (ms == '') {
+            this.a.to.push(this)
+            this.b.in.push(this)
+        }
+        this.drawable = true;
+        if (a && b && len == -1) {
+            var d = {
+                x: a.loc.x - b.loc.x,
+                y: a.loc.y - b.loc.y
+            };
+            var diff = Math.sqrt(d.x * d.x + d.y * d.y);
+            this.len = diff;
+        } else {
+            this.len = len;
+        }
+
+        //  console.log(this.len)
+        // body...
+    }
+    VerletJoint.COUNTER = 0;
+    VerletJoint.prototype.update = function() {
+        var a = this.a;
+        var b = this.b;
+
+        if (a && b) {
+
+            var dist = {
+                x: b.loc.x - a.loc.x,
+                y: b.loc.y - a.loc.y
+            }
+            var d = dist;
+            var l = Math.sqrt(d.x * d.x + d.y * d.y);
+            var diff = this.len - l;
+            var d2 = diff / 2;
+            var offset = {
+                x: d2 * dist.x / l,
+                y: d2 * dist.y / l
+            }
+            var dmp = .1
+
+            a.loc.x -= offset.x * dmp;
+            a.loc.y -= offset.y * dmp;
+            b.loc.x += offset.x * dmp;
+            b.loc.y += offset.y * dmp;
+        }
+        // body...
+    }
+    var ctx = el.getContext("2d");
+    el.addEventListener("mouseup", tend);
+    el.addEventListener("touchend", tend);
+    el.addEventListener("touchstart", tstart);
+    el.addEventListener("touchcancel", tend);
+    el.addEventListener("dblclick", ondblclick);
+    el.addEventListener("mousedown", tstart)
+    document.getElementById('addbtn').addEventListener('click', function() {
+        openedObj = null;
+        state = 0;
+        // body...
+    })
+    document.getElementById('movebtn').addEventListener('click', function() {
+        openedObj = null;
+        state = 1
+            // body...
+    })
+    document.getElementById('connectbtn').addEventListener('click', function() {
+        openedObj = null;
+        state = 2
+
+        // body...
+    })
+
+    document.getElementById('removeaccessbtn').addEventListener('click', function() {
+        openedObj = null;
+        state = 3
+
+        // body...
+    })
+    document.getElementById('editbtn').addEventListener('click', function() {
+        openedObj = null;
+        state = 4
+
+        // body...
+    })
+    var bb = {
+            x: el.parentElement.offsetLeft,
+            y: el.parentElement.offsetTop
+        }
+        //el.getBoundingClientRect()
+    function tend(e) {
+        if (e.changedTouches) {
+            m.x = e.changedTouches[0].pageX - bb.x;
+            m.y = e.changedTouches[0].pageY - bb.y;
+        }
+
+        releave()
+        e.preventDefault()
+        isDown = false;
+    }
+
+    function tstart(e) {
+        if (e.changedTouches) {
+            m.x = e.changedTouches[0].pageX - bb.x;
+            m.y = e.changedTouches[0].pageY - bb.y;
+        }
+
+        e.preventDefault()
+
+        isDown = true;
+        searchAnchor()
+    }
+
+    el.addEventListener("mousemove", function(e) {
+        e.preventDefault()
+
+        var old = {
+            x: m.x,
+            y: m.y
+        }
+
+        m.x = e.pageX - bb.x
+
+        m.y = e.pageY - bb.y
+        deltam = {
+            x: m.x - old.x,
+            y: m.y - old.y
+        };
+        deltaChangeFactor += (Math.abs(deltam.y) + Math.abs(deltam.x))
+
+    })
+    el.addEventListener('touchmove', function(e) {
+        //  console.log()
+        m.x = e.changedTouches[0].pageX - bb.x;
+        m.y = e.changedTouches[0].pageY - bb.y;
+
+    }, false)
+
+    var rect = {
+        top: 0,
+        bottom: h,
+        right: w,
+        left: 0
+    };
+    var ps = []
+    var js = [];
+    var anchor = new VerletPoint(m.x, m.y, 1);
+
+    anchor.user = true
+    var leftAnchor = null;
+    var joint = new VerletJoint(anchor, null);
+    var arrowDown = null;
+    var arrowObj1 = null;
+    var arrowObj2 = null;
+    var openedObj = null;
+
+    var vars = []
+    var ln = 3;
+    var doubleClickTarget = null
+    for (var i = 0; i < ln; i++) {
+
+        var angle = (i / ln) * Math.PI * 2 + Math.PI / 4;
+        var r = 80
+        if (i == 0) r = 120
+        var acx = Math.sin(angle) * r
+        var acy = Math.cos(angle) * r
+        var verlet = new VerletPoint(w / 2 + acx, h / 2 + acy, 20);
+        ps.push(verlet)
+
+    }
+
+    var a = ps[0]
+    var b = ps[1]
+    var c = ps[2]
+    var vj = new VerletJoint(a, b, 100)
+
+    a.connectedTo.push(b)
+    b.connectedIn.push(a)
+    a.link = b;
+    js.push(vj)
+
+    function ondblclick(e) {
+
+        ps.forEach(function(o) {
+            var u = o.loc;
+            var d = {
+                x: m.x - u.x,
+                y: m.y - u.y
+            };
+            var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+            if (dx < o.rad) {
+
+                // arrowObj2=o
+                // found=true;
+                //  o.rrrad=500
+                //   doubleClickTarget=o
+
+                return;
+            } else {
+
+            }
+
+        })
+
+        // body...
+    }
+
+    function releave() {
+       // console.log('relv')
+        isDown = false;
+        joint.b = null;
+        var found = false;
+        arrowDown = null;
+        if (arrowObj1 != null) {
+            ps.forEach(function(o) {
+                if (o.type == 'var') return;
+                var u = o.loc;
+                var d = {
+                    x: m.x - u.x,
+                    y: m.y - u.y
+                };
+                var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+                if (dx < o.rad) {
+                   // console.log('ssdsds')
+                    arrowObj2 = o
+                    found = true;
+                    return;
+                } else {
+
+                }
+
+            })
+
+        }
+        if (found == true && state == 2) {
+
+            if (arrowObj1 && arrowObj2) {
+                if (arrowObj2 == arrowObj1) {
+                    arrowObj1.selfConnected = true;
+                    arrowObj1.connectedTo.push(arrowObj2);
+
+                    arrowObj2.connectedIn.push(arrowObj1)
+                    return
+                }
+                if (arrowObj1.connectedTo.indexOf(arrowObj2) > -1) return;
+                // console.log(arrowObj2,arrowObj1)
+                var vj = new VerletJoint(arrowObj1, arrowObj2, 100)
+
+                arrowObj1.connectedTo.push(arrowObj2)
+                arrowObj2.connectedIn.push(arrowObj1)
+                arrowObj1.link = arrowObj2;
+                js.push(vj)
+                arrowObj1 = null;
+                arrowObj2 = null;
+            }
+
+        } else {
+            arrowObj1 = null;
+            arrowObj2 = null;
+
+        }
+
+        arrowDown = null;
+
+        // body...
+    }
+
+    function searchAnchor() {
+
+        if (state == 3) {
+
+            ps.forEach(function(o) {
+                if (o.type == 'var') return
+
+                var u = o.loc;
+                var d = {
+                    x: m.x - u.x,
+                    y: m.y - u.y
+                };
+                var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+                if (dx < o.rad) {
+
+                    o.delete = true;
+                   // console.log(o.to)
+                    o.to.forEach(function(j) {
+
+                        var idx = -1;
+                        js.forEach(function(k, i) {
+                            if (j.id == k.id) idx = i;
+                            
+                           // console.log(j)
+                        });
+
+                        if (idx > -1) js.splice(idx, 1);
+
+                    })
+
+                    o.in.forEach(function(j) {
+
+                        var idx = -1;
+                        js.forEach(function(k, i) {
+                            if (j.id == k.id) idx = i;
+                            
+                           // console.log()
+                        });
+
+                        if (idx > -1) js.splice(idx, 1);
+
+                    })
+                    o.in = o.to = null;
+                    // o.to=o.in=null;
+                    ps.splice(ps.indexOf(o), 1)
+                    o = null;
+                }
+                if (o && o.selfConnected) {
+                    var u = o.loc;
+
+                    var d = {
+                        x: m.x - u.x,
+                        y: m.y - (u.y - 40)
+                    };
+                    var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+                    if (dx < 10) {
+                        o.selfConnected = false;
+                        o.connectedTo.splice(o.connectedTo.indexOf(o), 1)
+                        o.connectedIn.splice(o.connectedIn.indexOf(o), 1)
+                    }
+
+                }
+
+            })
+            js.forEach(function(j) {
+
+                var u = j.selector;
+                var d = {
+                    x: m.x - u.x,
+                    y: m.y - u.y
+                };
+                var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+                if (dx < 10) {
+                    j.a.connectedTo.splice(j.a.connectedTo.indexOf(j.b), 1)
+                    j.b.connectedIn.splice(j.b.connectedIn.indexOf(j.a), 1)
+                    j.a.link = null;
+                    j.a = null;
+                    j.b = null;
+
+                    js.splice(js.indexOf(j), 1);
+                    return;
+
+                }
+
+            })
+        }
+        if (state == 0) {
+            var verlet = new VerletPoint(m.x, m.y, 20);
+
+            ps.push(verlet);
+
+            var wff = input.value.replace(/<>/g, "@").replace(/\[\]/g, "-@-").replace(/--/g, "");
+            var vars = getVars(wff)
+
+            //console.log(vars)
+
+            verlet.vars = {}
+            for (var i = 0; i < vars.length; i++) {
+                verlet.vars[vars[i]] = 0;
+                verlet.label[vars[i]] = 0
+            }
+            // verlet.label=JSON.parse(JSON.stringify(verlet.vars))
+
+        }
+
+        doubleClickTarget = null;
+        var isNew = true;
+        var notFound = true;
+
+        ps.forEach(function(o) {
+
+            if (o.type == 'var') return
+            var u = o.loc;
+            var d = {
+                x: m.x - u.x,
+                y: m.y - u.y
+            };
+            var dx = Math.sqrt(d.x * d.x + d.y * d.y);
+            if (dx < o.rad) {
+                notFound = false;
+                if (openedObj == o) {
+                    isNew = false;
+                    return;
+                }
+
+                console.log('this is less')
+                if (state == 1) {
+                    //console.log(o.in.map(o=>o.id))
+                   // console.log(o.connectedTo.map(o => o.id))
+                  //  console.log(o.connectedIn.map(o => o.id))
+                    joint = new VerletJoint(o, anchor, 10, 'k');
+                } else if (state == 2) {
+                    arrowDown = {
+                        x: u.x,
+                        y: u.y
+                    };
+                    arrowObj1 = o;
+                   // console.log('connected...')
+                } else if (state == 4) {
+                    //console.log(o)
+                    if (!o.vars || Object.keys(o.vars).length == 0) {
+                        openedObj = null;
+                        return;
+
+                    }
+
+                    openedObj = o;
+
+                    var vn = Object.keys(openedObj.vars);
+                    var nm = vn.length;
+                    variableDashboard.innerHTML = "";
+                    for (var l = 0; l < nm; l++) {
+                        if (openedObj.vars[vn[l]] == 1) variableDashboard.innerHTML += "<div class='selected'>" + vn[l] + "</div>"
+                        else variableDashboard.innerHTML += "<div>" + vn[l] + "</div>"
+
+                    }
+                    variableDashboard.style['opacity'] = 1;
+                    _SCALE = 0;
+
+                    //    variableDashboard.style['left']=openedObj.loc.x+"px"
+                    //  variableDashboard.style['top']=openedObj.loc.y+"px"
+
+                } else {
+
+                    variableDashboard.style['left'] = 0 + "px"
+                    variableDashboard.style['top'] = 0 + "px"
+
+                }
+
+                return
+
+            }
+
+        })
+        if (notFound) {
+            openedObj = null;
+        }
+        if (isNew) {
+            /* vars.forEach(function (o) {
+                if(openedObj)
+              {
+                var ol=openedObj.loc;
+               o.setLocation({x:ol.x+Math.random(),y:ol.y+Math.random()})}
+               o.rad=0;
+
+                // body...
+            })*/
+        }
+
+    }
+
+    ctx.strokeStyle = 'black'
+
+    function drawDetails() {
+
+    }
+
+    function renderx(v) {
+        ctx.lineWidth = 3
+
+        if (v.selfConnected) {
+
+            ctx.beginPath()
+            ctx.lineWidth = 2
+            ctx.arc(v.loc.x, v.loc.y - 20, 20, 0, Math.PI * 2, 5);
+            ctx.stroke()
+            var dir = {
+                x: v.loc.x,
+                y: v.loc.y - 40
+            }
+            drawTriag(dir, {
+                x: dir.x + 2,
+                y: dir.y
+            })
+
+        }
+        ctx.beginPath()
+        ctx.lineWidth = 3
+        if (v.dash) ctx.setLineDash([5, 5]);
+        ctx.arc(v.loc.x, v.loc.y, v.rad, 0, Math.PI * 2, 5);
+        ctx.stroke()
+
+        ctx.closePath();
+        ctx.fillStyle = 'white'
+        if (v.isTrue == true) {
+            ctx.fillStyle = 'lightgray'
+        }
+        ctx.fill()
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = 'black'
+        ctx.textAlign = "center"
+        ctx.font = "bold 14px Arial";
+        if (!v.user) ctx.fillText("w" + v.id, v.loc.x, v.loc.y + 14 / 3);
+
+        // body...
+    }
+
+    function drawCirc(x, y, rad, dash = false) {
+
+        ctx.beginPath()
+        if (dash) ctx.setLineDash([5, 5]);
+        ctx.arc(x, y, rad, 0, Math.PI * 2, 5);
+        ctx.stroke()
+        ctx.closePath();
+        ctx.setLineDash([]);
+
+        // body...
+    }
+
+    function drawline(x, y, u, z, dash = false) {
+        ctx.beginPath()
+
+        if (dash) ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 2
+        ctx.moveTo(x, y);
+        ctx.lineTo(u, z)
+        ctx.stroke()
+        ctx.closePath();
+        ctx.setLineDash([]);
+        // body...
+    }
+
+    function renderj(joint) {
+        ctx.lineWidth = 2
+
+        if (joint.drawable == false) return;
+        if (joint.a && joint.b) {
+            ctx.beginPath()
+            if (joint.dash) ctx.setLineDash([5, 5]);
+            ctx.moveTo(joint.a.loc.x, joint.a.loc.y);
+            ctx.lineTo(joint.b.loc.x, joint.b.loc.y)
+            ctx.stroke()
+            ctx.closePath();
+            ctx.setLineDash([]);
+            joint.selector = {
+                x: (joint.a.loc.x + joint.b.loc.x) / 2,
+                y: (joint.a.loc.y + joint.b.loc.y) / 2
+            }
+            drawTriag(joint.a.loc, joint.selector)
+        }
+        // body...
+    }
+    //renderx(verlet);
+    var t = 0;
+    animate()
+
+    function drawTriag(a, b, change = null) {
+
+        var m = b;
+        var minus = {
+            x: b.x - a.x,
+            y: b.y - a.y
+        }
+
+        var dx = Math.sqrt(minus.x * minus.x + minus.y * minus.y)
+        minus.x *= 1 / dx;
+        minus.y *= 1 / dx;
+
+        var prp = {
+            x: minus.y,
+            y: -minus.x
+        }
+        ctx.beginPath();
+        var deltx = -7
+        var delty = 6
+            //deltx/1.2;
+
+        /*var fx=0;
+       if(change) fx=deltaChangeFactor;
+         var fln=20+fx
+         var fln2=5+fx/2
+  */
+        //  ctx.moveTo(b.x,b.y)
+        //  ctx.lineTo(b.x+10,b.y+10)
+
+        var x0 = b.x + minus.x * deltx + prp.x * delty,
+            y0 = b.y + minus.y * deltx + prp.y * delty;
+        ctx.moveTo(x0, y0)
+        ctx.arcTo(b.x + minus.x * deltx / 2, b.y + minus.y * deltx / 2, b.x + minus.x * deltx + prp.x * -delty, b.y + minus.y * deltx + prp.y * -delty, -deltx / 1.1)
+            //ctx.lineTo(b.x+minus.x*deltx/2,b.y+minus.y*deltx/2)
+        ctx.lineTo(b.x + minus.x * deltx + prp.x * -delty, b.y + minus.y * deltx + prp.y * -delty)
+        ctx.lineTo(b.x + minus.x * -deltx, b.y + minus.y * -deltx)
+        ctx.lineTo(x0, y0)
+
+        /*  ctx.moveTo(b.x+minus.x*5+prp.x,b.y+minus.y*5+prp.y);
+          ctx.lineTo(b.x, m.y);
+          ctx.lineTo(b.x+minus.x*5-prp.x,b.y+minus.y*5-prp.y);*/
+
+        ctx.fillStyle = '#000000ee'
+
+        //ctx.stroke()
+
+        ctx.fill();
+        // body...
+    }
+
+    function animate() {
+        ctx.lineWidth = 2
+        deltaChangeFactor *= .2
+
+        ctx.fillStyle = 'white'
+        ctx.fillRect(0, 0, w, h)
+
+        anchor.setLocation(m)
+
+        joint.update()
+        renderj(joint)
+        renderx(anchor)
+
+        js.forEach(function(jnt) {
+            jnt.update()
+
+            // body...
+        })
+        drawDetails()
+
+        if (arrowDown && isDown) {
+
+            ctx.fillStyle = "black"
+            arrowDown = arrowObj1.loc
+            ctx.beginPath()
+            ctx.lineWidth = 2
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(arrowDown.x, arrowDown.y)
+            ctx.lineTo(m.x, m.y)
+
+            ctx.stroke()
+            ctx.setLineDash([]);
+            drawTriag(arrowDown, {
+                x: (m.x + arrowDown.x) / 2,
+                y: (m.y + arrowDown.y) / 2
+            }, true)
+
+        }
+
+        js.forEach(function(jnt) {
+            renderj(jnt)
+
+            // body...
+        })
+        ps.forEach(function(verlet) {
+
+            verlet.acc.y += verlet.gravity
+                // verlet.acc.x-=.4
+            verlet.solveCollision(ps)
+            verlet.constrain(rect)
+            verlet.update()
+
+            if (verlet.type == 'var') return;
+
+            if (verlet.drawable) renderx(verlet)
+
+            if (verlet == openedObj) {
+                return;
+            }
+            if (isDown) {
+                var tx = verlet.loc;
+                var dx = tx.x - m.x
+                var dy = tx.y - m.y;
+                var dl = dx * dx + dy * dy;
+
+                if (dl < verlet.rad * verlet.rad) {
+
+                    ctx.beginPath()
+
+                    ctx.arc(tx.x, tx.y, 10, 0, Math.PI * 2, 5);
+                    ctx.fillStyle = 'black';
+                    ctx.fill()
+                    ctx.closePath();
+
+                    verlet.rrad = 35;
+                } else {
+
+                    verlet.rrad = 20
+                    if (verlet.type == 'var') verlet.rrad = 10;
+                }
+            } else {
+                verlet.rrad = 20
+                if (verlet.type == 'var') verlet.rrad = 10;
+            }
+
+            // body...
+        })
+
+        if (openedObj) {
+            _SCALE += (SCALE - _SCALE) * .4;
+
+            variableDashboard.style['transform'] = "scale(" + _SCALE + ")"
+
+            variableDashboard.style['display'] = "block"
+
+            var s = (variableDashboard.getBoundingClientRect().width)
+            variableDashboard.style['left'] = (openedObj.loc.x + bb.x - s / 2) + "px"
+                //
+            variableDashboard.style['top'] = (openedObj.loc.y - 30) + "px"
+                //
+        } else {
+
+            variableDashboard.style['display'] = "none"
+
+            //variableDashboard.style['display']="none"
+        }
+
+        if ((arrowDown || anchor) && isDown) {
+            ctx.beginPath()
+            ctx.arc(m.x, m.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath()
+            ctx.fillStyle = "red"
+            ctx.arc(m.x, m.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        requestAnimationFrame(animate);
+        // body...
+    }
+
+    //----------------------------modal
+
+    function getVars(wff) {
+        var atomWff = /[a-z](\d*)?/g;
+
+        return Array.from(new Set(wff.match(atomWff)));
+
+    }
+
+    input.onkeyup = function(ev) {
+        changeInput(input.value)
+        var wff = input.value.replace(/<>/g, "@").replace(/\[\]/g, "-@-");
+        var vars = getVars(wff)
+
+        //console.log(vars)
+        ps.forEach(function(e, index) {
+            e.vars = {}
+            for (var i = 0; i < vars.length; i++) {
+                e.vars[vars[i]] = 0;
+                e.label[vars[i]] = 0
+            }
+
+            // console.log(element.vars)
+        });
+        // body...
+    }
+
+    function evaluate(wff) {
+        let monadicWff = /[-@][a-z](\d*)?/g;
+        let atomicWff = /\([a-z]\d*?[+*⊃][a-z]\d*?\)/g;
+        let atom = /[a-z](\d*)?/g;
+        let operator = /[+*⊃@-]/g;
+        var atomWff = /[a-z](\d*)?/g;
+        worlds = ps;
+
+        var dic = {}
+        var id = 0;
+        while (atomicWff.test(wff) || monadicWff.test(wff)) {
+            var list = wff.match(monadicWff);
+            if (list) {
+                for (var i = 0; i < list.length; i++) {
+                    // console.log(list[i])
+                   // console.log(wff)
+                    dic['t' + id] = list[i];
+                    wff = wff.replace(list[i], 't' + id++)
+
+                    //console.log(wff+"---->"+list[i])
+                }
+            }
+            list = wff.match(atomicWff);
+            if (list) {
+
+                for (var i = 0; i < list.length; i++) {
+                    // console.log(list[i])
+                    //console.log(wff)
+
+                    dic['t' + id] = list[i];
+                    wff = wff.replace(list[i], 't' + id++)
+
+                    //console.log(wff+"---->"+list[i])
+                }
+            }
+
+        }
+        //console.log(dic)
+
+        for (var i = 0; i < id; i++) {
+            var formula = dic['t' + i];
+            var u = formula.match(atom)
+            var op = formula.match(operator)
+            worlds.forEach(function(w) {
+                // w.label=JSON.parse(JSON.stringify(w.vars))
+
+                if (op == '*') {
+                    if (w.label[u[0]] == 1 && w.label[u[1]] == 1) w.label['t' + i] = 1;
+
+                }
+                if (op == '+') {
+                    if (w.label[u[0]] == 1 || w.label[u[1]] == 1) w.label['t' + i] = 1;
+
+                }
+                if (op == '⊃') {
+                    if (w.label[u[0]] != 1 || w.label[u[1]] == 1) w.label['t' + i] = 1;
+
+                }
+                if (op == '-') {
+                    if (!(w.label[u[0]] == 1)) w.label['t' + i] = 1;
+                }
+                if (op == '@') {
+                   // console.log('t' + i)
+
+                    if (w.label[u[0]] == 1) {
+                        w.connectedIn.forEach(function(m) {
+                            m.label['t' + i] = 1;
+
+                        })
+                    }
+                }
+
+            })
+
+        }
+        worlds.forEach(function(w) {
+            if (w.label["t" + (id - 1)] == 1) w.isTrue = true;
+            else w.isTrue = false;
+            // body...
+        })
+
+        return worlds;
+        // body...
+    }
+
+    function evalu(argument) {
+        var raw = input.value;
+        if (raw == '') return;
+        var str = "(" + raw.replace(/<>/g, "@").replace(/\[\]/g, "-@-").replace(/--/g, "").replace(/>/g, "⊃") + ")";
+        //console.log(str);
+        ps.forEach(function(element, index) {
+            element.label = JSON.parse(JSON.stringify(element.vars))
+                // statements
+        });
+
+        var ws = evaluate(str)
+
+        //console.log(ws.map((o) => o.label))
+
+        // body...
+    }
+
+    variableDashboard.addEventListener('mousedown', function(e) {
+        var t = e.target;
+        if (t.id == "variable-dashboard") return;
+        var ts = (t.textContent)
+        if (openedObj) {
+            openedObj.vars[ts] = 1 - openedObj.vars[ts];
+
+        }
+        openedObj.label = JSON.parse(JSON.stringify(openedObj.vars))
+        t.classList.toggle('selected')
+            // body...
+    })
+</script>
+<script type="text/javascript">
+    //document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+</script>
+
+<body>
+
+</body>
+
+</html>

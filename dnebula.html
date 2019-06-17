@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dandelion Nebula</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+</head>
+<style type="text/css">
+    body {
+        background-color: #101010;
+    }
+    
+    .language-javascript {
+        height: 100%;
+        background-color: black !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    /* scroll bar */
+    
+    ::-webkit-scrollbar {
+        width: .5em;
+        background-color: red;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background-color: black;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: #202020;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: darkred;
+    }
+    
+    #canv {
+        border: 2px solid #101010;
+        margin-top: 2em;
+        box-shadow: 1px 1px 10px black;
+    }
+    
+    .code {
+        width: 980px;
+        height: 480px;
+        border: 2px solid #101010;
+        box-shadow: 1px 1px 10px black;
+    }
+    
+    .cont {
+        margin: auto;
+        width: 980px;
+    }
+    
+    .tex {
+        color: #888;
+        font-size: 11px;
+        display: inline-block;
+        font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif;
+    }
+    
+    .tex:before {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 10px;
+        background-color: darkred;
+        display: inline-block;
+        margin-right: .5em;
+        margin-left: .5em;
+    }
+</style>
+
+<body>
+    <div class="cont">
+        <canvas id="canv" width="980" height="480" style="background-color: black"></canvas>
+        <div class="tex">Dandelion Nebula - 2019</div>
+        <div class="code">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
+
+    </code></pre>
+        </div>
+    </div>
+    <script type="text/javascript" id="sourcex">
+        //@author javid jafari 
+
+        var grads = [
+            [1, 1],
+            [-1, 1],
+            [1, -1],
+            [-1, -1]
+        ]
+        var n = 16;
+        var grids = [];
+        for (var i = 0; i < n; i++) {
+            grids[i] = []
+            for (var j = 0; j < n; j++) {
+                var th = Math.PI * 2 * Math.random()
+                var g = grads[Math.floor(Math.random() * grads.length)];
+                //[Math.cos(th),Math.sin(th)]
+                //grads[Math.floor(Math.random() * grads.length)];
+                grids[i].push({
+                    pos: {
+                        x: i,
+                        y: j
+                    },
+                    grad: {
+                        x: g[0],
+                        y: g[1]
+                    }
+                })
+
+            }
+
+        }
+        var el = document.getElementById('canv')
+        el.addEventListener('mousedown', ev => {
+
+            var x = (ev.offsetX / w) * 3,
+                y = (ev.offsetY / h) * 3;
+            var i = Math.floor(x)
+            var j = Math.floor(y)
+
+        })
+
+        function perlin2(x, y) {
+            x = Math.abs(x) % 15;
+            y = Math.abs(y) % 15;
+            var i = Math.floor(x)
+            var j = Math.floor(y)
+
+            var ds;
+
+            ds = [grids[i][j], grids[i + 1][j], grids[i][j + 1],
+             grids[i + 1][j + 1]];
+
+            var dots = [];
+            for (var u = 0; u < ds.length; u++) {
+                try {
+                    var g = ds[u].grad;
+                } catch {
+                    console.log(ds, i, j, x, y)
+                }
+                var d = ds[u].pos;
+                var xx = x - d.x
+                var yy = y - d.y
+
+                var dn = xx * g.x + yy * g.y;
+                dots.push(dn)
+            };
+
+            //console.log(i,dd.x)
+            var ab = dots[0] + fade(x - i) * (dots[1] - dots[0])
+            var cd = dots[2] + fade(x - i) * (dots[3] - dots[2])
+
+            var val = ab + fade(y - j) * (cd - ab);
+            return val;
+        }
+
+        function fade(x) {
+
+            return x * x * x * (x * (x * 6 - 15) + 10);
+        }
+
+        var el = document.getElementById("canv")
+        var mouseX = 0;
+        var mouseY = 0;
+        el.addEventListener("mousemove", function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // body...
+        })
+        var ctx = el.getContext("2d");
+
+        var w = 980;
+        var h = 480;
+        var _off_set = Math.random() * 1000 + 10;
+        for (var i = 0; i < w; i++) {
+            for (var j = 0; j < h; j++) {
+                var xx = (i / w) * (7);
+                var yy = (j / h) * (7);
+
+                var p = 0;
+
+                //p=perlin.noise(xx,yy,0)*255;
+
+                ctx.fillStyle = "rgb(" + p + "," + p + "," + p + ")"
+                    // console.log(p)
+                    //ctx.fillRect(i,j,1,1)
+
+            }
+        }
+        var cos = Math.cos;
+        var sin = Math.sin;
+        var rad = 1.5;
+        var _period_ = 8.0;
+        var dopi = Math.PI * 2;
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, w, h)
+        var t = 0;
+        var m = 1000;
+        for (var u = 0; u < 50; u++) {
+            var th = (u / 50) * Math.PI * 2;
+            var _off_set = Math.random() * 1000 + 10;
+            render(th)
+        }
+
+        function render(theta) {
+            t += .01;
+            ctx.fillStyle = "black";
+
+            for (var i = 0; i < m; i++) {
+
+            }
+            for (var i = 0; i < m; i++) {
+                var x = 1.0 * i / m * dopi * 9;
+                var u = (1.0 * i / m);
+                var fx = Math.pow(2, (u - 1) * 5);
+
+                var r = fx * 20;
+
+                var xx = cos(x) * (r + r);
+                var yy = sin(x) * r - r * 48 * i / 1000;
+                var alpha = 1 - (i / m) * 2;
+                for (var j = 2; j < 9; j++) {
+
+                    var p = 1.0 * i / m;
+                    var th = p * dopi;
+                    var rx = 100;
+                    var ry = 100;
+                    var s = sin(th) * 25;
+                    var fsc = 10;
+                    var sint = sin(th);
+                    var cost = cos(th);
+                    if (sint < 0) sint = -sint;
+                    var gt =sin(1.2 * th) + 1;
+
+                    var dx = th * j * s * perlin2(_off_set +
+
+                        rad * cos(dopi * (_period_ / j * p - t)), 
+                        rad * sin(dopi * (_period_ * p / j - t)));
+                    var dy = th * j * s * perlin2(j * _off_set +
+
+                        rad * cos(dopi * (_period_ / j * p - t)),
+                         rad * sin(dopi * (_period_ * p / j - t)));
+
+                    rx = ry = th * 100;
+                    var sinx = sin(theta) * ry;
+                    var cosx = cos(theta) * rx;
+                    //  sinx=xx;
+                    //  cosx=yy;
+
+                    var scale = (j + 1);
+                    var px = sinx + dx / scale;
+                    var py = cosx + dy / scale;
+                    ctx.fillStyle = "rgba(255,255,255," + 
+                    ((alpha * alpha) / 2) + ")"
+                        //(.5+(dx+dy)/100)
+
+                    ctx.fillRect(px + w / 2, py + h / 2, 1, 1)
+
+                }
+            }
+
+        }
+    </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+    </script>
+</body>
+
+</html>

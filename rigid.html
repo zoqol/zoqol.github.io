@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rigid Body simulation</title>
+    <link rel="stylesheet" href="prism.css" />
+    <script src="prism.js"></script>
+    <style>
+        #canv {
+            border: 1px solid gray;
+        }
+        
+        body {
+            background-color: black
+        }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
+        ::-webkit-scrollbar {
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
+
+    </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
+
+        </div>
+
+    </div>
+    	<script src="NewProject.js"></script>
+
+        <script type="text/javascript" id="sourcex">
+            package;
+
+import haxe.Timer;
+import js.Browser;
+import js.Lib;
+import js.html.CanvasElement;
+import js.html.CanvasRenderingContext2D;
+import js.html.MouseEvent;
+
+/**
+ * ...
+ * @author zoqol
+ */
+class Main {
+    private
+    var ctx: CanvasRenderingContext2D;
+    private
+    var bodies: Array < RigidBody > ;
+    private
+    var isDown: Bool = false;
+    private
+    var rays: Array < Ray > ;
+    private
+    var testlist: Array < RigidBody > ;
+    private
+    var joint: JointConstraint;
+    private
+    var MAX_RAY_DIST: Float = 1000;
+    private
+    var cam_height: Float = 80;
+    private
+    var mo: Dynamic = {
+        x: 0,
+        y: 0
+    };
+
+    public
+    function new() {
+
+
+        var canv = cast(Browser.document.getElementById('canv'), CanvasElement);
+
+        //  Browser.document.body.appendChild(canv);
+        ctx = canv.getContext2d();
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, 50, 50);
+
+
+
+
+        bodies = new Array < RigidBody > ();
+        rays = new Array < Ray > ();
+        testlist = new Array < RigidBody > ();
+        Canvas.setCanvas(ctx);
+        var vrtx: Array < Vec2D >= new Array < Vec2D > ();
+        vrtx.push(new Vec2D(-12, -30));
+        vrtx.push(new Vec2D(12, -30));
+        vrtx.push(new Vec2D(20, cam_height));
+        vrtx.push(new Vec2D(-20, cam_height));
+        var flash: RigidBody = new RigidBody(new Polygon(vrtx));
+        bodies.push(flash);
+        flash.p.x = 100;
+        flash.p.y = 100;
+
+        //joint 
+        joint = new JointConstraint(.007, null);
+        //body
+        var body: RigidBody = new RigidBody(new Polygon(Polygon.createVertices(3, 100)));
+        body.p.x = 300;
+        body.p.y = 300;
+        body.setAngle(Math.PI / 4);
+        bodies.push(body);
+        testlist.push(body);
+
+        body = new RigidBody(new Polygon(Polygon.createVertices(4, 60)));
+        body.p.x = 100;
+        body.p.y = 300;
+        body.setAngle(Math.PI / 4);
+        bodies.push(body);
+        testlist.push(body);
+
+        body = new RigidBody(new Polygon(Polygon.createVertices(5, 40)));
+        body.p.x = 280;
+        body.p.y = 150;
+        body.setAngle(Math.PI / 4);
+        bodies.push(body);
+        testlist.push(body);
+        body = new RigidBody(new Cirlce(50));
+        body.p.x = 380;
+        body.p.y = 50;
+        bodies.push(body);
+        testlist.push(body);
+        //----------ray
+        var o: Vec2D = flash.p;
+        var pi: Float = Math.PI;
+        var start: Float = pi / 14;
+        var step: Float = start / (5 * 2);
+        for (i in 0...20) {
+            var ray: Ray = new Ray(o, new Vec2D(Math.sin(start), Math.cos(start)));
+            start -= step;
+            rays.push(ray);
+        }
+        flash.torque = .1;
+
+        var timer = new Timer(2);
+        timer.run = loop;
+        canv.addEventListener('mousemove', onMouseMove);
+        canv.addEventListener('mousedown', onMouseDown);
+        canv.addEventListener('mouseup', onMouseUp);
+
+    }
+    public
+    function onMouseUp(e: MouseEvent) {
+
+        isDown = false;
+    }
+    public
+    function onMouseDown(e: MouseEvent) {
+
+        var m: Vec2D = new Vec2D(mo.x, mo.y);
+        for (i in 0...bodies.length) {
+            var bd: RigidBody = bodies[i];
+            var mat: Matrix2X2 = bd.matrix;
+            var p: Vec2D = new Vec2D(m.x, m.y);
+            if (bd.shape.contains(p, bd.p, bd.matrix)) {
+                joint.ref = p;
+                joint.body = bd;
+                isDown = true;
+                break;
+                //bd.torque=.1;            
+            }
+        }
+    }
+    public
+    function onMouseMove(e: MouseEvent) {
+        mo = {
+            x: e.offsetX,
+            y: e.offsetY
+        }
+
+        //ctx.fillRect(e.offsetX, e.offsetY, 50, 50);
+    }
+    private
+    function sortF(a: RigidBody, b: RigidBody): Int {
+
+        var ray: Ray = rays[cast(rays.length / 2, Int)];
+        var dir: Vec2D = ray.dir;
+        var o: Vec2D = bodies[0].p;
+        var od: Float = dir.x * o.x + dir.y * o.y;
+        var ad: Float = (a.p.x * dir.x + a.p.y * dir.y) - od;
+        var bd: Float = (b.p.x * dir.x + b.p.y * dir.y) - od;
+        return cast(ad - bd);
+    }
+    public
+    function loop() {
+
+
+
+
+        Canvas.clear();
+
+
+        var bdi: RigidBody = bodies[0];
+        var mat: Matrix2X2 = bdi.matrix;
+        var x: Float;
+        var y: Float;
+        testlist.sort(this.sortF);
+        for (r in rays) {
+
+            var d: Vec2D = r.odir;
+            x = d.x * mat.c + d.y * mat.d;
+            y = d.x * mat.a + d.y * mat.b;
+            r.dir.x = x;
+            r.dir.y = y;
+            var bi: Vec2D = new Vec2D();
+            var ci: Vec2D = new Vec2D();
+            var LEN: Int = testlist.length;
+            var i: Int = 0;
+            var f: Bool = false;
+            while (i < LEN && f == false) {
+
+                var bo: RigidBody = testlist[i];
+                var t: Float;
+                if (bo.shape.getType() == ShapeType.POLYGON) {
+                    if (Polygon.testRayPolygon(r.o, r.dir, cast(bo.shape, Polygon), bo.p, bo.matrix)) {
+                        t = cast(r.o.userData, Float);
+                        bi.x = r.dir.x * t;
+                        bi.y = r.dir.y * t;
+                        bi.x += r.o.x;
+                        bi.y += r.o.y;
+                        ci.x = r.o.x + (r.dir.x * cam_height);
+                        ci.y = r.o.y + (r.dir.y * cam_height);
+                        Canvas.drawLine(ci, bi, '#ff0011');
+                        Canvas.drawDot(bi, 1, '#00ffff');
+                        f = true;
+                        break;
+                    }
+                } else {
+                    if (Ray.testAgainstCircle(r.o, r.dir, cast(bo.shape))) {
+                        t = cast(r.dir.userData);
+                        bi.x = r.dir.x * t;
+                        bi.y = r.dir.y * t;
+                        bi.x += r.o.x;
+                        bi.y += r.o.y;
+                        ci.x = r.o.x + (r.dir.x * cam_height);
+                        ci.y = r.o.y + (r.dir.y * cam_height);
+                        Canvas.drawLine(ci, bi, '#00aaff');
+                        Canvas.drawDot(bi, 1, '#00ffff');
+                        f = true;
+                        break;
+                    }
+                }
+
+                i++;
+            }
+            if (f == false) {
+                bi.x = r.dir.x * MAX_RAY_DIST;
+                bi.y = r.dir.y * MAX_RAY_DIST;
+                bi.x += r.o.x;
+                bi.y += r.o.y;
+                ci.x = r.o.x + (r.dir.x * cam_height);
+                ci.y = r.o.y + (r.dir.y * cam_height);
+                Canvas.drawLine(ci, bi, '#ffffff');
+            }
+        }
+
+        var m: Vec2D = new Vec2D(mo.x, mo.y);
+        for (b in bodies) {
+
+            Canvas.drawBody(b);
+            Canvas.drawDot(m);
+            if (isDown && joint.body == b) {
+                joint.loc.x = m.x;
+                joint.loc.y = m.y;
+                joint.update();
+            }
+            b.damping();
+            b.integrate();
+
+        }
+
+
+
+
+    }
+    static
+    function main() {
+
+        new Main();
+    }
+
+}
+
+
+class Canvas {
+    private static
+    var canvas: CanvasRenderingContext2D;
+    public static
+    function setCanvas(g: CanvasRenderingContext2D): Void {
+        canvas = g;
+    }
+    public static
+    function drawDot(v: Vec2D, t: Float = 1, c: String = '#aa0000', r: Float = 4): Void {
+        canvas.beginPath();
+        canvas.strokeStyle = 'white';
+        //canvas.drawCircle(v.x, v.y, r);
+        canvas.arc(v.x, v.y, r, 0, Math.PI * 2);
+        canvas.closePath();
+        canvas.stroke();
+
+        //  canvas.endFill()
+    }
+    public static
+    function drawBody(body: RigidBody): Void {
+        var sh: IGeometricShape = body.shape;
+        if (sh.getType() == ShapeType.POLYGON) drawPoly(cast(sh, Polygon), body.p, body.matrix);
+        else drawCirlce(body.p, cast(sh, Cirlce).r);
+    }
+
+    public static
+    function clear(): Void {
+        canvas.fillStyle = 'black';
+        canvas.clearRect(0, 0, 480, 480);
+        canvas.fillRect(0, 0, 480, 480);
+
+
+    }
+    public static
+    function stroke() {
+
+        canvas.stroke();
+    }
+
+    public static
+    function drawLine(a: Vec2D, b: Vec2D, c: String = '0'): Void {
+        canvas.beginPath();
+        canvas.strokeStyle = c + '';
+
+        canvas.moveTo(a.x, a.y);
+        canvas.lineTo(b.x, b.y);
+        canvas.closePath();
+        canvas.stroke();
+    }
+
+    public static
+    function drawCirlce(c: Vec2D, r: Float, cl: String = '#ffffff'): Void {
+        canvas.beginPath();
+        canvas.strokeStyle = cl;
+
+        canvas.arc(c.x, c.y, r, 0, Math.PI * 2);
+        canvas.closePath();
+        canvas.stroke();
+
+    }
+
+    public static
+    function drawPoly(poly: Polygon, p: Vec2D, mat: Matrix2X2, c: String = '#eeeeee'): Void {
+        canvas.beginPath();
+        var n: Int = poly.vertices.length;
+        var v: Array < Vec2D >= poly.vertices;
+        var x: Float;
+        var y: Float;
+        var a: Vec2D = new Vec2D(v[0].x, v[0].y);
+        x = a.x * mat.c + a.y * mat.d;
+        y = a.x * mat.a + a.y * mat.b;
+        a.x = x;
+        a.y = y;
+        a.x += p.x;
+        a.y += p.y;
+        canvas.strokeStyle = c + '';
+        canvas.moveTo(a.x, a.y);
+        for (i in 0...n) {
+
+            var buf: Vec2D = v[(i + 1) == n ? 0 : i + 1];
+            a = new Vec2D(buf.x, buf.y);
+            x = a.x * mat.c + a.y * mat.d;
+            y = a.x * mat.a + a.y * mat.b;
+            a.x = x;
+            a.y = y;
+            a.x += p.x;
+            a.y += p.y;
+            canvas.lineTo(a.x, a.y);
+        }
+
+        canvas.closePath();
+        canvas.stroke();
+    }
+}
+
+
+
+class Polygon implements IGeometricShape {
+
+    public
+    var vertices: Array < Vec2D > ;
+    private
+    var transformedVrtx: Array < Vec2D > ;
+    private
+    var inertia: Float;
+    private
+    var center: Vec2D;
+    public
+    function new(vertices: Array < Vec2D > ) {
+        this.vertices = vertices;
+        this.calcOtherThings();
+    }
+
+    public
+    function getTransformedVertices(): Array < Vec2D > {
+        return null;
+    }
+
+    public static
+    function testRayPolygon(o: Vec2D, dir: Vec2D, poly: Polygon, pos: Vec2D, mat: Matrix2X2): Bool {
+
+        var len: Int = poly.vertices.length;
+        var v: Array < Vec2D >= poly.vertices;
+        var c: Int = 0;
+        var dist: Float = 1000;
+        for (i in 0...len) {
+            var bu: Vec2D = v[i];
+            var q: Vec2D = new Vec2D(bu.x, bu.y);
+            bu = (i + 1) < len ? v[i + 1] : v[0];
+            var p: Vec2D = new Vec2D(bu.x, bu.y);
+            var x: Float;
+            var y: Float;
+            var a: Vec2D = q;
+            x = a.x * mat.c + a.y * mat.d;
+            y = a.x * mat.a + a.y * mat.b;
+            a.x = x;
+            a.y = y;
+            a.x += pos.x;
+            a.y += pos.y;
+            a = p;
+            x = a.x * mat.c + a.y * mat.d;
+            y = a.x * mat.a + a.y * mat.b;
+            a.x = x;
+            a.y = y;
+            a.x += pos.x;
+            a.y += pos.y;
+            if (testLineIntesection(q, p, o, dir)) {
+                c++;
+                dist = Math.min(dist, Math.abs(cast(dir.userData, Float)));
+            }
+        }
+        if (c > 0 && (c & 1) == 0) {
+            o.userData = dist;
+            return true;
+
+        }
+        return false;
+    }
+
+    public static
+    function testLineIntesection(a: Vec2D, b: Vec2D, o: Vec2D, dir: Vec2D): Bool {
+        var n: Vec2D = new Vec2D(-dir.y, dir.x);
+        var ab: Vec2D = new Vec2D((b.x - a.x), (b.y - a.y));
+        var t: Float = ((o.x * n.x + o.y * n.y) - (a.x * n.x + a.y * n.y)) / (ab.x * n.x + ab.y * n.y);
+        if (t <= 1 && t >= 0) {
+            // var point:Vec2D=new Vec2D(a.x+ab.x*t,a.y+ab.y*t)
+            //  Canvas.drawDot(point,1,0xff0000)
+            var t1: Float = ((a.x + (ab.x * t)) * dir.x + (a.y + (ab.y * t)) * dir.y);
+            t1 -= o.x * dir.x + o.y * dir.y;
+            if (t1 > 0) {
+                dir.userData = t1;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public
+    function contains(p: Vec2D, pos: Vec2D, mat: Matrix2X2): Bool {
+
+        var w: Vec2D = new Vec2D(p.x - pos.x, p.y - pos.y);
+        var x: Float;
+        var y: Float;
+        x = w.x * mat.c + w.y * mat.a;
+        y = w.x * mat.d + w.y * mat.b;
+        p.x = x;
+        p.y = y;
+        var vrtx: Array < Vec2D >= this.vertices;
+        var n: Int = vrtx.length;
+        var ab: Vec2D = new Vec2D();
+        var pp: Vec2D = new Vec2D();
+        for (i in 0...n) {
+            var p1: Vec2D = vrtx[i];
+            var p2: Vec2D = (i + 1) < n ? vrtx[i + 1] : vrtx[0];
+            var ec: Float = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
+            if (ec < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public
+    function getType(): UInt {
+        return ShapeType.POLYGON;
+    }
+    public
+    function calcOtherThings(): Void {
+        var d: Float = 1;
+        var center: Vec2D = new Vec2D();
+        var area: Float = 0;
+        var I: Float = 0;
+        var vrtx: Array < Vec2D >= this.vertices;
+        var n: Int = vrtx.length;
+        var inv3: Float = 1 / 3;
+        for (i in 0...n) {
+            var p1: Vec2D = vrtx[i];
+            var p2: Vec2D = (i + 1) < n ? vrtx[i + 1] : vrtx[0];
+            var triArea: Float = .5 * (p1.x * p2.y - p1.y * p2.x);
+            area += triArea;
+            center.x += (p1.x + p2.x) * inv3 * triArea;
+            center.y += (p1.y + p2.y) * inv3 * triArea;
+            I += triArea * ((p2.x * p2.x + p2.y * p2.y) + (p2.x * p1.x + p2.y * p1.y) + (p1.x * p1.x + p1.y * p1.y));
+        }
+        var m: Float = area * d;
+        this.inertia = I;
+        var tk: Float = 1 / area;
+        center.x *= tk;
+        center.y *= tk;
+        this.center = center;
+    }
+    public
+    function getMOI(): Float {
+        return this.inertia;
+    }
+
+    public
+    function getCenter(): Vec2D {
+        return this.center;
+    }
+
+    public static
+    function createVertices(n: Int, r: Float) {
+        var vrtx: Array < Vec2D >= new Array < Vec2D > ();
+        var _2PI: Float = Math.PI * 2;
+        var theta: Float = 0;
+        for (i in 0...n) {
+            theta = _2PI * (i / n);
+
+            vrtx[i] = new Vec2D(r * Math.cos(theta), r * Math.sin(theta));
+        }
+        return vrtx;
+    }
+}
+
+
+
+class RigidBody {
+    //acceleration
+    public
+    var a: Vec2D;
+    //position
+    public
+    var p: Vec2D;
+    //velocity
+    public
+    var v: Vec2D;
+    //angular acceleration
+    public
+    var alpha: Float;
+    //angular velocity
+    public
+    var omega: Float;
+    //rotation angle
+    public
+    var theta: Float;
+    //moment of inertia
+    public
+    var moi: Float;
+    //mass
+    public
+    var m: Float;
+    //torque
+    public
+    var torque: Float;
+    public
+    var shape: IGeometricShape;
+    public
+    var matrix: Matrix2X2;
+
+    public
+    function new(shape: IGeometricShape, x: Float = 1, y: Float = 0, mass: Float = .5) {
+
+        this.shape = shape;
+        this.m = mass;
+        this.p = new Vec2D(x, y);
+        if (shape.getType() == ShapeType.CIRCLE) {
+            cast(shape, Cirlce).center = p;
+        }
+        this.a = new Vec2D();
+        this.v = new Vec2D();
+        this.alpha = 0;
+        this.omega = 0;
+        this.theta = 0;
+        this.torque = 0;
+        this.moi = shape.getMOI();
+        matrix = new Matrix2X2(0);
+
+    }
+
+    public
+    function setAngle(t: Float): Void {
+        theta = t;
+        matrix.setAngle(t);
+    }
+
+    public
+    function integrate(): Void {
+
+        v.x += a.x;
+        v.y += a.y;
+        p.x += v.x;
+        p.y += v.y;
+        a.x = a.y = 0;
+        a.x *= 0;
+        a.y *= 0;
+        alpha += torque;
+        omega += alpha;
+        theta += omega;
+        torque = 0;
+        alpha = 0;
+        if (theta > Math.PI * 2 || theta < -Math.PI * 2) theta = 0;
+        this.setAngle(theta);
+    }
+
+    public
+    function damping(): Void {
+
+        var k: Float = -.03 / m;
+        var f: Vec2D = new Vec2D();
+        a.x += (v.x * k);
+        a.y += (v.y * k);
+        this.omega = this.omega * .95;
+    }
+}
+class JointConstraint {
+
+    public
+    var k: Float;
+    public
+    var body: RigidBody;
+    public
+    var loc: Vec2D;
+    public
+    var ref: Vec2D;
+
+    public
+    function new(k: Float, body: RigidBody) {
+        this.k = k;
+        this.body = body;
+        this.loc = new Vec2D();
+    }
+
+    public
+    function isActive(): Bool {
+        return this.ref != null;
+    }
+    public
+    function update(): Void {
+        if (isActive()) {
+            var x: Float;
+            var y: Float;
+            var u: Vec2D = new Vec2D(ref.x, ref.y);
+            var matrix: Matrix2X2 = this.body.matrix;
+            x = u.x * matrix.c + u.y * matrix.d;
+            y = u.x * matrix.a + u.y * matrix.b;
+            u.x = x;
+            u.y = y;
+            u.x += body.p.x;
+            u.y += body.p.y;
+            Canvas.drawDot(u);
+
+            //update
+
+            var l: Vec2D = loc;
+            var f: Vec2D = new Vec2D((l.x - u.x) * k, (l.y - u.y) * k);
+            var torq: Float = -(f.x * (body.p.y - u.y) - f.y * (body.p.x - u.x));
+            var alp: Float = torq / (body.moi * .00001 * body.m);
+            body.a.x += f.x / body.m;
+            body.a.y += f.y / body.m;
+            body.alpha = alp;
+        }
+    }
+}
+class Ray {
+
+    public
+    var o: Vec2D;
+    public
+    var dir: Vec2D;
+    public
+    var odir: Vec2D;
+    public
+    function new(o: Vec2D, dir: Vec2D) {
+        this.o = o;
+        this.dir = dir;
+        this.odir = new Vec2D(dir.x, dir.y);
+    }
+
+    public static
+    function testAgainstCircle(o: Vec2D, dir: Vec2D, circle: Cirlce): Bool {
+        var cn: Vec2D = circle.getCenter();
+        var r2: Float = circle.r * circle.r;
+        var m: Vec2D = new Vec2D(o.x - cn.x, o.y - cn.y);
+        var b: Float = m.x * dir.x + m.y * dir.y;
+        var c: Float = (m.x * m.x + m.y * m.y) - r2;
+        if (c > 0 && b > 0) return false;
+        var delt: Float = (b * b) - c;
+        if (delt <= 0) return false;
+        var t: Float = -b - Math.sqrt(delt);
+        t = t < 0 ? 0 : t;
+        dir.userData = t;
+        //(point.x*dir.x+point.y*dir.y)-(o.x*dir.x+o.y*dir.y);
+        return true;
+    }
+}
+class Cirlce implements IGeometricShape {
+
+    public
+    var center: Vec2D;
+    public
+    var I: Float;
+    public
+    var r: Float;
+    public
+    function new(r: Float) {
+        this.r = r;
+        this.I = (Math.PI / 2) / Math.pow(r, 4);
+    }
+    public
+    function getCenter(): Vec2D {
+        return this.center;
+    }
+    public
+    function getMOI(): Float {
+        return this.I;
+    }
+    public
+    function getType(): UInt {
+        return ShapeType.CIRCLE;
+    }
+    public
+    function contains(p: Vec2D, pos: Vec2D, mat: Matrix2X2): Bool {
+        var w: Vec2D = new Vec2D(p.x - pos.x, p.y - pos.y);
+        p.x = w.x;
+        p.y = w.y;
+        // Canvas.drawDot(p,1,'0xff0000);
+        var o: Bool = ((w.x * w.x + w.y * w.y) <= r * r);
+        return o;
+    }
+}
+class ShapeType {
+    public static inline
+    var POLYGON = 1;
+    public static inline
+    var CIRCLE = 2;
+}
+interface IGeometricShape {
+    function getType(): UInt;
+
+    function getMOI(): Float;
+
+    function getCenter(): Vec2D;
+
+    function contains(p: Vec2D, pos: Vec2D, mat: Matrix2X2): Bool;
+}
+class Vec2D {
+
+    public
+    var x: Float;
+    public
+    var y: Float;
+    public
+    var userData: Dynamic;
+    public
+    function new(x: Float = 0, y: Float = 0): Void {
+        this.x = x;
+        this.y = y;
+    }
+}
+//mat RIX
+class Matrix2X2 {
+
+    public
+    var a: Float;
+    public
+    var b: Float;
+    public
+    var c: Float;
+    public
+    var d: Float;
+    public
+    function new(t: Float) {
+        this.setAngle(t);
+    }
+    public
+    function setAngle(t: Float) {
+        a = -Math.sin(t);
+        b = Math.cos(t);
+        c = b;
+        d = -a;
+    }
+}
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
+
+    <body>
+
+    </body>
+
+</html>
+	

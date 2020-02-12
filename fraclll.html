@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<!-- saved from url=(0036)https://zoqol.github.io/fraclll.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <title>FracTAAL</title>
-</head>
 <style type="text/css">
  .dio{
-  width: 1024px;
+  width: 900px;
   margin: auto;
   background-color: white;
  }
  body{background-color: black;}
-</style>
-<div class="dio">
-  <canvas width="1024" height="550" id="canv" style="border:solid black 1px;"></canvas>
+</style></head>
+
+<body data-gr-c-s-loaded="true"><div class="dio">
+  <canvas width="900" height="550" id="canv" style=""></canvas>
 </div>
-<body>
+
 <script>
     var el=document.getElementById("canv")
 var ctx=el.getContext("2d");
-    var center={x:0,y:400};
+    var center={x:-100,y:400};
    var  grad = ctx.createRadialGradient(0,0,0,0,0,500);
     grad.addColorStop(1,"rgba(0,50,50,0.2)");
     grad.addColorStop(0,"rgba(0,20,170,0.2)");
@@ -97,11 +97,14 @@ setInterval(function () {
     },1500)
 
 
-    render()
+   
     var t=0;
 
 
-
+for (var i = 0; i < 1024*2.3; i++) {
+render()
+   
+}
 function  render() {
     for(var i=0;i<ps.length;i++){
         var v=ps[i];
@@ -121,9 +124,9 @@ function  render() {
    ctx.strokeStyle=grad;
  //  ctx.clearRect(0,0,800,800);
     drawCircle(ps,t/80,center)
-    requestAnimationFrame(render)
+   
 
 }
 </script>
-</body>
-</html>
+
+</body></html>

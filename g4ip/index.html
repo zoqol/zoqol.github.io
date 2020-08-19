@@ -198,7 +198,7 @@ function toWffs(wffs) {
 		wffs.forEach((o)=>{
 				//console.log(o)
 				//o=o.replace(/[a-z]/g,function (t){return '('+t+')'});
-				o=o.replace(/[A-Z]|[a-z]/g, (p)=>{ return '('+p+')'}).replace(/f/g,'\\bot ');
+				o=o.replace(/[A-Z]|[a-z]/g, (p)=>{ return '('+p+')'});
 				var wff=new Wff(o);
 				test(o,wff);
 
@@ -665,9 +665,9 @@ setTimeout(()=>{elm.classList.add('visible')},400)
 
 
 function toLatex(x) {
-	return x.replace(/&/g,'\\land ').replace(/\|/g,'\\lor ').replace(/&/g,'*').replace(/\(([A-Z]|[a-z]|\bot)\)/g,'$1').
+	return x.replace(/&/g,'\\land ').replace(/\|/g,'\\lor ').replace(/&/g,'*').replace(/\(([A-Z]|[a-z])\)/g,'$1').
 		replace(/=>/g,'\\hspace{.1cm}\\vdash ')
-	.replace(/>/g,'\\supset ')
+	.replace(/>/g,'\\supset ').replace(/f([^r])/g,'\\bot $1')
 
 	// body...
 }

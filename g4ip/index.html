@@ -626,7 +626,7 @@ console.log(toFrac(s).replace(/&/g,'*'))
 */
 
 var formula='(((((A&B)>f)>f)>(((A>f)>f)&((B>f)>f)))&((A&B)>(B&A)))';
-var hash=window.location.hash.substr(3).replace(/%3E/g,'>');
+var hash=window.location.hash.substr(3).replace(/%3E/g,'>').replace(/%7C/g,'|');
 console.log(hash)
 if(hash) formula='('+hash+')';
 var s=new Sequent(toWffs([]),toWffs([formula]));

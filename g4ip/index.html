@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+
+
+		
+		.container{
+	
+
+		}
+		body{
+			background: #202020;
+			overflow: hidden;
+			margin: 0;
+		}
+		#canv{
+			background: white;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+		}
+
+    ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+        background-color: red;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background-color: black;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: #202020;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: darkred;
+    }
+		#sd{
+			margin: auto;
+			
+		}
+		.hidden{
+			visibility: hidden;
+			opacity: 0;
+			transition: all .2s linear;
+			
+		}
+		.visible{
+			visibility: visible;
+			opacity: 1;
+			 
+		}
+		#viewer{
+			background: white;
+			width: 100%;
+			overflow-x: scroll;
+		 
+			text-align: center;
+			height: 100vh;
+			
+			 display: flex;
+			 text-align: center;
+			 font-size: 1.8em;
+			 transition: all .2s linear;
+			 position: relative;
+			 left: 0;
+			 top: 0;
+
+		}
+		        #inpt {
+            border: 2px #101010 solid;
+            font-size: 18px;
+            background-color: transparent;
+            outline: none;
+            margin-bottom: .4em;
+            color: gray;
+            padding: .1em;
+            padding-left: .2em;
+             
+        }
+         input[type="button"] {
+            background-color: white;
+            border: 2px solid black;
+            outline: none;
+            cursor: pointer;
+            padding: .4em;
+            box-sizing: border-box;
+        }
+        
+        input[type="button"]:hover {
+            background-color: darkred;
+        }
+        
+        input[type="button"]:hover {
+            background-color: #202020;
+            color: white;
+        }
+        .full-height{
+        	height: 100vh !important;
+        
+        }
+
+		 
+	</style>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML-full">
+		
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});loadAll()
+</script>
+</head>
+<body>
+	
+<div id="viewer">
+	<canvas width="480" height="310" id="canv"></canvas>
+	<div id="sd" class="hidden"></div>
+
+
+</div>
+<div style="text-align: center;position: relative;
+    top: -2.3em;">
+	<input placeholder="" id="inpt">
+	<input type="button" value="Find Proof" onclick="onProofSearch()">
+
+	<div onclick="fullscreen()">full screen</div>
+</div>
+	<div class="container" id="cont">
+
+
+
+
+		
+
+	</div>
+	<script type="text/javascript">
+		var math = null;
+		var cavasElement=document.querySelector('#canv');
+		var c=cavasElement.getContext('2d');
+		var reg=/[a-z]{1}&[a-z]{1}/g;
+		var reg2=/\(?[a-z]{1}\d{0,}\)?&\(?[a-z]{1}\d{0,}\)?/g
+		var exp="((k&(l&d))&(b&c))";
+		exp=exp.replace(/[a-z]/g,function (o){return '('+o+')'});
+		var operators='|&>';
+	//∨
+		function Wff(str) {
+			this.str=str;
+			this.right=null;
+			this.left=null;
+			this.connective=null;
+			this.parent=null;
+
+			// body...
+		}
+		function Sequent(left,right) {
+			this.left=left;
+			this.right=right
+			this.childs=[]
+
+			this.rules=[]
+			this.toString=function () {
+				return this.left.map((o)=>o.str) + '=>' + this.right.map((o)=>o.str);
+				// body...
+			}
+		}
+
+
+		//"(o&(g&h))&(k&d)";
+		//toWffs(['((m)|(n))','(d)','(((s)&(a))&(d))']),toWffs(['(a)','((b)|(c))']));
+
+		//((((A)>(B))>((A)>(D)))>(((B)>(A))>((B)>(D))))
+
+
+
+var s=new Sequent(toWffs([]),toWffs(['(((A)>(f))>(A))']))
+//new Sequent(toWffs(['(A)']),toWffs(['(((A)>(f))>(f))']))
+//new Sequent(toWffs(['((A)&(B))']),toWffs(['(((B)&(A))|(C))']))
+//new Sequent(toWffs(['(((A)>(B))>(D))']),toWffs(['(A)']))
+//new Sequent(toWffs(['(((A)>(B))>(D))']),toWffs(['(A)']))
+//new Sequent(toWffs(['(((A)&(B))>(D))']),toWffs(['(A)']))
+//new Sequent(toWffs(['(((C)|(D))>(B))']),toWffs(['(D)']))
+//new Sequent(toWffs(['(P)','((P)>(B))','((D)&(G))']),toWffs(['(B)']))
+//new Sequent(toWffs(['(B)']),toWffs(['((A)>(A))']))
+//new Sequent(toWffs(['(A)']),toWffs(['((B)|(A))']));
+//new Sequent(toWffs(['((B)|(B))']),toWffs(['(B)']))
+//new Sequent(toWffs(['(A)','(B)']),toWffs(['((B)&(A))']));
+//new Sequent(toWffs(['((A)&(B))']),toWffs(['(B)']));
+var ns;
+
+
+
+function toWffs(wffs) {
+		var seqs=[]
+		wffs.forEach((o)=>{
+				//console.log(o)
+				//o=o.replace(/[a-z]/g,function (t){return '('+t+')'});
+				o=o.replace(/[A-Z]|[a-z]/g, (p)=>{ return '('+p+')'}).replace(/f/g,'\\bot ');
+				var wff=new Wff(o);
+				test(o,wff);
+
+				if(isWff(wff)) seqs.push(wff);
+				else alert('incorrect formula')
+			})
+	return seqs;
+}
+function isWff(wff) {
+		if(wff.left==null || wff.right==null){
+				for(var i=0;i<operators.length;i++){
+					var o=operators.charAt(i);
+					if(wff.str.indexOf(o)>-1) return false
+				}
+				return true;
+		}
+		return isWff(wff.left) && isWff(wff.right)
+}
+function proofSearch(seq) {
+	console.log(seq.toString())
+	if(isAxiom(seq) || isAbsurd(seq)) {console.log('is axiom or absurd:'+seq.toString());return true};
+
+	seq.left.forEach((k,i)=>{
+		if(k.connective=='&'){
+			var seq2=leftAND(seq,i);
+			seq.childs.push(seq2)
+			 proofSearch(seq2) 
+		}
+		if(k.connective=='|'){
+			var seqs=leftOR(seq,i);
+			seq.childs.push(seqs)
+			 proofSearch(seqs[0]);
+			 proofSearch(seqs[1]);
+			 
+		}
+		if(k.connective=='>'){
+			if(k.left){
+				if( k.left.connective=='|')
+					{
+					var seq2=leftIFOR(seq,i);
+					seq.childs.push(seq2)
+					 proofSearch(seq2) 
+			
+					}
+					if(seq.left.map((o)=>o.str).indexOf(k.left.str)>-1){
+						var seq2=leftIF0(seq,i);
+						seq.childs.push(seq2)
+					 proofSearch(seq2) 
+
+
+					}
+
+					if(k.left.connective=='>'){
+						var seqs=leftIFIF(seq,i);
+						seq.childs.push(seqs)
+						 proofSearch(seqs[0]);
+						 proofSearch(seqs[1]);
+					 
+
+					}
+					if(k.left.connective=='&'){
+						var seq2=leftIFAND(seq,i);
+						seq.childs.push(seq2)
+						 proofSearch(seq2) 
+
+					}
+				}
+			
+		}
+	})
+
+	seq.right.forEach((k,i)=>{
+
+		if(k.connective=='&'){
+			var seqs=rightAND(seq,i);
+			seq.childs.push(seqs)
+			 proofSearch(seqs[0]);
+			 proofSearch(seqs[1]);
+			 
+
+		}
+		if(k.connective=='>'){
+			var seq2=rightIF(seq,i);
+			seq.childs.push(seq2)
+			 proofSearch(seq2) 
+
+		}
+		if(k.connective=='|'){
+			var seq2=rightOR1(seq,i);
+			seq.childs.push(seq2)
+			;
+			if(proofSearch(seq2)) return true;
+
+			var seq2=rightOR2(seq,i);
+			seq.childs.push(seq2)
+			if(proofSearch(seq2)) return true;
+
+
+		}
+	})
+
+	return false;
+}
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+function Node() {
+	this.left=null;
+	this.right=null;
+	this.top=null;
+	this.parent=null;
+	this.level=0;
+	// body...
+}
+
+function searchPath(s,node) {
+	if(s.childs.length==0){
+		if(isAxiom(s) || isAbsurd(s)){return s.toString();}
+		return null;
+	}
+	var childs=s.childs;
+	for(var i=0;i<childs.length;i++){
+		var c=s.childs[i];
+		var bot='{'+s.toString()+'}'
+		if(Array.isArray(c)){
+			var l=c[0]
+			var r=c[1]
+			if(searchPath(l,new Node())!=null && searchPath(r,new Node())!=null) {
+				var n1=new Node();
+				var n2=new Node()
+				n2.level=n1.level=node.level+1;
+				node.left=n1;node.right=n2;
+
+
+				return '\\frac{'+searchPath(l,n1)+'\\hspace{1cm}'+searchPath(r,n2)+'}'+bot+s.rules[i];}
+		}
+		else{
+			if(searchPath(c,new Node())!=null) {
+				node.top=new Node();
+				node.top.level=node.level+1
+				return '\\frac{'+searchPath(c,node.top)+'}'+bot+s.rules[i];}
+			
+		}
+
+	}
+return null;
+	// body...
+}
+
+ /*
+function searchPath(s) {
+	if(s.childs.length==0){
+		if(isAxiom(s) || isAbsurd(s)) return s.toString();
+		return null;
+	}
+	var childs=s.childs;
+	for(var i=0;i<childs.length;i++){
+		var c=s.childs[i];
+		var bot='{'+s.toString()+'}'
+		if(Array.isArray(c)){
+			var l=c[0]
+			var r=c[1]
+			if(searchPath(l)!=null && searchPath(r)!=null) return '\\frac{'+searchPath(l)+'\\hspace{1cm}'+searchPath(r)+'}'+bot+s.rules[i];
+		}
+		else{
+			if(searchPath(c)!=null) return '\\frac{'+searchPath(c)+'}'+bot+s.rules[i];
+			
+		}
+
+	}
+return null;
+	// body...
+}*/
+function toFrac(s) {
+	if(s.childs.length==0) return s.toString();
+	
+	var c=s.childs[0]
+	var bot='{'+s.toString()+'}'
+	if(Array.isArray(c)){
+		var l=c[0]
+		var r=c[1]
+		return  '\\frac{'+toFrac(l)+'\\hspace{1cm}'+toFrac(r)+'}'+bot+s.rules[0];
+
+		//return '\\frac{'+toFrac(l)+'}'+'{'+l.toString()+'}'+'\\frac{'+toFrac(r)+'}'+'{'+r.toString()+'}';
+
+	}
+	
+	return '\\frac{'+toFrac(c)+'}'+bot+s.rules[0];
+	//if(Array.isArray(s.childs[0]))
+
+	// body...
+}
+
+function rightAND(seq,i) {
+	seq.rules.push('R&')
+	var rr=seq.right.concat([]);
+	rr.splice(i,1)
+	var rl=rr.concat([]);
+	rr.unshift(seq.right[i].right);
+	rl.unshift(seq.right[i].left);
+	var sr=new Sequent(seq.left,rr);
+	var sl=new Sequent(seq.left,rl);
+	return [sl,sr];
+	// body...
+}
+function leftAND(seq,i) {
+	seq.rules.push('L&')
+	var left=seq.left.concat([]);
+	left.splice(i,1);
+	left.unshift(seq.left[i].left,seq.left[i].right);
+	var newSeq=new Sequent(left,seq.right)
+	return newSeq
+
+	// body...
+}
+function leftOR(seq,i) {
+	seq.rules.push('L|')
+	var rr=seq.left.concat([]);
+	rr.splice(i,1)
+	var rl=rr.concat([]);
+	rr.unshift(seq.left[i].right);
+	rl.unshift(seq.left[i].left);
+	var sr=new Sequent(rr,seq.right);
+	var sl=new Sequent(rl,seq.right);
+	return [sl,sr];
+
+
+}
+function rightOR1(seq,i) {
+	seq.rules.push('R1|')
+	var right=seq.right.concat([]);
+	right.splice(i,1);
+	right.unshift(seq.right[i].left);
+	var newSeq=new Sequent(seq.left,right);
+	return newSeq
+	
+}
+function rightIF(seq,i) {
+	seq.rules.push('R>')
+	var right=seq.right.concat([]);
+	right.splice(i,1);
+	right.unshift(seq.right[i].right);
+	var left=seq.left.concat([]);
+	left.unshift(seq.right[i].left);
+	var newSeq=new Sequent(left,right);
+	return newSeq
+	
+}
+function leftIF0(seq,i) {
+	seq.rules.push('L0>')
+	var left=seq.left.concat([]);
+	left.splice(i,1);
+	left.unshift(seq.left[i].right);
+	var newSeq=new Sequent(left,seq.right)
+	return newSeq
+	 
+}
+
+function leftIFIF(seq,i) {
+	seq.rules.push('L>>')
+	var f=seq.left[i];
+	var o='('+f.left.right.str+'>'+f.right.str+')';
+	var _1=new Wff(o);
+	test(o,_1)
+
+	var left=seq.left.concat([]);
+	left.splice(i,1);
+	var lseq=left.concat([]);
+	left.unshift(f.right);
+	lseq.unshift(f.left.left,_1);
+	var sr=new Sequent(left,seq.right);
+	var sl=new Sequent(lseq,[f.left.right]);
+	return [sl,sr]
+	 
+}
+function leftIFAND(seq,i) {
+	seq.rules.push('L>&')
+	var f=seq.left[i];
+	var o='('+f.left.left.str+'>('+f.left.right.str+'>'+f.right.str+'))';
+	var _1=new Wff(o);
+	test(o,_1)
+
+	var left=seq.left.concat([]);
+	left.splice(i,1);
+	left.unshift(_1);
+	var newSeq=new Sequent(left,seq.right)
+	return newSeq
+	 
+}
+function leftIFOR(seq,i) {
+	seq.rules.push('L>|')
+	var f=seq.left[i];
+	var o='('+f.left.left.str+'>'+f.right.str+')';
+	var g='('+f.left.right.str+'>'+f.right.str+')'
+	var _1=new Wff(o);
+	var _2=new Wff(g);
+	test(o,_1)
+	test(g,_2)
+
+	var left=seq.left.concat([]);
+	left.splice(i,1);
+	left.unshift(_1,_2);
+	var newSeq=new Sequent(left,seq.right)
+	return newSeq
+	 
+}
+function rightOR2(seq,i) {
+	seq.rules.push('R2|')
+	var right=seq.right.concat([]);
+	right.splice(i,1);
+	right.unshift(seq.right[i].right);
+	var newSeq=new Sequent(seq.left,right);
+	return newSeq
+	
+}
+function isAbsurd(seq) {
+	var leftstring=seq.left.map((o)=> o.str);
+	if(leftstring.indexOf('(f)')>-1) return true;
+	else return false;
+
+	// body...
+}
+function isAxiom(seq) {
+			var leftstring=seq.left.map((o)=> o.str);
+			var rightstring=seq.right.map((o)=> o.str);
+		for (var i = 0; i < leftstring.length; i++) {
+			var o=leftstring[i]
+			if(rightstring.indexOf(o)>-1) return true;
+		} 
+
+		 return false;
+		// body...
+	}
+	function  test(str,wff=null) {
+		if(str.length<=1) return;
+		str=str.slice(1,str.length-1)
+		//console.log(el(str))
+			for(var i=0;i<str.length;i++){
+			var c=str.charAt(i)
+			if(operators.indexOf(c)>-1) {
+				var l=str.slice(0,i);
+				var r=str.slice(i+1,str.length);
+				if(el(l) && el(r)) {
+			 		 var left=new Wff(l)
+			 		 var right=new Wff(r);
+			 		 left.parent=wff;
+			 		 right.parent=wff;
+			 		 wff.left = left;
+			 		 wff.right=right;
+			 		 wff.connective=c;
+			 		// console.log(l+'|'+r)
+					test(l,left);
+					test(r,right)
+				}
+				
+			}
+		}
+		// body...
+	}
+var wff=new Wff(exp);
+//test(exp,wff);
+
+
+		var m=exp.match(reg);
+		function el(e) {
+			var j=e.match(/\)/g);
+			var k=e.match(/\(/g);
+			if(j && k && j.length==k.length) return true;
+		 
+			else return false;
+			// body...
+		}
+
+
+
+		function ismain(wff) {
+			if(wff.match(reg2)) return true;
+			else if(wff.match(/^\(?[a-z]\)?$/g)) return true;
+			else return false;
+
+
+
+			// body...
+		}
+
+
+
+		/******ui stuffs*/
+		var cont=document.querySelector('#cont');
+		/*for(var i=0;i<10;i++){
+			var d=document.createElement('div');
+			d.setAttribute('class', 'item');
+			d.style['left']=Math.random()*200+'px'
+			d.style['bottom']=Math.random()*400+'px'
+			d.innerHTML=Math.random();
+			cont.appendChild(d)
+		}*/
+
+console.log('sd')
+/*
+var s=new Sequent(toWffs([]),toWffs(['((A&B)>(B&A))']));
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+
+
+var s=new Sequent(toWffs([]),toWffs(['((A|B)>(B|A))']));
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+
+
+var s=new Sequent(toWffs([]),toWffs(['((A>f)>(((A>f)>f)>f))']));
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+
+
+var s=new Sequent(toWffs([]),toWffs(['((A&(B>f))>((A>B)>f))']));
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+
+
+;
+
+var s=new Sequent(toWffs([]),toWffs(['((A>B)>(((A>f)>f)>((B>f)>f)))']));
+proofSearch(s);
+console.log(toFrac(s).replace(/&/g,'*'))
+*/
+
+var formula='(((((A&B)>f)>f)>(((A>f)>f)&((B>f)>f)))&((A&B)>(B&A)))';
+var hash=window.location.hash.substr(3).replace(/%3E/g,'>');
+console.log(hash)
+if(hash) formula='('+hash+')';
+var s=new Sequent(toWffs([]),toWffs([formula]));
+//(((((A&B)>f)>f)>(((A>f)>f)&((B>f)>f)))&((A&B)>(B&A)))
+proofSearch(s);
+var root_=new Node()
+var pdf=searchPath(s,root_);
+if(pdf==null) pdf=toFrac(s);
+var pf=toLatex(pdf);
+
+function getDepth(node) {
+	if(node.left==null && node.right==null && node.top==null) { return node.level}
+	if(node.left && node.right) return Math.max(getDepth(node.left),getDepth(node.right))
+	if(node.left) return getDepth(node.left)
+	if(node.right) return getDepth(node.right)
+	if(node.top) return getDepth(node.top)
+
+}
+var depth=getDepth(root_);
+console.log(depth+" depth")
+var sd=toLatex(toFrac(s));
+var elm=document.querySelector('#sd');
+elm.innerHTML="$"+pf+"$";
+console.log(sd);
+var i=0;
+var int=setInterval(function (argument) {
+
+
+
+if(elm.getElementsByClassName('MathJax_Preview')[0]) {
+setTimeout(()=>{elm.classList.add('visible')},400)
+	;clearInterval(int)}
+	//MathJax_Preview
+	// body...
+},1)
+
+
+function toLatex(x) {
+	return x.replace(/&/g,'\\land ').replace(/\|/g,'\\lor ').replace(/&/g,'*').replace(/\(([A-Z]|[a-z]|\bot)\)/g,'$1').
+		replace(/=>/g,'\\hspace{.1cm}\\vdash ')
+	.replace(/>/g,'\\supset ')
+
+	// body...
+}
+
+
+
+function onProofSearch(){
+
+var s=new Sequent(toWffs([]),toWffs(['('+document.querySelector('#inpt').value+')']));
+proofSearch(s);
+root_=new Node();
+var pf=searchPath(s,root_);
+var sd;
+if(pf!=null) {
+	 sd=toLatex(pf.replace(/&/g,'\\land '));
+}else{
+
+	sd=toLatex(toFrac(s));
+}
+//elm.innerHTML="$"+sd+"$";
+
+MathJax.Hub.queue.Push(["Text", math, sd]);
+
+c.clearRect(0,0,480,300)
+var radius=2.2
+var sep=10;
+var px={x:480/2,y:300}
+c.beginPath();
+c.arc(px.x,px.y,2,0,Math.PI*2)
+c.fill();
+draw(depth,px,root_);
+
+}
+
+function loadAll(argument) {
+
+	
+
+        MathJax.Hub.queue.Push(function() {
+            math = MathJax.Hub.getAllJax("sd")[0];
+        });
+        changeInput = function(str) {
+
+            MathJax.Hub.queue.Push(["Text", math, convert(str)]);
+        }
+	// body...
+}
+function fullscreen(argument) {
+	document.querySelector('#viewer').classList.add('full-height')
+	// body...
+}
+
+
+
+c.clearRect(0,0,480,300)
+var radius=2.2
+var sep=10;
+var px={x:480/2,y:300}
+c.beginPath();
+c.arc(px.x,px.y,2,0,Math.PI*2)
+c.fill();
+draw(depth,px,root_);
+
+
+
+function draw(i,p,node) {
+	if(i==0 || node==null) return;
+
+		var exp=(Math.pow(2,i));
+		if(node.right){
+		var pl={x:p.x+exp,y:p.y-20}
+
+		c.beginPath();
+		c.fillStyle="#808080"
+		c.strokeStyle="#808080"
+		 
+		c.lineWidth=.8
+		c.arc(pl.x,pl.y,radius,0,Math.PI*2)
+		c.fill();
+		c.moveTo(p.x,p.y)
+	//	c.lineTo(pl.x,pl.y);
+        c.bezierCurveTo(p.x, p.y-sep, pl.x, p.y, pl.x, pl.y);
+		c.stroke();
+
+		
+ 		
+		draw(i-1,pl,node.right)
+		}
+		if(node.top){
+		var pl={x:p.x,y:p.y-20}
+		c.beginPath();
+		c.arc(pl.x,pl.y,radius,0,Math.PI*2)
+		c.fill();
+ 		c.moveTo(p.x,p.y)
+		c.lineTo(pl.x,pl.y);
+		c.stroke();
+
+	 
+ 		
+
+		draw(i-1,pl,node.top)
+		}
+		if(node.left){
+		var pl={x:p.x-exp,y:p.y-20}
+		c.beginPath();
+ 
+		c.arc(pl.x,pl.y,radius,0,Math.PI*2)
+		c.fill();
+		
+		c.moveTo(p.x,p.y)
+	//	c.lineTo(pl.x,pl.y);
+		c.bezierCurveTo(p.x, p.y-sep, pl.x, p.y, pl.x, pl.y);
+		c.stroke();
+
+ 
+ 		
+
+		draw(i-1,pl,node.left)
+		}
+
+	// body...
+}
+	</script>
+
+</body>
+</html>

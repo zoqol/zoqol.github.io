@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<style type="text/css">
+body{
+	background: #101010;
+}
+#box{
+	width: 20px;
+	height: 20px;
+	background: black;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+/* /!\ You need to add vendor prefixes in order to render the CSS properly (or simply use http://leaverou.github.io/prefixfree/) /!\ */ .tridiv {
+	-webkit-backface-visibility: hidden;
+
+  perspective: 800px;
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  perspective-origin: center;
+   
+}
+.face {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+.scene, .shape, .face, .face-wrapper, .cr {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+.scene {
+  width: 80em;
+  height: 80em;
+  top: 50%;
+  left: 50%;
+  margin: -40em 0 0 -40em;
+}
+.shape {
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: 50%;
+}
+.face, .face-wrapper {
+  overflow: hidden;
+  transform-origin: 0 0;
+  backface-visibility: hidden;
+  /* hidden by default, prevent blinking and other weird rendering glitchs */
+}
+.face {
+  background-size: 100% 100%!important;
+  background-position: center;
+}
+.face-wrapper .face {
+  left: 100%;
+  width: 100%;
+  height: 100%
+}
+.photon-shader {
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%
+}
+.side {
+  left: 50%;
+}
+.cr, .cr .side {
+  height: 100%;
+}
+[class*="cylinder"] .tp {
+	will-change: transform;
+  transform: rotateX(90deg) translateY(-50%);
+}
+[class*="cylinder"] .bm {
+	will-change: transform;
+  transform: rotateX(-90deg) translateY(-50%);
+}
+[class*="cylinder"] .tp, [class*="cylinder"] .bm, [class*="cylinder"] .tp .photon-shader, [class*="cylinder"] .bm .photon-shader {
+	will-change: transform;
+  border-radius: 50%;
+}
+[class*="cylinder"] .bm {
+	will-change: transform;
+  top: 100%;
+}
+/* .cyl-1 styles */
+.cyl-1 {
+	will-change: transform;
+  transform:translate3D(0em, 0em, 0em) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  opacity:1;
+  width:6em;
+  height:1em;
+  margin:-0.5em 0 0 -3em;
+}
+.cyl-1 .tp, .cyl-1 .bm {
+  width:6em;
+  height:6em;
+}
+.cyl-1 .side {
+	will-change: transform;
+  width:1.3944608463408996em;
+  height:1em;
+}
+.cyl-1 .s0 {
+  transform: rotateY(12.857142857142858deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s1 {
+  transform: rotateY(38.57142857142857deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s2 {
+  transform: rotateY(64.28571428571429deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s3 {
+  transform: rotateY(90deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s4 {
+  transform: rotateY(115.71428571428572deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s5 {
+  transform: rotateY(141.42857142857144deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s6 {
+  transform: rotateY(167.14285714285714deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s7 {
+  transform: rotateY(192.85714285714286deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s8 {
+  transform: rotateY(218.57142857142858deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s9 {
+  transform: rotateY(244.2857142857143deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s10 {
+  transform: rotateY(270deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s11 {
+  transform: rotateY(295.7142857142857deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s12 {
+  transform: rotateY(321.4285714285714deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .s13 {
+  transform: rotateY(347.1428571428571deg) translate3D(-50%, 0, 2.975em);
+}
+.cyl-1 .face, .cyl-1 .side {
+  background-color:#FFFFFF;
+}
+.cyl-1 .tp {
+  background:url(http://s15.picofile.com/file/8409795700/s_2.jpg);
+}
+.cyl-1 .bm {
+  background:url(http://s15.picofile.com/file/8409795700/s_2.jpg);
+}
+.cyl-1 .side {
+  background:url(http://s14.picofile.com/file/8409796234/sides.jpg);
+}
+.obj{
+	    perspective-origin: center;
+	    will-change: transform;
+
+}
+</style>
+<body>
+<div class="tridiv" >
+  <div class="scene"  class="obj" id="obj">
+    <div class="shape cylinder-1 cyl-1">
+      <div class="face bm"></div>
+      <div class="face tp"></div>
+      <div class="face side s0"></div>
+      <div class="face side s1"></div>
+      <div class="face side s2"></div>
+      <div class="face side s3"></div>
+      <div class="face side s4"></div>
+      <div class="face side s5"></div>
+      <div class="face side s6"></div>
+      <div class="face side s7"></div>
+      <div class="face side s8"></div>
+      <div class="face side s9"></div>
+      <div class="face side s10"></div>
+      <div class="face side s11"></div>
+      <div class="face side s12"></div>
+      <div class="face side s13"></div>
+    </div>
+  </div>
+</div>
+
+ <div id="box"></div>
+<script type="text/javascript">
+
+var obj=document.querySelector('#obj');
+let trace=console.log;
+const parent=obj.parentElement;
+
+ 
+
+var t=50;
+ obj.style.transform="rotateY("+t+"deg) rotateZ(180deg) rotateX(90deg) translate(10px,200px)";
+
+const coins=[]
+coins.push(obj)
+obj.angle=0;
+let box=document.querySelector('#box')
+const n=5;
+
+for(let i=1;i<n;i++){
+	let x=(i/n*360);
+	 console.log(x)
+	  let o=obj.cloneNode(true);
+	 parent.appendChild(o);
+	 o.angle=x;
+	 o.style.transform="rotateY("+x+"deg) rotateZ(180deg) rotateX(90deg) translate(10px,200px)";
+	 coins.push(o)
+
+}
+coins[0].i=0;
+ loop();
+
+ function loop(argument) {
+
+	//obj2.style.transform = 'rotateZ('+t+'deg) translateX(200px)'
+		for(const o of coins){
+	
+ 	let theta=Math.PI*2*(o.angle+t)/360;
+ 	let sin=Math.cos(theta);
+ 	var tx=(1+sin)/2;
+ 	box.style['width']=(tx)*200+'px';
+ o.style['z-index']=Math.floor(tx*n)
+ 	
+
+	o.style.transform="rotateY("+(o.angle+t)+"deg) rotateZ(180deg) rotateX(90deg) translate(10px,200px)";
+
+
+}
+
+ 	t+=.5;
+ 	t=t%360;
+
+
+
+	window.requestAnimationFrame(loop);
+
+	// body...
+}
+</script>
+
+</body>
+</html>

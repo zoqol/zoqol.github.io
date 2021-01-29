@@ -149,8 +149,9 @@ input[type="button"]:hover {
 	</div>
 	<div class="container" id="cont"></div>
 	<script>
+		 var math;
 	function loadAll(argument) {
-	       var math;
+	        
 	}
 		
 			
@@ -158,6 +159,7 @@ window.addEventListener("load", function(){
 	var tag = document.createElement("script");
 			tag.src = "Sequent.js";
 			document.getElementsByTagName("head")[0].appendChild(tag);
+	math = MathJax.Hub.getAllJax("sd")[0];
 			
     // ....
 });

@@ -125,7 +125,9 @@ input[type="button"]:hover {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML-full" type="text/javascript">
 	</script> 
 	<script type="text/x-mathjax-config">
+	var math;
 	   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});loadAll()
+	   math = MathJax.Hub.getAllJax("sd")[0];
 	</script>
 	<div id="viewer">
 		<div id="scroll-holder">
@@ -159,7 +161,7 @@ window.addEventListener("load", function(){
 	var tag = document.createElement("script");
 			tag.src = "Sequent.js";
 			document.getElementsByTagName("head")[0].appendChild(tag);
-	math = MathJax.Hub.getAllJax("sd")[0];
+	
 			
     // ....
 });

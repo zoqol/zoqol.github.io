@@ -125,6 +125,15 @@ input[type="button"]:hover {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_CHTML-full" type="text/javascript">
 	</script> 
 	<script type="text/x-mathjax-config">
+	
+window.addEventListener("load", function(){
+	var tag = document.createElement("script");
+			tag.src = "Sequent.js";
+			document.getElementsByTagName("head")[0].appendChild(tag);
+			
+    // ....
+});
+
 	   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});loadAll()
 	</script>
 	<div id="viewer">
@@ -153,7 +162,6 @@ input[type="button"]:hover {
 	       var math;
 	}
 	</script> 
-	<script src="Sequent.js">
-	</script>
+	 
 </body>
 </html>

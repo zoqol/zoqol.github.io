@@ -158,6 +158,8 @@ input[type="button"]:hover {
 		
 			
 window.addEventListener("load", function(){
+	 math = MathJax.Hub.getAllJax("sd")[0];
+	setTimeOut(()=>{ math = MathJax.Hub.getAllJax("sd")[0];},500)
 	var tag = document.createElement("script");
 			tag.src = "Sequent.js";
 			document.getElementsByTagName("head")[0].appendChild(tag);

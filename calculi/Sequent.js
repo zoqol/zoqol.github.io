@@ -97,7 +97,7 @@ var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
 	console.log("src/Main.hx:35:","hello");
-	var math;
+	 
 	window.addEventListener("load",function() {
 		MathJax.Hub.queue.Push(function() {
 			math = MathJax.Hub.getAllJax("sd")[0];

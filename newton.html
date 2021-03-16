@@ -1,173 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Newtons Fractal</title>
+    <title>Rigid Body simulation</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
-    <style >
-        
-        #canv{
-left: 620px;
-border:1px solid gray;
-background-color: #101010;
- position:absolute;
- top: 10px;
-  
+    <script type="text/javascript" src="math.js"></script>
+    <style>
+    pre[class*="language-"].line-numbers {
+   font-size:12px;
+}
+        #canv {
+            border: 1px solid gray;
+
+    background-color: #101010;
+           
         }
         
-        body{
+        body {
             background-color: black
         }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
         ::-webkit-scrollbar {
-    width: 10px;
-}
- 
-
-        .code{
-            padding: 0px;
-            position:relative;
-           width: 600px;
-           margin: 0px;
-            
-          
-           
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
         }
     </style>
 
 </head>
 
+<body>
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
 
-<div class="code">
-    <pre><code  id="cd" class="language-javascript">
-    
     </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
 
-</div>
-  <canvas id="canv" width="480" height="480" ></canvas>  
-    <script type="text/javascript" src="math.js"></script>
+        </div>
 
-<script id="sourcex">
- 
-  
-    var el=document.getElementById("canv")
-      var ctx=el.getContext("2d");
+    </div>
+     
 
-   
-    var idata=ctx.getImageData(0,0,480,480);
-    var data=idata.data;
-      var n=480;
-      var i=0;
-      var s1=math.complex(-.5,-0.866025);
-      var s2=math.complex(-.5,0.866025);
-      var s3=math.complex(1,0);
-     setInterval(function () {
-                var th=(i/n)*3-1.5;
-                if(i>n) return;
-                i++;
-        for(var j=0;j<n;j++){
-            var ch=(j/n)*3-1.5;
-            var kh=math.complex(th,ch);
-            var tw=zn(kh)
-            var t=math.subtract(s2,tw);
-            var rad=1
-            var op=1
-            var ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
+        <script type="text/javascript" id="sourcex">
+var el = document.getElementById("canv");
+var ctx = el.getContext("2d");
 
-           
+var idata = ctx.getImageData(0, 0, 480, 480);
+var data = idata.data;
+var n = 480;
+var i = 0;
+var s1 = math.complex(-0.5, -0.866025);
+var s2 = math.complex(-0.5, 0.866025);
+var s3 = math.complex(1, 0);
+setInterval(function () {
+  var th = (i / n) * 3 - 1.5;
+  if (i > n) return;
+  i++;
+  for (var j = 0; j < n; j++) {
+    var ch = (j / n) * 3 - 1.5;
+    var kh = math.complex(th, ch);
+    var tw = zn(kh);
+    var t = math.subtract(s2, tw);
+    var rad = 1;
+    var op = 1;
+    var ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
 
-          //console.log(ln*255)
-             if(ln<.01){
-             // t=math.subtract(s2,kh);
-                ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
-                ctx.fillStyle="rgba("+Math.ceil((1-ln)*255)+",0,64,"+op+")"
-            //   ctx.fillRect(i,j,1,1)
-            ctx.beginPath()
-                  ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
-                  ctx.fill()
+    //console.log(ln*255)
+    if (ln < 0.01) {
+      // t=math.subtract(s2,kh);
+      ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
+      ctx.fillStyle = "rgba(" + Math.ceil((1 - ln) * 255) + ",0,64," + op + ")";
+      //   ctx.fillRect(i,j,1,1)
+      ctx.beginPath();
+      ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
+      ctx.fill();
+    }
+    var t = math.subtract(s1, tw);
 
-            }
-              var t=math.subtract(s1,tw);
+    var ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
+    if (ln < 0.01) {
+      // t=math.subtract(s1,kh);
+      ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
+      ctx.fillStyle =
+        "rgba(128,0," + Math.ceil((1 - ln) * 255) + "," + op + ")";
+      //ctx.fillRect(i,j,1,1)
+      ctx.beginPath();
+      ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
+      ctx.fill();
+    }
+    var t = math.subtract(s3, tw);
 
-               var ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
-            if(ln<.01){
-             // t=math.subtract(s1,kh);
-                ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
-                ctx.fillStyle="rgba(128,0,"+Math.ceil((1-ln)*255)+","+op+")"
-                //ctx.fillRect(i,j,1,1)
-                ctx.beginPath()
-                  ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
-                  ctx.fill()
+    var ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
+    if (ln < 0.01) {
+      //  t=math.subtract(s3,kh);
+      ln = Math.sqrt(t.re * t.re + t.im * t.im) / 3;
 
-            }
-            var t=math.subtract(s3,tw);
-
-               var ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
-            if(ln<.01){
-            //  t=math.subtract(s3,kh);
-                ln=Math.sqrt(t.re*t.re+t.im*t.im)/3
-                
-                
-                ctx.fillStyle="rgba("+Math.ceil((1-ln)*255)+",0,0,"+op+")"
-                // ctx.fillRect(i,j,1,1)
-                ctx.beginPath()
-                  ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
-                  ctx.fill()
-
-            }
-
-                //
-                
-
-
-        
-        }
-        // body...
-     },0)
-        //ctx.fill();
-    function xn(n){
-var x=n-1;
-if(x==0) return 1;
-var w=xn(x)
-return w-(w*w-2)/(2*w)
-}
-
-
-
-function zn(init) {
-var xn=init;
-var n=0;
-   while(n<8){
-    var w=xn
-    //xn[++n]=
-    var f=math.subtract(w,math.divide(pz(w),pzp(w)));
-    xn=f;
-    n++;
-    //w-(w*w-2)/(2*w);
+      ctx.fillStyle = "rgba(" + Math.ceil((1 - ln) * 255) + ",0,0," + op + ")";
+      // ctx.fillRect(i,j,1,1)
+      ctx.beginPath();
+      ctx.arc(i, j, rad, 0, 2 * Math.PI, true);
+      ctx.fill();
     }
 
-    return xn;
-    // body...
+    //
+  }
+  // body...
+}, 0);
+//ctx.fill();
+function xn(n) {
+  var x = n - 1;
+  if (x == 0) return 1;
+  var w = xn(x);
+  return w - (w * w - 2) / (2 * w);
 }
-var a = math.complex(-.5, 0.866025);     // Complex 2 + 
 
-var tw=zn(math.complex(-.5, 1))
+function zn(init) {
+  var xn = init;
+  var n = 0;
+  while (n < 8) {
+    var w = xn;
+    //xn[++n]=
+    var f = math.subtract(w, math.divide(pz(w), pzp(w)));
+    xn = f;
+    n++;
+    //w-(w*w-2)/(2*w);
+  }
+
+  return xn;
+  // body...
+}
+var a = math.complex(-0.5, 0.866025); // Complex 2 +
+
+var tw = zn(math.complex(-0.5, 1));
 
 function pz(z) {
-    var z3=math.pow(z, 3);
-    var res=math.subtract(z3,1);
-    return res;
+  var z3 = math.pow(z, 3);
+  var res = math.subtract(z3, 1);
+  return res;
 }
 function pzp(z) {
-    return math.multiply(math.pow(z, 2),3)
-    // body...
+  return math.multiply(math.pow(z, 2), 3);
+  // body...
 }
-</script>
-<script type="text/javascript">
-    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
 
-</script>
-<body>
 
-</body>
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
+
+    <body>
+
+    </body>
+
 </html>
+	

@@ -1,50 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Deer 3D</title>
+    <title>Rigid Body simulation</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
-    <style >
-        
-        #canv{
-left: 620px;
-border:1px solid gray;
-background-color: #101010;
- position:absolute;
- top: 10px;
-  
+    <style>
+    pre[class*="language-"].line-numbers {
+   font-size:12px;
+}
+        #canv {
+            border: 1px solid gray;
+             background-color: #101010;
         }
         
-        body{
+        body {
             background-color: black
         }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
         ::-webkit-scrollbar {
-    width: 10px;
-}
- 
-
-        .code{
-            padding: 0px;
-            position:relative;
-           width: 600px;
-           margin: 0px;
-            
-          
-           
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
         }
     </style>
 
 </head>
 
-
-<div class="code">
-    <pre><code  id="cd" class="language-javascript">
-    
-    </code></pre>
-
-</div>
-    <div id="deer" style="color:white;display:none">v -37.2752 331.0773 137.8256
+<body>
+  <div id="deer" style="color:white;display:none">v -37.2752 331.0773 137.8256
 v -38.1139 337.4311 136.5123
 v -35.7848 337.1519 136.1145
 v -29.2732 10.2711 75.7084
@@ -876,8 +907,23 @@ v -39.6287 394.7976 95.5925
 v -40.7831 392.2703 94.2666
 v -44.8521 386.8836 108.5253
 v -44.9314 384.1815 107.7265</div>
-  <canvas id="canv" width="480" height="480" ></canvas>  
-<script id="sourcex">
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
+
+    </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
+
+        </div>
+
+    </div>
+     
+
+        <script type="text/javascript" id="sourcex">
+    
+    
 var source=document.getElementById("deer").innerHTML;
 
 var dta=source.split("\n")
@@ -1023,14 +1069,15 @@ reanimate()
 
         // body...
     }
-           
-  
-</script>
-<script type="text/javascript">
-    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
 
-</script>
-<body>
+    <body>
 
-</body>
+    </body>
+
 </html>
+	

@@ -1,140 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>dots on straight lines</title>
+    <title>fluid</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
-    <style >
-        
-        #canv{
-left: 620px;
-border:1px solid gray;
-background-color: #101010;
- position:absolute;
- top: 10px;
-  
+         <script type="text/javascript" src="dat.gui.js"></script>
+
+    <style>
+    pre[class*="language-"].line-numbers {
+   font-size:12px;
+}
+        #canv {
+            border: 1px solid gray;
+             background-color: #101010;
         }
         
-        body{
+        body {
             background-color: black
         }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
         ::-webkit-scrollbar {
-    width: 10px;
-}
- 
-
-        .code{
-            padding: 0px;
-            position:relative;
-           width: 600px;
-           margin: 0px;
-            
-          
-           
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
         }
     </style>
 
 </head>
 
+<body>
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
 
-<div class="code">
-    <pre><code  id="cd" class="language-javascript">
-    
     </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
 
-</div>
-  <canvas id="canv" width="480" height="480" ></canvas>  
-<script id="sourcex">
-var el=document.getElementById("canv");
-var w=480;
-var h=480;
-    var ctx=el.getContext("2d");
-    var idata=ctx.getImageData(0,0,400,400);
-    var data=idata.data;
+        </div>
 
-var t=0;
-        var n=0;
-        var r=200;
-        var ths=[];
-         var step=1;
-        add()
-       
+    </div>
+     
+
+        <script type="text/javascript" id="sourcex">
+var el = document.getElementById("canv");
+var w = 480;
+var h = 480;
+var ctx = el.getContext("2d");
+var idata = ctx.getImageData(0, 0, 400, 400);
+var data = idata.data;
+
+var t = 0;
+var n = 0;
+var r = 200;
+var ths = [];
+var step = 1;
+add();
+
 function add() {
-            n=n+step;
-           if(n<1 || n>10) step*=-1;
-            ths=[];
-        for(var i=0;i<n;i++){
-            var theta=(i/n)*Math.PI+Math.PI/2;
-            var xx=Math.sin(theta);
-            var yy=Math.cos(theta);
-             ths.push({x:xx,y:yy,p:{x:0,y:0}});
-        }
-            // body...
-        }
-        setInterval(add,3000)
-    reanimate();
-    var dlta=0;
-    var offset=100;
+  n = n + step;
+  if (n < 1 || n > 10) step *= -1;
+  ths = [];
+  for (var i = 0; i < n; i++) {
+    var theta = (i / n) * Math.PI + Math.PI / 2;
+    var xx = Math.sin(theta);
+    var yy = Math.cos(theta);
+    ths.push({ x: xx, y: yy, p: { x: 0, y: 0 } });
+  }
+  // body...
+}
+setInterval(add, 3000);
+reanimate();
+var dlta = 0;
+var offset = 100;
 
+function reanimate() {
+  ctx.fillStyle = "#000000";
+  t++;
+  dlta += 0.03;
+  ctx.clearRect(0, 0, w, h);
+  ctx.beginPath();
 
-    function reanimate() {
-        ctx.fillStyle="#000000";
-        t++;
-        dlta+=.03;
-        ctx.clearRect(0, 0, w, h);
-        ctx.beginPath();
-
-/*
+  /*
  ctx.beginPath();
              ctx.arc(w/2+xx,h/2+yy,10,0,Math.PI*2)
              ctx.fill()
 */
 
-ctx.beginPath();
-ctx.lineWidth=2
-ctx.strokeStyle="#11aaff"
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#11aaff";
 
-       ctx.arc(w/2,h/2,r,0,Math.PI*2);
-       ctx.stroke();
+  ctx.arc(w / 2, h / 2, r, 0, Math.PI * 2);
+  ctx.stroke();
 
-       ctx.lineWidth=1
-var opratio=Math.sin(dlta+Math.PI)+1
-for(var i=0;i<ths.length;i++){
+  ctx.lineWidth = 1;
+  var opratio = Math.sin(dlta + Math.PI) + 1;
+  for (var i = 0; i < ths.length; i++) {
+    var ratio = Math.sin(dlta + (i / n) * Math.PI);
+    var dir = ths[i];
+    var p = { x: dir.x * r, y: dir.y * r };
+    ctx.beginPath();
+    // ctx.strokeStyle="#11aaff"
+    ctx.strokeStyle = "rgba(17, 170, 255, " + opratio + ")";
+    ctx.moveTo(w / 2 + p.x, h / 2 + p.y);
 
-    var ratio=Math.sin(dlta+(i/n)*Math.PI);
-            var dir=ths[i];
-            var p={x:dir.x*r,y:dir.y*r};
-             ctx.beginPath();
-            // ctx.strokeStyle="#11aaff"
-             ctx.strokeStyle = "rgba(17, 170, 255, "+opratio+")";
-             ctx.moveTo(w/2+p.x,h/2+p.y);
-         
+    //  ctx.arc(w/2-p.x,h/2-p.y,10,0,Math.PI*2)
 
-           //  ctx.arc(w/2-p.x,h/2-p.y,10,0,Math.PI*2)
+    ctx.lineTo(w / 2 - p.x, h / 2 - p.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.arc(
+      w / 2 + dir.x * r * ratio,
+      h / 2 + dir.y * r * ratio,
+      8,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+  //ctx.arc(w/2,h/2,10,0,Math.PI*2);
 
-             ctx.lineTo(w/2-p.x,h/2-p.y)
-             ctx.stroke()
-              ctx.beginPath();
-              ctx.fillStyle="#ffffff"
-               ctx.arc(w/2+dir.x*r*ratio,h/2+dir.y*r*ratio,8,0,Math.PI*2)
-               ctx.fill();
+  requestAnimationFrame(reanimate);
 
-        }
-        //ctx.arc(w/2,h/2,10,0,Math.PI*2);
-        
-        requestAnimationFrame(reanimate);
+  // body...
+}
 
-        // body...
-    }
-           
-  
-</script>
-<script type="text/javascript">
-    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
 
-</script>
-<body>
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
 
-</body>
+    <body>
+
+    </body>
+
 </html>
+	

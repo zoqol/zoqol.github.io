@@ -1,177 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Dancing Sierpiński</title>
+    <title>Rigid Body simulation</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
-     <script type="text/javascript" src="dat.gui.js"></script>
-
-    <style >
-        
-        #canv{
-left: 620px;
-border:1px solid gray;
-background-color: #ffffff;
- position:absolute;
- top: 10px;
-  
+    <style>
+    pre[class*="language-"].line-numbers {
+   font-size:12px;
+}
+        #canv {
+            border: 1px solid gray;
+            background: white;
         }
         
-        body{
+        body {
             background-color: black
         }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
         ::-webkit-scrollbar {
-    width: 10px;
-}
- 
-
-        .code{
-            padding: 0px;
-            position:relative;
-           width: 600px;
-           margin: 0px;
-            
-          
-           
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
         }
     </style>
 
 </head>
 
+<body>
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
 
-<div class="code">
-    <pre><code  id="cd" class="language-javascript">
-    
     </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
 
-</div>
-  <canvas id="canv" width="480" height="480" ></canvas>  
-<script id="sourcex">
+        </div>
+
+    </div>
+     
+
+        <script type="text/javascript" id="sourcex">
 /**
  * Created by zoQol on 11/8/2016.
  */
 
+var el = document.getElementById("canv");
+var ctx = el.getContext("2d");
 
-var el=document.getElementById("canv")
-var ctx=el.getContext("2d");
-
-var dopi=Math.PI*2;
+var dopi = Math.PI * 2;
 var grad;
-var ar=[]
-window.onload = function() {
-    var depth = 0;
-    var w=480;
-    var h=480;
-    
-    var ps = []
+var ar = [];
+window.onload = function () {
+  var depth = 0;
+  var w = 480;
+  var h = 480;
+
+  var ps = [];
+  ctx.beginPath();
+  grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 500);
+  grad.addColorStop(1, "rgba(0,50,50,0.2)");
+  grad.addColorStop(0, "rgba(0,20,170,0.2)");
+
+  draw();
+  ctx.stroke();
+  function draw() {
+    var c = { x: w / 2, y: h * 0.6 };
+    phi = (dopi * 0) / 3 + (Math.PI * 3) / 2;
+    var r = 100;
+    for (var i = 1; i <= 3; i++) {
+      var phi = (dopi * i) / 3 + (Math.PI * 3) / 2;
+      var r = 250;
+      x = Math.cos(phi) * r + c.x;
+      y = Math.sin(phi) * r + c.y;
+      ps.push({ x: x, y: y });
+    }
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 0.5;
+  }
+
+  ar = getPoints();
+  ar2 = getPoints();
+  render();
+  setInterval(function () {
+    ar2 = getPoints();
+  }, 500);
+  function render() {
+    var i = 0;
+    ar.forEach(function (o) {
+      var q = ar2[i++];
+      o.x += (q.x - o.x) * 0.1;
+      o.y += (q.y - o.y) * 0.1;
+    });
+    ctx.clearRect(0, 0, w, h);
+
     ctx.beginPath();
-    grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 500);
-    grad.addColorStop(1, "rgba(0,50,50,0.2)");
-    grad.addColorStop(0, "rgba(0,20,170,0.2)");
-    
-    draw()
-    ctx.stroke()
-    function draw() {
+    ar.forEach(function (o) {
+      ctx.lineTo(o.x, o.y);
+    });
+    ctx.stroke();
+    requestAnimationFrame(render);
+  }
 
+  function getPoints() {
+    var us = [];
+    drawTriang(ps[2], ps[0], ps[1], 8);
+    function drawTriang(a, b, c, n) {
+      if (n == 0) {
+        us.push(a, b, c);
+      } else {
+        var ab = { x: (b.x - a.x) * 0.5 + a.x, y: (b.y - a.y) * 0.5 + a.y };
+        var ac = { x: (c.x - a.x) * 0.5 + a.x, y: (c.y - a.y) * 0.5 + a.y };
+        var bc = { x: (c.x - b.x) * 0.5 + b.x, y: (c.y - b.y) * 0.5 + b.y };
+        var r = Math.sqrt(ab.x * ab.x + ab.y * ab.y) / (100 / n);
+        if (n < 4) r = n * 2;
+        ac.x += Math.cos(Math.random() * dopi) * r;
+        ac.y += Math.sin(Math.random() * dopi) * r;
 
-        var c = {x: w / 2, y: h * .6}
-        phi = dopi * 0 / 3 + Math.PI * 3 / 2;
-        var r = 100;
-        for (var i = 1; i <= 3; i++) {
-            var phi = dopi * i / 3 + Math.PI * 3 / 2;
-            var r = 250;
-            x = Math.cos(phi) * r + c.x;
-            y = Math.sin(phi) * r + c.y;
-            ps.push({x: x, y: y})
-
-        }
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 0.5;
-
-
+        ab.x += Math.cos(Math.random() * dopi) * r;
+        ab.y += Math.sin(Math.random() * dopi) * r;
+        bc.x += Math.cos(Math.random() * dopi) * r;
+        bc.y += Math.sin(Math.random() * dopi) * r;
+        drawTriang(a, ab, ac, n - 1);
+        drawTriang(ac, bc, c, n - 1);
+        drawTriang(ab, b, bc, n - 1);
+      }
     }
 
-    ar = getPoints();
-    ar2=getPoints();
-    render()
-    setInterval(function () {
-        ar2=getPoints();
-    },500)
-    function render() {
-        var i=0;
-        ar.forEach(function (o) {
-            var q=ar2[i++];
-            o.x+=(q.x-o.x)*.1;
-            o.y+=(q.y-o.y)*.1;
+    return us;
+  }
+};
 
-           
-        })
-       ctx.clearRect(0, 0, w, h);
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
 
-        ctx.beginPath();
-        ar.forEach(function (o) {
+    <body>
 
-            ctx.lineTo(o.x,o.y);
-        })
-        ctx.stroke()
-        requestAnimationFrame(render)
-    }
+    </body>
 
-
-
-    function  getPoints() {
-        var us = [];
-        drawTriang(ps[2], ps[0], ps[1], 8);
-        function drawTriang(a, b, c, n) {
-
-
-            if (n == 0) {
-                us.push(a, b, c)
-            }
-            else {
-
-                var ab = {x: (b.x - a.x) *
-                 .5 + a.x, y: (b.y - a.y) * .5 + a.y};
-                var ac = {x: (c.x - a.x) *
-                 .5 + a.x, y: (c.y - a.y) * .5 + a.y}
-                var bc = {x: (c.x - b.x) * 
-                    .5 + b.x, y: (c.y - b.y) * .5 + b.y}
-                var r = Math.sqrt(ab.x *
-                 ab.x + ab.y * ab.y) / (100 / n)
-                if (n < 4) r = n * 2
-                ac.x += Math.cos(Math.random() * dopi) * r;
-                ac.y += Math.sin(Math.random() * dopi) * r;
-
-                ab.x += Math.cos(Math.random() * dopi) * r;
-                ab.y += Math.sin(Math.random() * dopi) * r;
-                bc.x += Math.cos(Math.random() * dopi) * r;
-                bc.y += Math.sin(Math.random() * dopi) * r;
-                drawTriang(a, ab, ac, n - 1)
-                drawTriang(ac, bc, c, n - 1)
-                drawTriang(ab, b, bc, n - 1)
-
-
-            }
-
-
-        }
-
-        return us; }
-}
-
-           
-  
-</script>
-<script type="text/javascript">
-
-    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
-
-</script>
-<body>
-
-</body>
 </html>
-
-
-
+	

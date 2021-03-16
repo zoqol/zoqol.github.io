@@ -1,162 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Sperm</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
-    <style >
-        
-        #canv{
-left: 620px;
-border:1px solid gray;
-background-color: white;
- position:absolute;
- top: 10px;
-  
+    <style>
+    pre[class*="language-"].line-numbers {
+   font-size:12px;
+}
+        #canv {
+            border: 1px solid gray;
+            background: white;
         }
         
-        body{
+        body {
             background-color: black
         }
+        
+        .code {
+            padding: .5em;
+            text-align: center;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            border: 0;
+            outline: 0;
+        }
+        
+        .cont {
+            display: flex;
+        }
+        
+        .cont > div {
+            height: 100vh;
+        }
+        
+        .language-javascript {
+            height: 100vh;
+            background-color: #101010 !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .tt {
+            width: calc(100% - 500px);
+        }
+        /* scroll bar */
+        
         ::-webkit-scrollbar {
-    width: 10px;
-}
- 
-
-        .code{
-            padding: 0px;
-            position:relative;
-           width: 600px;
-           margin: 0px;
-            
-          
-           
+            width: .5em;
+            background-color: red;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background-color: black;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #202020;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: darkred;
         }
     </style>
 
 </head>
 
+<body>
+    <div class="cont">
+        <div class="tt">
+            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
 
-<div class="code">
-    <pre><code  id="cd" class="language-javascript">
-    
     </code></pre>
+        </div>
+        <div class="code">
+            <canvas id="canv" height="480" width="480"></canvas>
 
-</div>
-  <canvas id="canv" width="480" height="480" ></canvas>  
-<script id="sourcex">
-var el=document.getElementById("canv");
-var w=480;
-var h=480;
-    var ctx=el.getContext("2d");
-   function Sperm() {
-    this.len=20;
-    this.tail=[];
-    this.phi=0;
-    this.angle=0;
-    this.ample=3;
-    this.height=10;
-    this.sSize=20;
-    this.speed=.1;
-    this.vel={x:0,y:0}
-    for(var i=0;i<this.len;i++){
-        this.tail.push({x:0,y:0})
+        </div>
+
+    </div>
+     
+
+        <script type="text/javascript" id="sourcex">var el = document.getElementById("canv");
+var w = 480;
+var h = 480;
+var ctx = el.getContext("2d");
+function Sperm() {
+  this.len = 20;
+  this.tail = [];
+  this.phi = 0;
+  this.angle = 0;
+  this.ample = 3;
+  this.height = 10;
+  this.sSize = 20;
+  this.speed = 0.1;
+  this.vel = { x: 0, y: 0 };
+  for (var i = 0; i < this.len; i++) {
+    this.tail.push({ x: 0, y: 0 });
+  }
+  this.setPos = function (x, y) {
+    this.tail[0].x = x;
+    this.tail[0].y = y;
+  };
+  this.render = function () {
+    ctx.beginPath();
+    ctx.strokeStyle = "black";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    //ctx.arc(this.tail[1].x, this.tail[1].y,ctx.lineWidth,0,Math.PI*2)
+    ctx.fillStyle = "black";
+    var vec = {
+      x: this.tail[1].x - this.tail[0].x,
+      y: this.tail[1].y - this.tail[0].y,
+    };
+    var tn = Math.atan2(vec.y, vec.x);
+    ctx.ellipse(
+      this.tail[0].x,
+      this.tail[0].y,
+      ctx.lineWidth * 4.8,
+      ctx.lineWidth * 1.5,
+      tn,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
+
+    ctx.moveTo(this.tail[1].x, this.tail[1].y);
+    ctx.lineTo(this.tail[1].x, this.tail[1].y);
+
+    for (var i = 2; i < this.tail.length; i++) {
+      var p = this.tail[i];
+      ctx.lineWidth = (2 * this.tail.length) / i;
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
     }
-    this.setPos=function (x,y) {
-        this.tail[0].x = x;
-        this.tail[0].y = y; 
-    }
-    this.render=function () {
-       ctx.beginPath();
-       ctx.strokeStyle="black";
-        ctx.lineJoin = "round"
-       ctx.lineWidth=3;
-       ctx.stroke();
-       //ctx.arc(this.tail[1].x, this.tail[1].y,ctx.lineWidth,0,Math.PI*2)
-        ctx.fillStyle="black"
-        var vec={x:this.tail[1].x-this.tail[0].x,y:this.tail[1].y-this.tail[0].y};
-        var tn=Math.atan2(vec.y,vec.x)
-        ctx.ellipse(this.tail[0].x, this.tail[0].y,  ctx.lineWidth*4.8,  ctx.lineWidth*1.5, tn , 0, 2 * Math.PI);
-       ctx.fill()
-
-       ctx.moveTo(this.tail[1].x, this.tail[1].y);
-       ctx.lineTo(this.tail[1].x, this.tail[1].y);
-
-       for(var i=2;i<this.tail.length;i++){
-        var p=this.tail[i];
-        ctx.lineWidth=2*(this.tail.length)/i;
-        ctx.lineTo(p.x,p.y);
-        ctx.stroke()
-
-
-       }
-    }
-    this.update=function () {
-        var head=this.tail[0];
-        var mas=this.tail[1];
-        this.angle=Math.atan2(this.vel.y,this.vel.x);
-        head.x+=this.vel.x;
-        head.y+=this.vel.y;
-        mas.y=this.height;
-        var phi=this.phi
-        var ample=this.ample;
-        var angle=this.angle
-        mas.x=Math.cos(phi)*ample;
-        var tt=this.angle;
-        var cost=Math.cos(tt);
-        var sint=Math.sin(tt);
-        var _y = mas.y * cost + mas.x * sint;
-        var _x = mas.x * cost - mas.y * sint;
-        mas.x = _x+head.x;
-        mas.y = _y + head.y;
-        this.phi += this.speed;
-         for(var i=2;i<this.tail.length;i++){
-            var p = this.tail[i];
-            var dx = p.x - this.tail[i - 2].x;
-            var dy = p.y - this.tail[i - 2].y;
-            var d = Math.sqrt(dx * dx + dy * dy);
-            p.x = this.tail[i - 1].x + this.sSize*(dx ) / d;
-            p.y = this.tail[i - 1].y + this.sSize * (dy ) / d;
-
-         }
-
-
-
-        // body...
+  };
+  this.update = function () {
+    var head = this.tail[0];
+    var mas = this.tail[1];
+    this.angle = Math.atan2(this.vel.y, this.vel.x);
+    head.x += this.vel.x;
+    head.y += this.vel.y;
+    mas.y = this.height;
+    var phi = this.phi;
+    var ample = this.ample;
+    var angle = this.angle;
+    mas.x = Math.cos(phi) * ample;
+    var tt = this.angle;
+    var cost = Math.cos(tt);
+    var sint = Math.sin(tt);
+    var _y = mas.y * cost + mas.x * sint;
+    var _x = mas.x * cost - mas.y * sint;
+    mas.x = _x + head.x;
+    mas.y = _y + head.y;
+    this.phi += this.speed;
+    for (var i = 2; i < this.tail.length; i++) {
+      var p = this.tail[i];
+      var dx = p.x - this.tail[i - 2].x;
+      var dy = p.y - this.tail[i - 2].y;
+      var d = Math.sqrt(dx * dx + dy * dy);
+      p.x = this.tail[i - 1].x + (this.sSize * dx) / d;
+      p.y = this.tail[i - 1].y + (this.sSize * dy) / d;
     }
 
-   }
-var sperm=new Sperm();
-sperm.setPos(w/2,h/2-h/3)
-reanimate()
+    // body...
+  };
+}
+var sperm = new Sperm();
+sperm.setPos(w / 2, h / 2 - h / 3);
+reanimate();
 
-    function reanimate() {
+function reanimate() {
+  ctx.clearRect(0, 0, w, h);
 
-        ctx.clearRect(0,0,w,h);
-      
-         
+  sperm.update();
+  sperm.render();
 
-         
-        sperm.update();
-         sperm.render();
-         
-       /*  ctx.beginPath()
+  /*  ctx.beginPath()
          ctx.fillStyle="black"
         ctx.ellipse(100, 100, 50, 75, 0 * Math.PI/180, 0, 2 * Math.PI);
 ctx.fill()*/
-       
-       
-        requestAnimationFrame(reanimate);
-    }
-           
-  
-</script>
-<script type="text/javascript">
-    document.getElementById("cd").append(document.getElementById("sourcex").innerHTML)
 
-</script>
-<body>
+  requestAnimationFrame(reanimate);
+}
 
-</body>
+
+        </script>
+    <script type="text/javascript">
+        document.getElementById("cd").append(document.getElementById("sourcex").innerHTML);
+		
+    </script>
+
+    <body>
+
+    </body>
+
 </html>
+	

@@ -1,1 +1,333 @@
 
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        canvas{
+
+
+            margin: 2px;
+        display: block;
+
+
+
+        }
+        body{
+            
+            background-image: url("bg.gif");
+        }
+        .ma{
+
+            width:70%;
+
+        
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 10px;
+            background-color: white;
+            overflow: hidden;
+
+
+
+
+        }
+
+        .hldr{
+
+
+           display: inline;
+            text-align: center;
+              
+
+
+
+        }
+        code{
+
+            clear: both;
+
+        }
+        #soki{
+        padding: 10px;
+            clear: both;
+        }
+        .header{
+            padding-top: 50px;
+            width: 100%;
+            height: 220px;
+            text-align: center;
+            color: #308080;
+
+
+        }
+        h2{
+            padding-left: 20px;
+            color: darkcyan;
+        }
+        h1{
+            font-size: 34px;
+        }
+        .dlbtn{
+            width: 200px;
+            height: 45px;
+            background-color: darkcyan;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 16px;
+            border: solid;
+            border-width: 1px;
+            border-color: white;
+
+        }
+        a:link{
+
+           text-decoration: none;
+        }
+        .dlbtn:hover {
+            background-color: whitesmoke;
+           border: solid;
+            border-width: 1px;
+            border-color: black;
+            color: black;
+
+
+        }
+
+#hoo{
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: center;
+}
+    </style>
+
+</head>
+<body>
+
+<div  class="ma">
+    <div class="header">
+        <h1><pre>Twin.JS</pre></h1>
+        <code>A JavaScript Library to Make Things Move</code>
+       <a href="Twin.js" download><div class="dlbtn"><pre>download</pre></div></a>
+        <hr>
+    </div>
+<div id="hoo"></div>
+
+    <script src="Twin.js"></script>
+
+    <script>
+        function Boom(id,easeFunc,caption){
+            var div=document.createElement("DIV");
+            div.setAttribute('class','hldr');
+            var c=document.createElement("CANVAS");
+            c.setAttribute("width",225);
+            c.setAttribute("height",225);
+            c.setAttribute("id",id);
+            div.appendChild(c);
+            var matn=document.createElement('CODE');
+            matn.innerHTML=caption;
+            div.appendChild(matn);
+
+            document.getElementById('hoo').appendChild(div);
+
+            var off={};
+            off.x=35;
+            off.y=30;
+            var ctx = c.getContext("2d");
+
+            var dots=[];
+            drawGrid();
+            drawAll();
+            var ti=60;
+
+            function drawGrid(){
+                ctx.beginPath();
+                ctx.lineWidth=.3;
+                ctx.strokeStyle="#808080";
+                var n=6;
+                for (var i=0;i<=n;i++){
+
+                    var a=(i/n)*150;
+                    ctx.moveTo(a+off.x,off.y);
+                    ctx.lineTo(a+off.x,150+off.y);
+                    ctx.moveTo(off.x,a+off.y);
+                    ctx.lineTo(150+off.x,a+off.y);
+
+                }
+                ctx.stroke();
+                ctx.beginPath();
+              
+
+            }
+            var obj={y:150};
+            var lpos=0;
+            function up(e){
+                var y=obj.y+off.y;
+                dots.push({x:((e.t)/ti)*150+off.x,y:y});
+                ctx.clearRect(0,0,300,300);
+                ctx.beginPath();
+                lpos= obj.y-150;
+                ctx.rect(off.x, off.y+150,150,lpos);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                drawGrid();
+                drawAll();
+                var end=dots[dots.length-1];
+                ctx.beginPath();
+                ctx.arc(end.x,end.y,3,0,Math.PI*2);
+
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.closePath()
+            }
+
+            function drawAll(){
+
+                var p=dots[0];
+                if(!p) return;
+                ctx.beginPath();
+                ctx.globalAlpha=1;
+                ctx.strokeStyle="#11aaff";
+                ctx.moveTo(p.x, p.y);
+                for (var i=1;i<dots.length;i++){
+                    p=dots[i];
+                    ctx.lineTo(p.x, p.y);
+                }
+
+                ctx.stroke();
+
+            }
+            c.addEventListener('mouseover',ovr);
+            function ovr(e){
+                dots.length=0;
+                obj={y:150};
+                Twin.go(id,obj,{y:0},ti,easeFunc,null,up);
+            }
+
+            //  c.addEventListener('mouseleave',out);
+
+            c.addEventListener('mouseout',out);
+            function out(e){
+
+                var tw=Twin.getObject(id);
+
+                Twin.go(id,obj,{y:150},tw.t,easeFunc,fin,up2);
+            }
+            function fin(e){
+
+                ctx.clearRect(0,0,300,300);
+                ctx.globalAlpha=0;
+                ctx.beginPath();
+                ctx.globalAlpha=(1-(obj.y/150));
+                var wi=lpos+obj.y;
+
+                ctx.rect(off.x, off.y+150,150,wi);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                ctx.globalAlpha=1;
+                drawGrid();
+                drawAll();
+            }
+            function up2(){
+
+                dots.pop();
+                ctx.clearRect(0,0,300,300);
+
+                ctx.beginPath();
+                ctx.globalAlpha=(1-(obj.y/150));
+                var wi=lpos+obj.y;
+
+                ctx.rect(off.x, off.y+150,150,wi);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                ctx.globalAlpha=1;
+                drawGrid();
+                drawAll();
+            }
+        }
+        Twin.init();
+        var b1=new Boom("sd",Easing.linear.eIn,"Easing.linear.eIn");
+
+        var b2=new Boom("b2",Easing.x2.eIn,"Easing.x2.eIn");
+        var b3=new Boom("b3",Easing.x2.eOut,"Easing.x2.eOut");
+        var b4=new Boom("b4",Easing.x2.eInOut,"Easing.x2.eInOut");
+
+
+        var b5=new Boom("b5",Easing.x3.eIn,"Easing.x3.eIn");
+        var b6=new Boom("b6",Easing.x3.eOut,"Easing.x3.eOut");
+        var b7=new Boom("b7",Easing.x3.eInOut,"Easing.x3.eInOut");
+
+        var b8=new Boom("b8",Easing.x4.eIn,"Easing.x4.eIn");
+        var b9=new Boom("b9",Easing.x4.eOut,"Easing.x4.eOut");
+        var b10=new Boom("b10",Easing.x4.eInOut,"Easing.x4.eInOut");
+
+        var b11=new Boom("b11",Easing.x5.eIn,"Easing.x5.eIn");
+        var b12=new Boom("b12",Easing.x5.eOut,"Easing.x5.eOut");
+        var b13=new Boom("b113",Easing.x5.eInOut,"Easing.x5.eInOut");
+
+        var b14=new Boom("b14",Easing.expo.eIn,"Easing.expo.eIn");
+        var b15=new Boom("b15",Easing.expo.eOut,"Easing.expo.eOut");
+        var b16=new Boom("b16",Easing.expo.eInOut,"Easing.expo.eInOut");
+
+        var b17=new Boom("b17",Easing.back.eIn,"Easing.back.eIn");
+        var b18=new Boom("b18",Easing.back.eOut,"Easing.back.eOut");
+        var b19=new Boom("b19",Easing.back.eInOut,"Easing.back.eInOut");
+
+        var b20=new Boom("b20",Easing.circ.eIn,"Easing.circ.eIn");
+        var b21=new Boom("b21",Easing.circ.eOut,"Easing.circ.eOut");
+        var b22=new Boom("b22",Easing.circ.eInOut,"Easing.circ.eInOut");
+
+        var b23=new Boom("b23",Easing.elastic.eIn,"Easing.elastic.eIn");
+        var b24=new Boom("b24",Easing.elastic.eOut,"Easing.elastic.eOut");
+        var b25=new Boom("b25",Easing.elastic.eInOut,"Easing.elastic.eInOut");
+
+    </script>
+    <p></p>
+    <p></p>
+    <div id="soki">
+        <p> </p>
+        <p> </p>
+        <p> </p>
+        <p> </p>
+        <h2><pre>How Can I Use it?</pre></h2>
+        <p>you can use the method <code>Twin.go(id,obj,props,duration,ease,onFinish,onUpdate,easeProps)</code> </p>
+        <p>the arguments are :</p>
+        <pre>
+            id       : a unique string for identifying tween.
+            obj      : the object which you want to change it's properties.
+            props    : properties of the object that you want to change.
+            duration : time interval  
+            ease     : the type of motion( you can choose it from above the page)
+            onFinish : the function callback when motion ends.
+            onUpdate : the function callback when the motion updates.
+
+        </pre>
+
+        <p>See the following example :</p>
+        <pre style='color:#000020;background:#f6f8ff;'><html2><body2 style='color:#000020; background:#f6f8ff; '><pre>
+Twin<span style='color:#308080; '>.</span>init<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#200080; font-weight:bold; '>var</span> el<span style='color:#308080; '>=</span>document<span style='color:#308080; '>.</span>getElementById<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id1'</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+     Twin<span style='color:#308080; '>.</span>go<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id'</span><span style='color:#308080; '>,</span><span style='color:#406080; '>{</span>x<span style='color:#406080; '>:</span>el<span style='color:#308080; '>.</span>offsetLeft<span style='color:#406080; '>}</span><span style='color:#308080; '>,</span><span style='color:#406080; '>{</span>x<span style='color:#406080; '>:</span><span style='color:#008c00; '>200</span><span style='color:#406080; '>}</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>80</span><span style='color:#308080; '>,</span>Easing<span style='color:#308080; '>.</span>elastic<span style='color:#308080; '>.</span>eOut<span style='color:#308080; '>,</span>onFinished<span style='color:#308080; '>,</span><span style='color:#200080; font-weight:bold; '>function</span> <span style='color:#308080; '>(</span>e<span style='color:#308080; '>)</span><span style='color:#406080; '>{</span>
+          el<span style='color:#308080; '>.</span>style<span style='color:#308080; '>.</span>left<span style='color:#308080; '>=</span> e<span style='color:#308080; '>.</span>obj<span style='color:#308080; '>.</span>x<span style='color:#308080; '>+</span><span style='color:#1060b6; '>'px'</span><span style='color:#406080; '>;</span>
+     <span style='color:#406080; '>}</span><span style='color:#308080; '>)</span>
+Twin<span style='color:#308080; '>.</span>getObject<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id'</span><span style='color:#308080; '>)</span><span style='color:#308080; '>.</span>pause<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+</pre>
+
+    </div>
+
+
+</div>
+
+</body>
+
+
+
+</html>

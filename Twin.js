@@ -1,3 +1,6 @@
+/**
+ * Created by ZoQol on 12/31/2014.
+ */
 const N=10;
 const X=2;
 const dopi=Math.PI*2;

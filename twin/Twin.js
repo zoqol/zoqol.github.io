@@ -302,7 +302,7 @@ TwableObj=function (obj,props,duration,ease,onFinish,onUpdate,easeProps){
 
         for (i in this.props){
             var o=this.oth[i];
-            var p=this.ease(this.t,invT, o.x0, o.delta,this.eProps);
+            var p=this.ease(this.t+1,invT, o.x0, o.delta,this.eProps);
            // console.log(this.obj[i]);
             this.obj[i]=p;
         }

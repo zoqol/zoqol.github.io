@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>New Project</title>
+	<meta name="description" content="" />
+</head>
+<body>
+	<style>
+	body{
+		margin: 0;
+		background-color: #eee;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
+	}
+	#holder{
+		position: relative;
+		width: 480px;
+		height: 480px;
+	}
+	canvas{
+		border:1px solid gray;
+		background-color:#101010;
+		background-image: linear-gradient(to left,rgba(255,255,255,.05) 1px, transparent 0),
+		linear-gradient(rgba(255,255,255,.05) 1px, transparent 0);
+		background-size: 10px 10px;
+		position: absolute;
+		
+	}
+	</style>
+	<div id="holder">
+		<canvas id="canv" width="480" height="480"></canvas>
+	</div>
+	<script defer src="minimalcomps.min.js"></script>
+
+	<script defer src="controls.js">
+		
+	</script>
+	<script src="Fourier.js"></script>
+	<!--
+		
+	-->
+</body>
+</html>

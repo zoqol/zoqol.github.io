@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+  
+    <!-- Import @tensorflow/tfjs or @tensorflow/tfjs-core -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script>
+
+<!-- Adds the WASM backend to the global backend registry -->
+<script  src="https://zoqol.github.io/minimalcomps.min.js"></script>
+<style>
+    	#camera{
+		max-width: 100vw;
+		height: auto;
+    border: 1px solid gray;
+	}
+  #rect{
+    border: 1px solid red;
+    width: 0px;
+    height: 0px;
+    position: absolute;
+  }
+  body{
+    background-color: #eee;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  .container{
+    position: relative;
+    display: inline-block;
+  }
+
+  #logs{
+    position: fixed;
+    width: 200px;
+    height: 100vh;
+    background-color: rgba(0,0,0,.5);
+    left: 0;
+    top: 0;
+    z-index: 3;
+    color: white;
+    overflow: scroll;
+  }
+</style>
+</head>
+<body>
+
+    <div id="logs">
+
+    </div>
+         <div class="container">
+        <video autoPlay id="camera" ></video>
+        <div id="rect">
+    
+        </div>
+    
+       </div>
+
+    <script>
+       tf.setBackend('wasm').then(() => main());
+      
+        function main(){
+            
+            
+const DEBUGMODE=true;
+function trace(x) {
+	if(DEBUGMODE) console.log(x)
+
+	// body...
+}
+
+const modelConfig = {  scale: 0.7 };
+
+
+
+ const loadModel = () => {
+    const promise = new Promise((resolve, reject) => {
+
+      blazeface.load({inputWidth:128,inputHeight:128}).then(network => {
+
+
+        tf.loadLayersModel('./model_files/model.json').then((model) => {
+          resolve({network,model});
+        }).catch(x => reject(x))
+
+        
+
+      }).catch(x => {
+        reject(x);
+      });
+
+    })
+
+    return promise;
+  };
+
+var video=document.querySelector('#camera');
+var rect=document.querySelector('#rect');
+var logs=document.querySelector('#logs');
+var requestDelay=200;
+const THRESHOLD = 34;
+ 
+
+const { Checkbox,Panel,HSlider, Button, Canvas, HBox, Toggle,TextArea, Defaults, Dropdown, Label,Window } = mc2;
+
+
+const panel = new Window(document.body, "Control", 250, 20, 200, 400);
+let showRect=true;
+
+new HSlider(panel, 10, 35, "request delay:", 20, 0, 100,(evt)=>{
+	requestDelay=1000*evt.detail/100
+});
+
+
+new Checkbox(panel, 10, 5, "draw bound",true,(x)=>{
+	showRect=!showRect
+	console.log('show rect:' + showRect)
+	rect.style.display=showRect?'block':'none'
+});
+var tx=new TextArea(panel, 10, 80, "");
+var lable=new Label(panel, 10, 65, "Status:");
+window.addEventListener('init',(evt)=>{
+      trace('init facedetect')
+      trace(evt)
+      tx.text+='\ninit-time:'+evt.detail+'ms'
+    },{once:true})
+
+function LoadCamera() {
+    const promise = new Promise((resolve, reject) => {
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            resolve(stream)
+          })
+          .catch(function (err0r) {
+            reject('camera is not connected')
+          });
+      } else {
+        reject('camera is not connected')
+      }
+
+    });
+    return promise;
+  }
+
+function  setAABB(x,y,w,h) {
+
+
+
+	  
+      rect.style.left=x+'px'
+      rect.style.width=w+'px'
+
+      rect.style.top = y+'px';
+       rect.style.height = h+'px';
+    
+	// body...
+}
+function pred(network,vid,model) {
+	var time=Date.now();
+  const returnTensors = true;
+	network.estimateFaces(vid,returnTensors).then(predicts=>{
+	
+		
+
+	 
+   
+		if(predicts.length > 0){
+
+
+
+
+     
+		 
+
+     var start = predicts[0].topLeft;
+      var end = predicts[0].bottomRight;
+    var size = [end[0] - start[0], end[1] - start[1]];
+     
+
+
+      var start = predicts[0].topLeft.dataSync();
+        var end = predicts[0].bottomRight.dataSync();
+
+        var size = [end[0] - start[0], end[1] - start[1]];
+
+      
+
+
+      var imageWidth=vid.videoWidth;
+      var imageHeight=vid.videoHeight;
+      var image=vid;
+ 
+      const margin = 22
+          start[0] = Math.max(start[0] - margin/2, 0);
+          start[1] = Math.max(start[1] - 46, 0);
+
+          end[0] = Math.min(end[0] + margin/2, imageWidth);
+          end[1] = Math.min(end[1] + 15, imageHeight);
+          size = [end[0] - start[0], end[1] - start[1]];
+          setAABB(start[0], start[1], size[0], size[1]);
+
+       start = tf.tensor(start);
+        end = tf.tensor(end);
+
+
+        var tensor = tf.browser.fromPixels(image).toFloat();
+          var normalizedTopLeft = start.div([imageWidth, imageHeight]);
+          var normalizedBottomRight = end.div([imageWidth, imageHeight]);
+
+          const boxes = tf
+            .concat([[normalizedTopLeft.dataSync()[1], normalizedTopLeft.dataSync()[0]], [normalizedBottomRight.dataSync()[1], normalizedBottomRight.dataSync()[0]]])
+            .reshape([-1, 4]);
+
+
+          const tensor_shape = tensor.shape;
+          var image_tensor = tensor.expandDims(0);
+          // It's face size and constant
+          const IMAGE_WIDTH = 224;
+          const IMAGE_HEIGHT = 224;
+          var crop_size;
+          // The model input is in RGB format and normalized
+          var tensor_face = tf.image.cropAndResize(image_tensor, boxes, [0], crop_size = [IMAGE_HEIGHT, IMAGE_WIDTH]).div(tf.scalar(255));
+
+          var prediction_tensor = model.predict(tensor_face);
+          var lbl = prediction_tensor.dataSync().indexOf(Math.max(...prediction_tensor.dataSync()));
+      //    trace(delta)
+         trace(lbl)
+
+         
+       
+
+         var delta=Date.now()-time;
+         window.dispatchEvent(new CustomEvent('init',{'detail': delta}))
+      logs.textContent+=delta+'ms, '
+			logs.scrollTop=logs.scrollHeight
+
+      var stat=''
+         if (lbl == 0) {
+            stat='LEFT'
+          }
+          else if (lbl == 1) {
+            stat = 'NONE';
+
+
+          }
+          else {
+            stat = 'RIGHT';
+
+          }
+          lable.text="STATUS: "+stat;
+
+
+
+
+     /* const { annotations } = predicts[0];
+
+      const lc = annotations['leftCheek'];
+      const rc = annotations['rightCheek'];
+      const deltax = lc[0][2] - rc[0][2];
+
+      if (deltax > THRESHOLD) {
+        lable.text="Status: LEFT"
+      
+        
+      }else if(deltax <- THRESHOLD){
+        lable.text="Status: RIGHT"
+      }else{
+        lable.text="Status: NONE"
+      }
+
+			 
+			logs.textContent+=delta+'ms, '
+			logs.scrollTop=logs.scrollHeight
+			const boundingBox = predicts[0].boundingBox;
+			setAABB(boundingBox);*/
+		}
+		
+		setTimeout(x=>{
+			 pred(network,vid,model)
+		},requestDelay)
+	})
+	// body...
+}
+	var time=Date.now();
+    loadModel().then(({network,model}) => {
+    	trace('model loaded')
+  
+    	var delta=Date.now()-time;
+
+    	//trace(delta+'ms')
+    	tx.text+='\nModel load time: '+delta+'ms';
+
+    	 LoadCamera().then(stream => {
+        trace('camera loaded');
+        video.srcObject = stream;
+        video.addEventListener('loadeddata', (evt)=>{
+        	trace('video loaded')
+        	 pred(network,video,model)
+        })
+       
+
+
+    	})
+    });
+
+
+
+
+        }
+      </script>
+</body>
+</html>

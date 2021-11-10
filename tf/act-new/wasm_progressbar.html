@@ -217,6 +217,7 @@ function  loop() {
     var color='red';
     if(100*correctCounter/frameCounter>acceptionRate) color='green'
     if(divideCounter==0 && 100*correctCounter/frameCounter>50) color='green'
+	    logs.textContent += `coorrect frrame ratio: ${correctCounter} / ${frameCounter}; `;
     frameCounter=0;
     correctCounter=0;
     divideCounter++;
@@ -348,7 +349,7 @@ function pred(network,vid,model) {
 
          var delta=Date.now()-time;
          window.dispatchEvent(new CustomEvent('init',{'detail': delta}))
-      logs.textContent+=delta+'ms, '
+    //  logs.textContent+=delta+'ms, '
 			logs.scrollTop=logs.scrollHeight
        if(started) frameCounter++;
 

@@ -255,6 +255,7 @@
             var color = 'red';
             if (100 * correctCounter / frameCounter > acceptionRate) color = 'green'
             if (divideCounter == 0 && 100 * correctCounter / frameCounter > 50) color = 'green'
+		   logs.textContent += `coorrect frrame ratio: ${correctCounter} / ${frameCounter}; `;
             frameCounter = 0;
             correctCounter = 0;
             divideCounter++;
@@ -262,7 +263,7 @@
             factorTimer = Date.now();
 
           
-              logs.textContent += `coorrect frrame ratio: ${correctCounter} / ${frameCounter}; `;
+             
           }
           var remaning = ((totalTime + .5) * 1000 - deltaT)
           if (remaning <= 0) {

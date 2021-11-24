@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+  
+    <!-- Import @tensorflow/tfjs or @tensorflow/tfjs-core -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script>
+
+<!-- Adds the WASM backend to the global backend registry -->
+<script  src="https://zoqol.github.io/minimalcomps.min.js"></script>
+<style>
+    	#camera{
+		max-width: 100vw;
+		height: auto;
+    border: 1px solid gray;
+	}
+  #rect{
+    border: 1px solid red;
+    width: 0px;
+    height: 0px;
+    position: absolute;
+  }
+  body{
+    background-color: #eee;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  .container{
+    position: relative;
+    display: inline-block;
+  }
+
+  #logs{
+    position: fixed;
+    width: 200px;
+    height: 100vh;
+    background-color: rgba(0,0,0,.5);
+    left: 0;
+    top: 0;
+    z-index: 3;
+    color: white;
+    overflow: scroll;
+  }
+
+    .progress-holer{
+    background-color: white;
+    width: 680px;
+    height: 10px;
+    background-color: white;
+    position: fixed;
+    bottom: 1rem;
+    left: 1px;
+    right: 1px;
+    display: flex;
+    margin: auto;
+  }
+  .fill{
+    width: 30%;
+    height: 100%;
+    background-color: red;
+  }
+</style>
+</head>
+<body>
+  <div class="progress-holer" id="progress"></div>
+    <div id="logs">
+
+    </div>
+         <div class="container">
+        <video autoPlay id="camera" ></video>
+        <div id="rect">
+    
+        </div>
+    
+       </div>
+
+    <script>
+       tf.setBackend('wasm').then(() => main());
+      
+        function main(){
+            
+            
+const DEBUGMODE=true;
+function trace(x) {
+	if(DEBUGMODE) console.log(x)
+
+	// body...
+}
+
+const modelConfig = {  scale: 0.7 };
+
+
+
+ const loadModel = () => {
+    const promise = new Promise((resolve, reject) => {
+
+      facemesh.load({inputWidth:128,inputHeight:128}).then(network => {
+
+        resolve({network,network});
+
+        
+
+      }).catch(x => {
+        reject(x);
+      });
+
+    })
+
+    return promise;
+  };
+
+var video=document.querySelector('#camera');
+var rect=document.querySelector('#rect');
+var logs=document.querySelector('#logs');
+
+var progress=document.querySelector('#progress');
+ 
+
+
+
+var toLeft=Math.random()>.5
+var started=false;
+var totalTime=6;
+var t0=0;
+var acceptionRate=80;
+var divideFactor=3;
+var factorTimer=0;
+var divideCounter=0;;
+var frameCounter=0;
+var correctCounter=0;
+
+
+var requestDelay=200;
+const THRESHOLD = 34;
+ 
+const { TextInput,Checkbox,Panel,HSlider, Button, Canvas, HBox, Toggle,TextArea, Defaults, Dropdown, Label,Window } = mc2;
+
+
+const panel = new Window(document.body, "Control", 250, 20, 200, 400);
+let showRect=true;
+
+new HSlider(panel, 10, 35, "request delay:", 100*requestDelay/1000, 0, 100,(evt)=>{
+  requestDelay=1000*evt.detail/100
+});
+
+
+new Checkbox(panel, 10, 5, "draw bound",true,(x)=>{
+  showRect=!showRect
+  console.log('show rect:' + showRect)
+  rect.style.display=showRect?'block':'none'
+});
+
+var tx=new TextArea(panel, 10, 80, "");
+var targetLabel=new Label(panel, 10, 53, `Rotate to ${toLeft?'LEFT':'RIGHT'}`);
+var lable=new Label(panel, 10, 65, "Status:");
+var timeCounterLabel=new Label(panel, 10, 220, "Total time (second):");
+var totalTimeInput=new TextInput(panel, 10, 235, totalTime,(evt)=>{
+  var num=parseFloat(evt.detail);
+  if(isNaN(num)){
+     alert('PLEASE ENTER NUMERICAL VALUE')
+     return;
+  }
+     totalTime=num;
+});
+
+var progressDivLabel=new Label(panel, 10, 220+40, "Progressbar division number:");
+var progressDivInput=new TextInput(panel, 10, 235+40, divideFactor,(evt)=>{
+    var num=parseFloat(evt.detail);
+  if(isNaN(num)){
+     alert('PLEASE ENTER NUMERICAL VALUE')
+     return;
+  }
+     divideFactor=num;
+
+});
+
+
+
+new HSlider(panel, 10, 235+85, "Acception threshold (percent):", acceptionRate, 0, 100,(evt)=>{
+   acceptionRate=evt.detail;
+});
+var timeCounterLabel=new Label(panel, 10, 235+110, "Remaining time:");
+
+
+
+
+var btn=new Button(panel,10,195,'Start',evt=>{
+  started=true;
+  factorTimer=t0=Date.now();
+
+loop()
+
+})
+function  loop() {
+  if(started==false) return;
+  var ct=Date.now();
+  var deltaT=ct-t0;
+
+  var ftimer=ct-factorTimer;
+  if(1000*totalTime/divideFactor<ftimer) {
+    console.log('changed');
+    console.log(correctCounter,frameCounter)
+    var color='red';
+    if(100*correctCounter/frameCounter>acceptionRate) color='green'
+    if(divideCounter==0 && 100*correctCounter/frameCounter>50) color='green'
+	    logs.textContent += `coorrect frrame ratio: ${correctCounter} / ${frameCounter}; `;
+    frameCounter=0;
+    correctCounter=0;
+    divideCounter++;
+    progress.innerHTML+=`<div class='fill' style="width:${100/divideFactor}%;background-color:${color}"></div>`
+    factorTimer=Date.now();
+  }
+  var remaning=((totalTime+.5)*1000 -deltaT)
+if(remaning<=0) {
+  started=false;
+  remaning=0;
+}
+timeCounterLabel.text='Remaining time: '+remaning+'ms'
+
+  setTimeout(loop,0)
+  // body...
+}
+
+window.addEventListener('init',(evt)=>{
+      trace('init facedetect')
+      trace(evt)
+      tx.text+='\ninit-time:'+evt.detail+'ms'
+    },{once:true})
+
+function LoadCamera() {
+    const promise = new Promise((resolve, reject) => {
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            resolve(stream)
+          })
+          .catch(function (err0r) {
+            reject('camera is not connected')
+          });
+      } else {
+        reject('camera is not connected')
+      }
+
+    });
+    return promise;
+  }
+
+function  setAABB(x,y,w,h) {
+
+
+
+	  
+      rect.style.left=x+'px'
+      rect.style.width=w+'px'
+
+      rect.style.top = y+'px';
+       rect.style.height = h+'px';
+    
+	// body...
+}
+function pred(network,vid,model) {
+	var time=Date.now();
+  const returnTensors = true;
+	network.estimateFaces(vid).then(predicts=>{
+	
+		
+
+	 
+   
+		if(predicts.length > 0){
+
+
+
+    const { annotations } = predicts[0];
+
+      const lc = annotations['leftCheek'];
+      const rc = annotations['rightCheek'];
+      const deltax = lc[0][2] - rc[0][2];
+
+      if (deltax > THRESHOLD) {
+        lable.text="Status: LEFT"
+        
+        if(toLeft && started) correctCounter++;
+        
+      }else if(deltax <- THRESHOLD){
+        lable.text="Status: RIGHT"
+        if(!toLeft && started) correctCounter++;
+      }else{
+        lable.text="Status: NONE"
+      }
+
+			var delta=Date.now()-time;
+			logs.textContent+=delta+'ms, '
+			logs.scrollTop=logs.scrollHeight
+			const boundingBox = predicts[0].boundingBox;
+			setAABB(boundingBox);
+		}
+		
+		setTimeout(x=>{
+			 pred(network,vid,model)
+		},requestDelay)
+	})
+	// body...
+}
+	var time=Date.now();
+    loadModel().then(({network,model}) => {
+    	trace('model loaded')
+  
+    	var delta=Date.now()-time;
+
+    	//trace(delta+'ms')
+    	tx.text+='\nModel load time: '+delta+'ms';
+
+    	 LoadCamera().then(stream => {
+        trace('camera loaded');
+        video.srcObject = stream;
+        video.addEventListener('loadeddata', (evt)=>{
+        	trace('video loaded')
+        	 pred(network,video,model)
+        })
+       
+
+
+    	})
+    });
+
+
+
+
+        }
+      </script>
+</body>
+</html>

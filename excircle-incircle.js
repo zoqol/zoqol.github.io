@@ -95,7 +95,7 @@ Tritangent.prototype = {
 			++_g;
 			var dx = this.O.x + a.x - this.mouse.x;
 			var dy = this.O.y + a.y - this.mouse.y;
-			if(dx * dx + dy * dy < 100) {
+			if(dx * dx + dy * dy < 250) {
 				found = true;
 				this.selectedPoint = a;
 			}

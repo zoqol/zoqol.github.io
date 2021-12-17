@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Excircle-Incircle</title>
+	<meta name="description" content="" />
+	<style>
+		#canv {
+			background: #101010;
+			
+	    border: 1pxsolid gray;
+    background-color: #101010;
+    background-image: linear-gradient(to left,rgba(255,255,255,.05) 1px, transparent 0), linear-gradient(rgba(255,255,255,.05) 1px, transparent 0);
+    background-size: 10px 10px;
+ touch-action:none;
+		}
+
+		.cursor {
+			width: 16px;
+			height: 16px;
+			background-image: url(cursor.png);
+			position: absolute;
+			transition: transform 1s ease-In-out;
+		}
+
+		.fade {
+			transform: translate(-100px, -210px);
+
+		}
+
+		body {
+			background-color: #eee;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.holder {
+			width: 480px;
+			height: 480px;
+			position: relative;
+			overflow: hidden;
+
+		}
+
+		.text {
+			color:#eee;
+			font-family: monospace, sans-serif;
+			position: absolute;
+			bottom: 20px;
+			font-size: 9px;
+			width: 200px;
+			text-align: justify;
+		
+			left: calc(50% - 100px);
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="holder">
+		<div class="cursor"></div>
+		<canvas width="480" height="480" id="canv"></canvas>
+		<div class="text">Theorem: The external bisectors of any two angles of a triangle
+			are concurrent with the internal bisector of the third angle. </div>
+	</div>
+
+	<script src="excircle-incircle.js"></script>
+</body>
+
+</html>

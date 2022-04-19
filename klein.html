@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Rigid Body simulation</title>
+    <title>Klein</title>
     <link rel="stylesheet" href="prism.css" />
     <script src="prism.js"></script>
     <style>
@@ -95,6 +95,8 @@
 var el = document.getElementById("canv");
 var w = 480;
 var h = 480;
+Vec3.scaleFactor=1;
+Vec3.sf=0;
 Vec3.prototype.O = new Vec3(w / 2, h / 2, 0);
 Vec3.O = new Vec3(w / 2, h / 2, 0);
 function Vec3(x, y, z) {
@@ -166,16 +168,17 @@ Obj3D.prototype.update = function () {
   // console.log()
   var p = this.loc;
   Vec3.O = Vec3.prototype.O;
-
+  Vec3.sf+=(Vec3.scaleFactor - Vec3.sf)*.0001;
+  console.log()
   if (p.z > -fl) {
     var k = Vec3.O.to(p);
 
     var sc = fl / (fl + p.z);
-
+   
     //this.scaleX = this.scaleY = sc;
     this.scale = sc;
-    this.x = Vec3.O.x + k.x * sc;
-    this.y = Vec3.O.y + k.y * sc;
+    this.x = Vec3.O.x + k.x *Vec3.sf* sc;
+    this.y = Vec3.O.y + k.y *Vec3.sf* sc;
     this.visible = true;
     //  this.alpha = sc;
   } else {
@@ -209,6 +212,14 @@ el.addEventListener("mousemove", function (e) {
 
   m.y = e.clientY - e.target.offsetTop;
 });
+el.addEventListener('mousewheel',function (e){
+  e.preventDefault()
+  console.log(e.deltaY)
+ 
+    Vec3.scaleFactor+=(e.deltaY)/100
+    if(Vec3.scaleFactor<.5) Vec3.scaleFactor=.5
+ 
+})
 el.addEventListener(
   "touchmove",
   function (e) {

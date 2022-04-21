@@ -88,7 +88,6 @@ var Main = function() {
 };
 Main.__name__ = true;
 Main.main = function() {
-	console.log("src/Main.hx:315:","qq");
 	new Main();
 };
 Main.prototype = {
@@ -175,8 +174,9 @@ Main.prototype = {
 			var d = Math.sqrt(dx * dx + dy * dy);
 			if(d < 70) {
 				s.setPos(-1000,-1000);
+				s.velocity = new Point(0,0);
 				s.ignore = true;
-				console.log("src/Main.hx:260:","fuck");
+				console.log("src/Main.hx:261:","fuck");
 			}
 		}
 		var _g = 0;
@@ -212,8 +212,10 @@ Main.prototype = {
 		while(_g < _g1) {
 			var i = _g++;
 			var s = this.sprms[i];
-			s.update();
-			s.render(g);
+			if(!s.ignore) {
+				s.update();
+				s.render(g);
+			}
 		}
 	}
 	,__class__: Main

@@ -76,7 +76,8 @@
 
 
 	}
-	a{
+
+	a {
 		color: white;
 		text-decoration: none;
 	}
@@ -91,6 +92,7 @@
 		padding: 0px;
 		width: calc(600px - 2em);
 		margin: auto;
+		
 
 
 	}
@@ -99,11 +101,13 @@
 		text-align: center;
 
 		background-color: rgba(0, 0, 0, 0.6);
-		display: block;
+		display: flex;
+		justify-content: center;
 
 		position: relative;
 		width: 100%;
 		height: 100%;
+		 
 
 
 	}
@@ -119,23 +123,21 @@
 		display: block;
 	}
 
-	a {
-	 
-	}
+	a {}
 
 	div p {
 		display: block;
 	}
-	.elm{
+
+	.elm {
 		cursor: pointer;
-		 opacity: .5;
-		 color:white
-	 
-		transition: all .8s cubic-bezier(0.23, 1, 0.320, 1);
+		opacity: .5;
+		color: white transition: all .8s cubic-bezier(0.23, 1, 0.320, 1);
 	}
-	.elm:hover{
-		 opacity: 1;
-		
+
+	.elm:hover {
+		opacity: 1;
+
 	}
 
 	.item {
@@ -288,9 +290,121 @@
 
 	}
 
-	.exs p{
+	.exs p {
 		white-space: nowrap;
-    width: 100px;
+		width: 100px;
+	}
+
+	.circ {
+		width: 150px;
+		height: 150px;
+
+		border-radius: 50%;
+		;
+		margin: 1rem;
+		overflow: hidden;
+		position: relative;
+		transition: transform .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		/*cubic-bezier(0.64, 0.57, 0.67, 1.53);*/
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-image: url(me.jpg);
+		background-size: contain;
+		border: 1px dashed #eee;
+
+		z-index: 2;
+
+
+
+	}
+
+	.circ:hover {
+
+		border: 1px dashed #eee;
+
+
+	}
+
+	.inner-obj {
+		background-color: black;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 100%;
+		border-radius: 50%;
+		transition: all .5s ease;
+
+	}
+
+	#circ-wrapper:hover .circ {
+		transform: scale(.93) translateY(3px);
+
+
+	}
+
+	#circ-wrapper:hover .inner-obj {
+		border-radius: 0;
+		top: 0%;
+	}
+
+	#circ-wrapper {
+
+		position: absolute;
+
+		cursor: pointer;
+		transition: transform .1s cubic-bezier(0.165, 0.84, 0.44, 1);
+	}
+
+	#circ-wrapper:active {
+		transform: scale(.8);
+	}
+
+	.lable {
+		visibility: hidden;
+		position: relative;
+		font-family: 'Courier New', Courier, monospace;
+		transform-origin: center;
+		transition: all .2s ease;
+		font-size: 8px;
+
+
+	}
+
+	#circ-wrapper:hover .lable {
+		visibility: visible;
+		color: white;
+		z-index: 5;
+		transform: scale(2);
+
+	}
+
+	.title-text {
+		color: #888;
+		position: absolute;
+		bottom: 1rem;
+		font-size: 13px;
+		font-family: monospace;
+	}
+	.overall-bg{
+		width: 150%;
+		height: 200%;
+		background-color: white;
+	 
+		position: absolute;
+		transform: translateY(50%);
+		border-radius: 50%;
+		transition: all .7s cubic-bezier(0.165, 0.84, 0.44, 1);
+	
+	}
+	overall{
+		overflow: hidden;
+	}
+	overall:hover .overall-bg{
+		transform: translateY(-20%);
+		 border-radius: 0%;
+	
+		
 	}
 </style>
 
@@ -306,21 +420,22 @@
 		<div class="row">
 			<div class="col-sm-12 sdt">
 				<overall>
-					<div class="me">
+					<div class="overall-bg"></div>
+					<div id="circ-wrapper">
+						<a href="/about">
+							<div class="circ exs">
+								<div class="lable ">About Me!</div>
+								<div class="inner-obj">
+
+
+								</div>
+							</div>
+						</a>
 
 					</div>
 
-					<div class="tex"><pre>
-zoqol
-I make things move, using code
 
-<div ><a href="/about"><b class="elm">[+] ABOUT</b></a> |<a href="/contact"></a> <b class="elm">[+] CONTACT</b> |<a href="https://twitter.com/zoqoly"> <b class="elm">[+] TWITTER</b></a></div>
-
-
-</pre>
-
-					</div>
-
+					<div class="title-text"> I make things move, using code.</div>
 				</overall>
 
 			</div>
@@ -438,7 +553,7 @@ I make things move, using code
 
 			<div class="item exs">
 				<a href="Ellipsen.html"><img src="pics/ellipsen.png"></a>
-				<p>[+] Ellipsen | 2018  </p>
+				<p>[+] Ellipsen | 2018 </p>
 
 			</div>
 			<div class="item exs"><a href="cardiod.html"><img src="pics/cardiod.jpg"></a>
@@ -552,10 +667,10 @@ I make things move, using code
 				<p>[+] G3cp/G4ip | 2020 </p>
 			</div>
 			<div class="item exs"><a href="https://zoqol.github.io/excircle-incircle"><img src="pics/incircle.jpg"></a>
-				<p>[+] Incircle | 2021  </p>
+				<p>[+] Incircle | 2021 </p>
 			</div>
 			<div class="item exs"><a href="https://zoqol.github.io/noisyparticles"><img src="pics/vortaxe.jpg"></a>
-				<p>[+] Vortex | 2021  </p>
+				<p>[+] Vortex | 2021 </p>
 			</div>
 
 
@@ -619,23 +734,69 @@ I make things move, using code
 			})
 
 		}
-		var elms2=document.querySelectorAll('.exs')
+		var elms2 = document.querySelectorAll('.exs')
 
 		for (elm of elms2) {
-			var p=elm.querySelector('p')
-			console.log(elm)
-			console.log(p)
-			if(!p) continue
+			var p = elm.querySelector('p')
+
+
+			if (!p) continue
 			var fc = new FuckyText(p)
-		 
-			elm.fc=fc;
+
+			elm.fc = fc;
 			elm.addEventListener("pointerover", function (e) {
-				console.log(e.currentTarget)
+
 				e.currentTarget.fc.start();
 			})
 
 		}
 
+
+		let isOver = false;
+		const circwrapper = document.querySelector('#circ-wrapper');
+		const bb = circwrapper.getBoundingClientRect();
+		const circ = circwrapper.querySelector('.circ');
+		const lable = circwrapper.querySelector('.lable');
+		const scale = 30;
+		let pos = { x: 0, y: 0 };
+		const realPos = { x: 0, y: 0 }
+
+
+		circwrapper.addEventListener('pointermove', evt => {
+			let dx = bb.width / 2 - evt.offsetX;
+			let dy = bb.height / 2 - evt.offsetY;
+
+			let sx = dx / (bb.width / 2)
+			let sy = dy / (bb.height / 2)
+			let dot = dx * dx + dy * dy;
+
+			pos.x = -sx * scale
+			pos.y = sy * scale
+
+		})
+		circwrapper.addEventListener('mouseover', evt => {
+			isOver = true;
+		})
+		circwrapper.addEventListener('pointerleave', evt => {
+			pos = { x: 0, y: 0 };
+			isOver = false;
+
+		})
+
+		const loop = () => {
+
+			realPos.x += (pos.x - realPos.x) * .1;
+			realPos.y += (pos.y - realPos.y) * .1;
+			circ.style.left = realPos.x + "px"
+			circ.style.top = -realPos.y + "px"
+
+			lable.style.left = realPos.x / 3 + "px"
+			lable.style.top = -realPos.y / 3 + "px"
+			//circ.style.top=Math.random()*5+"px"
+
+			window.requestAnimationFrame(loop)
+		}
+		loop()
 	</script>
 
 </body>

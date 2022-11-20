@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>DEMO</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+   <style>
+    :root{
+        --color-orange:#d78645;
+    }
+
+    @font-face {
+    font-family: ArialRound;
+    src: url(./assets/fonts/ARLRDBD.ttf);
+    }
+    body{
+        margin: 0;
+        font-family: ArialRound,Arial, Helvetica, sans-serif;
+        overflow-x: hidden;
+        display: flex;
+        justify-content: center;
+        background:linear-gradient(180deg,#be6f4d,#a11b05)
+        
+    }
+    .container{
+        width:1366px;
+        background-color: black;
+        box-shadow: 0px 0px 50px rgba(0,0,0,.5);
+    }
+    .header{
+        background-color: white;
+
+    }
+    #top-bar{
+        background-color: var(--color-orange);
+       padding: 2rem;
+    }
+    #header-board{
+        width: 100%;
+        height: 900px;
+        background-color: #11616c;
+        background-size: 230% 350%;
+        background-image: radial-gradient(circle,#d78645 30%, #11616c 100%);
+      
+       
+        background-repeat: no-repeat;
+        background-position: 0% 0%;
+        border-top-left-radius: 35px;
+        position: relative;
+        top: -35px;
+    }
+    #header-board .logo{
+        background-image: url(./assets/images/logo.png);
+        width: 72px;
+        height: 91px;
+       background-size: contain;
+        display: inline-block;
+        margin:1.5rem 0 0 1.5rem;
+        background-repeat: no-repeat;
+    }
+    ul{
+        padding: 0;
+    }
+    #header-board .menu{
+       
+        display: inline-block;
+        color: white;
+        border-right: 2px solid var(--color-orange);
+        border-bottom: 2px solid var(--color-orange);
+        padding-right: 2rem;
+        padding-top: 1rem;
+        height: 4.3rem;
+        border-bottom-right-radius: 40px;
+        margin-left: 2rem;
+    }
+    #header-board .menu ul li{
+        display: inline;
+        font-size: 1.2rem;
+      
+      
+    }
+    #header-board .menu ul li:hover{
+        color: var(--color-orange);
+        cursor: pointer;
+      }
+  
+    #header-board .menu ul li::before{
+        content: '';
+        display: inline-block;
+        width: .5rem;
+        height: .5rem;
+        border-radius: 50%;
+        margin-right: .5rem;
+        margin-left: 1rem;
+        position: relative;
+        top: -3px;
+   
+        background-color: orange;
+    }
+    .header #eagle{
+        background-image: url(./assets/images/eagle.png);
+        height: 1130px;
+         width: 100%;
+        top: 38%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        position: absolute;
+        right: -40%;
+        z-index: 1;
+    }
+
+    .flex{display: flex;}
+    .header h1{
+        font-size: 5rem;
+        color: white;
+        margin-left: 5rem;
+        margin-top: 3rem;
+        text-shadow: 0px 8px 1px rgba(0,0,0,.7);
+    }
+    .header h2{
+        color: white;
+        margin-left: 5rem;
+        z-index: 2;
+        position: relative;
+        line-height: 2;
+        text-shadow: 0px 3px 3px rgba(0,0,0,.7);
+    }
+    r{
+        color: red;
+    }
+    .text-bg{
+        width: 100%;
+       
+        margin-top:-320px;
+        position: relative;
+        background-color: transparent;
+        -webkit-mask-image: url(/assets/images/bg.svg);
+  mask-image: url(./assets/images/eagle.png);
+  
+  -webkit-mask-repeat: no-repeat;
+  
+    }
+    .bgx{
+        width: 100%;
+        height: 1946px;
+        padding-top: 330px;
+        background: linear-gradient(-45deg,#c64723,#edc566);
+    }
+    .text-box{
+     
+        color: white;
+        font-size: 26px;
+        padding-left: 8rem;
+        padding-right: 17rem;
+        white-space: pre-line;
+        line-height: 1.7;
+    }
+    .section-title{
+        font-size: 2.5rem;
+        background-color: #f52a2f;
+        display: inline-block;
+        padding: .5rem;
+        border-radius: 40px;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        margin-left: 4rem;
+    }
+    .design-icon img{
+        width: 100%;
+
+    }
+    .design-icon{
+        display: inline-block;
+    width: 9rem;
+    margin-left: 3rem;
+    align-self: center;
+    }
+    .section-image{
+        display: flex;
+
+    }
+    .footer{
+   
+        height: 200px;
+        width: 100%;
+        background-image: url(./assets/images/eagle-footer.png);
+        background-repeat: no-repeat;
+        background-position: 50%;
+        background-size: 12%;
+        margin-top: -200px;
+    }
+  
+    .footer-strip{
+        height: 3rem;
+        width: 100%;
+        background-color: black;
+    }
+    .social-box{
+        width: 50px;
+        height: 50px;
+        background-color: white;
+        border-radius: 50%;
+        display: inline-block;
+        margin: .5rem;
+        cursor: pointer;
+        background-size:70%;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .social-box:hover{
+        background-color: #11616c;
+    }
+    .social-container{
+        margin-left: 2rem;
+        margin-top: 1rem;
+       
+    }
+    .fb{
+        background-image: url(./assets/images/fb.png);
+    }
+    .twitter{
+        background-image: url(./assets/images/twitter.png);
+
+    }
+    .discord{
+        background-image: url(./assets/images/discord.png);
+
+    }
+    .youtube{
+        background-image: url(./assets/images/youtube.png);
+
+    }
+   </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div id="top-bar"></div>
+            <div id="header-board">
+                <div class="flex">
+                    <div class="logo"></div>
+                <div class="menu">
+                    <ul>
+                        <li>Home</li>
+                        <li>About us</li>
+                        <li>Contact us</li>
+                        <li>Prices</li>
+                    </ul>
+                </div>
+                <div class="social-container">
+                    <div class="social-box discord"></div>
+                    <div class="social-box fb"></div>
+                    <div class="social-box twitter"></div>
+                    <div class="social-box youtube"></div>
+
+                </div>
+
+                </div>
+                <div id="eagle"></div>
+                <h1><r>RED </r>BEAK <br> AGENCY</h1>
+                <h2 >
+                    Design, Development & Copywriting for our Crypto & NFT ambition. <br>
+End-to-End creation of your Web3.0 project.
+
+                </h2>
+                
+                
+            </div>
+            <div class="text-bg">
+                <div class="bgx">
+<div class="section-title">Benefits:</div>
+                    <div class="text-box">
+                        1- Quality: we provide service of the absolute highest caliber custom-tailored to your needs.
+2- Quantity: Diverse range od design options and functionalities using modern know-how and up-to-date blockchain trends.
+3- Size: Suitable options available for both big and small project ambitions.
+4- Speed: Swift and sound delivery in just 5-10 days.
+5- Price: Reasonabe package with a clear plan for return investment.      
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="section-title">Serevices:</div>
+<div class="text-box">
+    THE 3 PILARS OF A SUCCESSFULL WEBSITE
+</div>
+<br>
+<br>
+<br>
+<div class="section-title" style="margin-left: 10rem;">Design</div>
+ <br>
+ <br>
+
+<div class="section-image">
+    <div class="design-icon">
+        <img src="./assets/images/icon0.png">
+    </div>
+    <div class="text-box">
+      custom-tailored & 
+      made from scratch.
+
+      User-friendly Interface
+      optimized for conversion.
+
+      Unlimited revisions & support
+      and awesomeness guaranteed.
+    </div>
+</div> 
+                </div>
+            </div>
+
+<div class="footer">
+    
+</div>
+<div class="footer-strip"></div>
+        </div>
+    </div>
+   
+</body>
+</html>

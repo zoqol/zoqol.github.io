@@ -1,560 +1,804 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>DEMO</title>
-   
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-   <style>
-    :root{
-        --color-orange:#d78645;
-        font-size: 1.2vh;
-    }
+	<title>zoQol</title>
 
-    @font-face {
-    font-family: ArialRound;
-    src: url(./assets/fonts/ARLRDBD.ttf);
-    }
-    body{
-        margin: 0;
-        font-family: ArialRound,Arial, Helvetica, sans-serif;
-        overflow-x: hidden;
-        display: flex;
-        justify-content: center;
-        background:linear-gradient(180deg,#be6f4d,#a11b05)
-        
-    }
-    .container{
-        width:100vh;
-        background-color: black;
-        box-shadow: 0px 0px 50px rgba(0,0,0,.5);
-        height: 100vh;
-        position: relative;
-        
-    }
-    .header{
-        background-color: white;
-        height: 100%;
-        position: relative;
-
-    }
-    #top-bar{
-        background-color: var(--color-orange);
-       padding: 2rem;
-    }
-    #header-board{
-        width: 100%;
-        height:calc( 100% - 3rem);
-        background-color: #11616c;
-        background-size: 230% 350%;
-        background-image: radial-gradient(circle,#d78645 30%, #11616c 100%);
-      
-       
-        background-repeat: no-repeat;
-        background-position: 0% 0%;
-        border-top-left-radius: 35px;
-        position: relative;
-        top: -3rem;
-    }
-    #header-board .logo{
-        background-image: url(./assets/images/logo.png);
-        width: 6%;
-        height: 91px;
-       background-size: contain;
-        display: inline-block;
-        margin:1.5rem 0 0 1.5rem;
-        background-repeat: no-repeat;
-    }
-    ul{
-        padding: 0;
-    }
-    #header-board .menu{
-       
-        display: inline-block;
-        color: white;
-        border-right: 2px solid var(--color-orange);
-        border-bottom: 2px solid var(--color-orange);
-        padding-right: 2rem;
-        padding-top: 1rem;
-        height: 4.3rem;
-        border-bottom-right-radius: 40px;
-        margin-left: 2rem;
-    }
-    #header-board .menu ul li{
-        display: inline;
-        font-size: 1.2rem;
-      position: relative;
-      transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-    }
-
-    #header-board .menu ul li::after{
-
-        content: '';
-       width: 0;
-    height: 2px;
-    background-color: var(--color-orange);
-    position: absolute;
-    left: 2rem;
-    bottom: -0.5rem;
-    transition: width 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-    }
-    #header-board .menu ul li:hover::after{
-        width:  calc(100% - 2rem);
-       
-
-    }
-    #header-board .menu ul li:hover{
-        color: var(--color-orange);
-        cursor: pointer;
-      }
-  
-    #header-board .menu ul li::before{
-        content: '';
-        display: inline-block;
-        width: .5rem;
-        height: .5rem;
-        border-radius: 50%;
-        margin-right: .5rem;
-        margin-left: 1rem;
-        position: relative;
-        top: -.01rem;
-   
-        background-color: orange;
-    }
-    .header #eagle{
-        background-image: url(./assets/images/eagle.png);
-        height: 90%;
-         width: 90%;
-         pointer-events: none;
-        background-size: contain;
-        background-repeat: no-repeat;
-        position: absolute;
-        right: -29%;
-        z-index: 2;
-        transition: transform 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-    }
-
-    .flex{display: flex;}
-    .header h1{
-        font-size: 5rem;
-        color: white;
-        margin-left: 5rem;
-        margin-top: 15%;
-        text-shadow: 0px 5px 1px rgba(0,0,0,.7);
-        z-index: 1;
-        position: relative;
-    }
-    .header h2{
-
-        color: white;
-        margin-left: 9rem;
-        z-index: 2;
-        position: relative;
-        line-height: 1.6;
-        text-shadow: 0px 3px 3px rgba(0,0,0,.7);
-    }
-
-    .header h2::before{
-        
-        content: '';
-        display: inline-block;
-        width: .5rem;
-        height: .5rem;
-        border-radius: 50%;
-        margin-right: .5rem;
-        margin-left: 1rem;
-        position: relative;
-        top: -.01rem;
-       box-shadow: 0px 2px 2px rgba(0,0,0,.7);
-        background-color: red;
-    }
-    
-    r{
-        color: red;
-    }
-    .text-bg{
-        width: 100%;
-       
-        margin-top:-320px;
-        position: relative;
-        background-color: transparent;
-        -webkit-mask-image: url(./assets/images/bg.svg);
-  mask-image: url(./assets/images/bg.svg);
-  transition: transform 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-  -webkit-mask-repeat: no-repeat;
-  
-    }
-    .bgx{
-        width: 100%;
-   
-        padding-top: 330px;
-        background: linear-gradient(-45deg,#c64723,#edc566);
-    }
-    .text-box{
-     
-        color: white;
-        font-size: 26px;
-        padding-left: 8rem;
-        padding-right: 17rem;
-        white-space: pre-line;
-        line-height: 1.7;
-    }
-    .section-title{
-        font-size: 2.5rem;
-        background-color: #f52a2f;
-        display: inline-block;
-        padding: .5rem;
-        border-radius: 40px;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        margin-left: 4rem;
-    }
-    .design-icon img{
-        width: 100%;
-
-    }
-    .design-icon{
-        display: inline-block;
-    width: 9rem;
-    margin-left: 3rem;
-    align-self: center;
-    }
-    .section-image{
-        display: flex;
-
-    }
- 
-    .social-box{
-        width: 3.5rem;
-        height: 3.5rem;
-        background-color: white;
-        border-radius: 50%;
-        display: inline-block;
-        margin: .5rem;
-        cursor: pointer;
-        background-size:70%;
-        background-position: center;
-        background-repeat: no-repeat;
-        transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-     overflow: hidden;
-
-    }
-    
-    .social-box::after{
-        content: '';
-        width: 0%;
-        height: 0%;
-        background: inherit;
-        display: block;
-        bottom: 0;
-        left: -100%;
-        border-radius: 50%;
-        width: 100%;
-        height: 100%;
-        position: relative;
-        background-position: center;
-        background-repeat: no-repeat;
-        transition: left .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-       
-    }
-    .social-box:hover::after{
-      
-        left: 0%;
-     
-         
-    }
-    .social-box:hover{
-        background-color: var(--color-orange);
-        background-position: 320%;
-    }
-    .social-container{
-        margin-left: 2rem;
-        margin-top: 1rem;
-       
-    }
-    .fb{
-        background-image: url(./assets/images/fb.svg);
-    }
-    .twitter{
-        background-image: url(./assets/images/twitter.png);
-
-    }
-    .discord{
-        background-image: url(./assets/images/discord.svg);
-
-    }
-    .youtube{
-        background-image: url(./assets/images/youtube.png);
-
-    }
-    .glow{
-        background-color: #c64723;
-        width: 600px;
-        height: 600px;
-        position: absolute;
-        right: -200px;
-        bottom: 0%;
-        
-        border-radius: 50%;
-        filter: blur(150px );
-    }
-    .glow-wrapper{
-        pointer-events: none;
-        width: 100%;
-        height: 100%;
-     
-    position: absolute;
-    left: 0;
-    top: 0;
-    overflow: hidden;
-    }
-
-    .fade-in{
-        animation:fadein .8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-
-    }
-    #t1,#t2,#t3{
-        opacity: 0;
-    }
-    @keyframes fadein {
-        from{
-            
-            opacity: 0;
-            transform: translateX(-2rem);
-        }
-        to{
-            opacity: 1;
-            transform: translateX(0rem);
-        }
-        
-    }
-   
-
-    .orange-element{
-
-        width: 100%;
-        height: 80%;
-      
-       top:calc(55% - 40%);
-         
-        position: absolute;
-        z-index: 0;
-
-    }
-    .orange-element .top{
-         
-         -webkit-mask-image: url(./assets/images/bg-top.svg);
-             mask-image: url(./assets/images/bg-top.svg);
-             -webkit-mask-repeat: no-repeat;
-         height: 30%;
-    }
-    .orange-element .bottom{
-         
-         -webkit-mask-image: url(./assets/images/bg-bottom.svg);
-             mask-image: url(./assets/images/bg-bottom.svg);
-         height: 30%;
-         -webkit-mask-repeat: no-repeat;
-
-    }
-    .orange-element .middle {
-        background: linear-gradient(to left,#c64723,#edc566);
- height: 39%;
-    }
-    .tint{
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to left,#c64723,#edc566);
-    }
-
-    .footer{
-        position: absolute;
-        width: 100%;
-        background-color: white;
-        height: 30%;
-        bottom: 0;
-        border-bottom-right-radius: 35px;
-      
-    }
-     .after{
-      content: ' ';
-    width: 50px;
-    height: 50px;
-    display: block;
-    background-color: black;
-    right: 0;
-    position: absolute;
-    top: -50px;
-    z-index: 0;
-   
-    }
-    .after::after{
-        content: ' ';
-        width: 100%;
-        height: 100%;
-        background-color: white;
-        display: block;
-        border-bottom-right-radius: 50%;
-    }
-    .footer img{
-        width: 10%;
-        position: absolute;
-        bottom: 8%;
-        left: calc(50% - 5%);
-    }
-    .footer-strip{
-        position: absolute;
-        bottom: 0;
-        height: 3%;
-        width: 100%;
-        background-color: black;
-        text-align: center;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        
-    }
-    .footer-strip > div{
-        display: inline-block;
-        
-    }
-    button.start{
-        font-size: 1.4rem;
-        z-index: 11;
-    position: relative;
-    border: none;
-    background: #f52a2f;
-    padding: 1.5rem 2.8rem;
-    border-radius: 15pc;
-    font-weight: bolder;
-    text-shadow: 0 0  1px black;
-    font-family: ArialRound,Arial, Helvetica, sans-serif;
-    border: 3px solid #ca9e8b;
-    box-shadow: 0 3px 5px black;
-    cursor: pointer;
-    transition: all .3s ease;
-    display: block;
-    margin: auto;
-    margin-top: 2.2rem;
-  
-
-    }
-    button.start:hover{
-        box-shadow: 0 3px 10px black;
-        background-color: red;
-    }
-    button.start:hover:active{
-        background-color: white;
-    }
-    
-    a{
-        color:unset;
-        text-decoration: unset;
-    }
-   </style>
-    
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div id="eagle"></div>
-            <div id="top-bar"></div>
-            <div id="header-board">
-                <div class="footer"> 
-                   
-                    <img src="./assets/images/eagle-footer.png">
-                </div>
-               
-                <div class="orange-element">
-                    <div class="top">
-                        <div class="tint"></div>
-                    </div>
-                    <div class="middle"></div>
-                    <div class="bottom">
-                        <div class="tint"></div>
-                    </div>
-                </div>
-                <div class="flex">
-                    <div class="logo"></div>
-                <div class="menu">
-                    <ul>
-                        <li>Home</li>
-                        <li>About us</li>
-                        <li>Contact us</li>
-                        <li>Prices</li>
-                    </ul>
-                </div>
-                <div class="social-container">
-                    <div class="social-box discord"></div>
-                    <div class="social-box fb"></div>
-                    <div class="social-box twitter"></div>
-                    <div class="social-box youtube"></div>
+<style type="text/css">
+	:root {
+		--v: 120px;
+	}
 
-                </div>
-
-                </div>
-                
-             
-               
-                <h1><r>RED </r>BEAK <br> AGENCY</h1>
-                <h2 id="t1">
-                    Design, Development & Copywriting for yor <br> Crypto & NFT ambition. <br> 
+	;
 
 
-                </h2>
-                <h2 id="t2">
-                    End-to-End creation of your Web3.0 project.
-                </h2>
-                <br>
-                
-                <a href="/get-started.html">
-                    <button class="start">GET STARTED!</button>
-                </a>
-              
-               
-                
-            </div>
-            
-         
+	body {
 
- 
-           
-        </div>
-       <div class="footer-strip">
-        <div class="after"></div>
-        <div>Terms of Service / Privacy Policy</div>
-        <div style="margin-left: 2rem">Ⓒ READ BEAK AGENCY, All right reserved</div>
-    </div>
-       </div>
-    </div>
-   <script>
 
-window.onload=()=>{
+		margin: 0;
 
-    const eagle=document.querySelector('#eagle')
- const bg=document.querySelector('.text-bg')
-    window.addEventListener('scroll',evt=>{
-        const pfx=window.scrollY/(document.body.offsetHeight - window.innerHeight);
-        //eagle.style.top=`${topx+pfx*100}px`;
-        eagle.style.transform=`translateY(${-pfx*200}px)`
-        bg.style.transform=`translateY(${pfx*50}px)`
-        
-    })
+		background-color: red !important;
+	}
 
-    const observer=new IntersectionObserver(elements=>{
-        elements.forEach(el=>{
-            if(el.isIntersecting){
-                console.log(el)
-                el.target.classList.add('fade-in')
-            }
-        })
-    })
-    observer.observe(document.querySelector('#t1'))
-    observer.observe(document.querySelector('#t2'))
-    observer.observe(document.querySelector('#t3'))
-   
-}
-   </script>
+	html {
+		background: white;
+	}
+
+	.box {
+		float: left;
+		display: block;
+		width: 100px;
+		height: 100px;
+		background-color: white;
+		margin-bottom: 20px;
+		border: 5px solid #101010;
+		padding: 0;
+		text-align: center;
+
+		margin: 5px;
+
+
+
+	}
+
+	.me {
+		background-image: url('me.jpg');
+		display: inline-block;
+		width: 200px;
+		height: 161px;
+
+		clip-path: circle(40% at center);
+		background-size: 100% 100%;
+
+
+
+	}
+
+	.box:hover {
+		opacity: .5;
+	}
+
+	div pre {
+		color: white;
+
+
+	}
+
+	img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.container {
+		width: 600px;
+		margin: auto;
+
+
+	}
+
+	a {
+		color: white;
+		text-decoration: none;
+	}
+
+
+
+	.sdt {
+
+		background-size: cover;
+		background-image: url('bg.jpg');
+		height: 250px;
+		padding: 0px;
+		width: calc(600px - 2em);
+		margin: auto;
+		
+
+
+	}
+
+	overall {
+		text-align: center;
+
+		background-color: rgba(0, 0, 0, 0.6);
+		display: flex;
+		justify-content: center;
+
+		position: relative;
+		width: 100%;
+		height: 100%;
+		 
+
+
+	}
+
+	pre {
+
+		overflow: hidden;
+
+	}
+
+	.tex {
+		color: white;
+		display: block;
+	}
+
+	a {}
+
+	div p {
+		display: block;
+	}
+
+	.elm {
+		cursor: pointer;
+		opacity: .5;
+		color: white transition: all .8s cubic-bezier(0.23, 1, 0.320, 1);
+	}
+
+	.elm:hover {
+		opacity: 1;
+
+	}
+
+	.item {
+
+		width: 100px;
+		height: auto;
+		float: left;
+		margin-left: 1em;
+		float: left;
+		margin-top: .9em;
+
+
+
+
+
+
+
+	}
+
+	.item+.item {}
+
+	.item img {
+		box-sizing: border-box;
+
+		width: 100px;
+		height: 100px;
+		border: 3px solid #101010;
+
+	}
+
+	.item p {
+		font-size: 9px;
+		line-height: 1;
+		transition: background-color .3s linear;
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+	}
+
+	.item2 p {
+		font-size: 9px;
+		line-height: 1;
+		color: black;
+
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+	}
+
+	.item:hover p {
+		background-color: black;
+		color: white;
+	}
+
+	.item2 {}
+
+	.item2:hover p {
+		background-color: black;
+		color: white;
+	}
+
+	.wide {
+
+		display: block;
+		height: 100px;
+		width: 565px;
+	}
+
+
+
+	.item h4 {
+		font-size: 9px;
+		line-height: 1;
+		display: inline;
+		float: line;
+		float: left;
+		margin: 0;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+	}
+
+	.item-box {
+		width: calc(200px + 1em);
+		height: 100px;
+		background-color: white;
+		display: block;
+
+		float: left;
+		display: flex;
+		box-sizing: border-box;
+		margin-left: 1em;
+		margin-top: 1em;
+
+
+
+
+	}
+
+	.big-item {
+
+		width: calc(200px + 1em);
+		height: calc(200px + .6em);
+		display: block;
+		float: left;
+		margin-left: 1em;
+
+		margin-top: 1em;
+
+	}
+
+	.big-item img {
+		width: 100%;
+		height: 100%;
+		border: 3px solid #101010;
+	}
+
+	.item-box img {
+		box-sizing: border-box;
+		float: left;
+		width: 100px;
+		height: 100px;
+		border: 3px solid #101010;
+	}
+
+	.item-box:hover p {
+		background-color: black;
+		color: white;
+	}
+
+	.item-box w {
+		width: : 100px;
+		height: 100px;
+		display: block;
+		font-size: 9px;
+		padding: 1em;
+		margin: 0px;
+
+		color: #888;
+		font-family: Arial, Helvetica, "メイリオ", Meiryo, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", sans-serif
+	}
+
+	red {
+		background-color: darkred;
+		color: white;
+	}
+
+	t {
+		background: darkred;
+		margin-right: .3rem;
+		border-radius: .5rem;
+
+
+
+	}
+
+	.exs p {
+		white-space: nowrap;
+		width: 100px;
+	}
+
+	.circ {
+		width: 150px;
+		height: 150px;
+
+		border-radius: 50%;
+		;
+		margin: 1rem;
+		overflow: hidden;
+		position: relative;
+		transition: transform .3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		/*cubic-bezier(0.64, 0.57, 0.67, 1.53);*/
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-image: url(me.jpg);
+		background-size: contain;
+		border: 1px dashed #eee;
+
+		z-index: 2;
+
+
+
+	}
+
+	.circ:hover {
+
+		border: 1px dashed #eee;
+
+
+	}
+
+	.inner-obj {
+		background-color: black;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 100%;
+		border-radius: 50%;
+		transition: all .5s ease;
+
+	}
+
+	#circ-wrapper:hover .circ {
+		transform: scale(.93) translateY(3px);
+
+
+	}
+
+	#circ-wrapper:hover .inner-obj {
+		border-radius: 0;
+		top: 0%;
+	}
+
+	#circ-wrapper {
+
+		position: absolute;
+
+		cursor: pointer;
+		transition: transform .1s cubic-bezier(0.165, 0.84, 0.44, 1);
+	}
+
+	#circ-wrapper:active {
+		transform: scale(.8);
+	}
+
+	.lable {
+		visibility: hidden;
+		position: relative;
+		font-family: 'Courier New', Courier, monospace;
+		transform-origin: center;
+		transition: all .2s ease;
+		font-size: 8px;
+
+
+	}
+
+	#circ-wrapper:hover .lable {
+		visibility: visible;
+		color: white;
+		z-index: 5;
+		transform: scale(2);
+
+	}
+
+	.title-text {
+		color: #888;
+		position: absolute;
+		bottom: 1rem;
+		font-size: 13px;
+		font-family: monospace;
+	}
+	.overall-bg{
+		width: 150%;
+		height: 200%;
+		background-color: white;
+	 
+		position: absolute;
+		transform: translateY(50%);
+		border-radius: 50%;
+		transition: all .7s cubic-bezier(0.165, 0.84, 0.44, 1);
+	
+	}
+	overall{
+		overflow: hidden;
+	}
+	overall:hover .overall-bg{
+		transform: translateY(-20%);
+		 border-radius: 0%;
+	
+		
+	}
+</style>
+
+<body style="">
+
+	<div class="container">
+		<div style="    z-index: -1;
+    width: 600px;
+    height: 100vh;
+    background: #ffffff;
+    position: fixed;
+    top: 0;"></div>
+		<div class="row">
+			<div class="col-sm-12 sdt">
+				<overall>
+					<div class="overall-bg"></div>
+					<div id="circ-wrapper">
+						<a href="/about">
+							<div class="circ exs">
+								<div class="lable ">About Me!</div>
+								<div class="inner-obj">
+
+
+								</div>
+							</div>
+						</a>
+
+					</div>
+
+
+					<div class="title-text"> [...]</div>
+				</overall>
+
+			</div>
+		</div>
+
+		<div></div>
+
+		<div class="row" style="margin-top: 1em;display:block;">
+			<div class="item-box exs ">
+				<a href='Tree2.html' target=' '>
+					<img src="pics/tree.jpg">
+				</a>
+
+				<w class="item2 ">
+					<p style="overflow: hidden;">[+] Fractal Tree | 2013</p>
+					<hr>
+					Simple fractal tree, generated recursively using trigonometric functions and beizer curves,
+					originally written in <red>AS3</red>
+				</w>
+
+
+			</div>
+			<div class="item-box exs">
+				<a href='sierpinski.html' target=' '>
+					<img src="pics/sierp.png">
+				</a>
+
+				<w class="item2 ">
+					<p>[+] Distorted Sierpiński</p>
+					<hr>
+					Famous Sirpinski's triangle or fractal, subdivided recursively by random intervals.
+
+
+			</div>
+
+
+
+			<div class="item exs">
+				<a href="spirals.html" target="ـblank"><img src="pics/spiral.png"></a>
+				<p>[+] Spirals | 2018</p>
+
+			</div>
+
+
+
+
+			<div style="float:left;">
+
+				<div class="item-box exs">
+					<a href='newton.html' target=' '>
+						<img src="pics/newton.png">
+					</a>
+
+					<w class="item2">
+						<p>[+] Newton | 2018</p>
+						<hr>
+						This image is generated by solving a complex equation using Newton's method.
+
+
+				</div>
+				<div style="float:none;">
+					<div class="item exs">
+						<a href="Torricelli.html"><img src="pics/Torricelli.jpg"></a>
+						<p>[+] Torricelli | 2018 </p>
+
+					</div>
+
+					<div class="item exs"><a href="sperm.html"><img src="pics/sperm.jpg"></a>
+						<p>[+] Sperm</p>
+					</div>
+				</div>
+			</div>
+			<div class="item2 exs">
+				<div class="big-item">
+					<a href="klein.html">
+						<img src="pics/klein.jpg">
+
+					</a>
+					<p>[+] Klein Bottle | 2018 </p>
+				</div>
+
+			</div>
+
+
+
+			<div class="item"><a href="balls.html"><img src="pics/balls.jpg"></a></div>
+
+
+
+
+
+
+
+
+			<div class="item exs"><a href="sinlaw.html"><img src="pics/sinlaw.jpg"></a>
+				<p>[+] sins.swf</p>
+			</div>
+
+
+
+			<div class="item-box exs ">
+				<a href='fluid.html' target=' '>
+					<img src="pics/fluid.jpg">
+				</a>
+
+				<w class="item2">
+					<p>[+] Fluid | 2013</p>
+					<hr>
+					This fluid-like simulation based on Vector fields, a function is defined on vectors to make curvy
+					motion, originally written in <red>AS3</red>
+				</w>
+
+
+			</div>
+
+			<div class="item exs">
+				<a href="Ellipsen.html"><img src="pics/ellipsen.png"></a>
+				<p>[+] Ellipsen | 2018 </p>
+
+			</div>
+			<div class="item exs"><a href="cardiod.html"><img src="pics/cardiod.jpg"></a>
+				<p>[+] cardioid</p>
+			</div>
+
+
+			<div class="item exs"><a href="deer3d.html"><img src="pics/deer3d.jpg"></a>
+				<p>[+] 3Deer</p>
+			</div>
+
+
+
+
+
+
+
+			<div class="item2 exs">
+				<div class="big-item">
+					<a href="cloth.html">
+						<img src="pics/cloth.jpg">
+
+					</a>
+					<p>[+] Cloth Simulation | 2013 </p>
+				</div>
+
+			</div>
+
+			<div style="float:left;">
+
+				<div class="item-box exs">
+					<a href='taylor.html' target=''>
+						<img src="pics/taylor.jpg">
+					</a>
+
+					<w class="item2">
+						<p>[+] Taylor | 2017 </p>
+						<hr>
+						a visualization of taylor series, for the function exp(x).
+
+
+				</div>
+				<div style="float:none;">
+					<div class="item exs"><a href="dots.html"><img src="pics/dots.jpg"></a>
+						<p>[+] Dots</p>
+					</div>
+
+					<div class="item exs"><a href="fibo.html"><img src="pics/fibo.jpg"></a>
+						<p>[+] fibo.swf</p>
+					</div>
+				</div>
+			</div>
+
+
+
+			<div class="item"><a href="fraclll.html"><img src="pics/fracIII.jpg"></a></div>
+
+
+
+
+
+
+
+			<div class="item exs">
+				<a href="wave.html"><img src="pics/8koin.png"></a>
+				<p>[+] Wave </p>
+
+			</div>
+			<div class="item exs wide ">
+				<a href="dnebula.html"><img src="pics/nebula.png" style="width: 565px"></a>
+				<p>[+] Dandelion Nebula | 2019 </p>
+			</div>
+
+
+
+
+
+
+
+
+			<div class="item exs"><a href="limacon.html"><img src="pics/limacon.jpg"></a>
+				<p>[+] limacn.swf</p>
+			</div>
+
+			<div class="item exs"><a href="parabola.html"><img src="pics/parabola.JPG"></a>
+				<p>[+] Parabola.swf</p>
+			</div>
+			<div class="item exs"><a href="Fourier.html"><img src="pics/fourier.jpg"></a>
+				<p>[+] Fourier[.swf]</p>
+			</div>
+			<div class="item exs"><a href="blackhole.html"><img src="pics/blackhole.png"></a>
+				<p>[+] black-asshole | 2019</p>
+			</div>
+			<div class="item exs"><a href="rigid.html"><img src="pics/rigid.png"></a>
+				<p>[+] rigid-body sim+ray</p>
+			</div>
+
+			<div class="item-box exs ">
+				<a href="modal.html" target=" ">
+					<img src="pics/modal.png">
+				</a>
+
+				<w class="item2">
+					<p>[+] Modal | 2019</p>
+					<hr>
+					A Model Checker for Propositonal Modal logic(PML), you can easily design models and evaulate modal
+					propositions under different interpretations.
+
+			</div>
+			<div class="item exs"><a href="https://zoqol.github.io/calculi"><img src="pics/proof.PNG"></a>
+				<p>[+] G3cp/G4ip | 2020 </p>
+			</div>
+			<div class="item exs"><a href="https://zoqol.github.io/excircle-incircle"><img src="pics/incircle.jpg"></a>
+				<p>[+] Incircle | 2021 </p>
+			</div>
+			<div class="item exs"><a href="https://zoqol.github.io/noisyparticles"><img src="pics/vortaxe.jpg"></a>
+				<p>[+] Vortex | 2021 </p>
+			</div>
+
+
+
+		</div>
+	</div>
+	<script>
+
+		function FuckyText(el) {
+			var alphabets = "ABCDEFGHIJPQRSabcdefgopqrs01";
+			var orig = el.innerHTML;
+
+			var str = el.innerHTML;
+			var ar = str.split("");
+			var p = FuckyText.prototype;
+			p.duration = 600;
+			var startTime = 0;
+			var timeIndex = [];
+			var isRunning = false;
+			var eps = .2
+			for (var i = 0; i < str.length; i++) {
+				var dx = i / str.length;
+				timeIndex[i] = dx + Math.random() * (1 - dx);
+			}
+			var iid = 0;
+			this.start = function () {
+				if (isRunning == true) return;
+				isRunning = true;
+
+				startTime = new Date().getTime()
+				iid = setInterval(function () {
+					var currentTime = new Date().getTime() - startTime;
+					var px = currentTime / p.duration;
+
+					var ch = ""
+					for (var i = 0; i < str.length; i++) {
+						var tx = timeIndex[i];
+						if (px > tx) ch += str[i]
+						else if (px < tx / 3) ch += "-"
+						else ch += alphabets[Math.floor(Math.random() * (alphabets.length - 1))]
+
+						//alphabets[Math.floor(Math.random()*(alphabets.length-1))]
+					}
+					el.innerHTML = ch;
+
+					if (px > 1) {
+						isRunning = false;
+						clearInterval(iid);
+					}
+				}, 1000 / 60)
+			}
+
+		}
+		var elms = document.querySelectorAll('.elm')
+		for (elm of elms) {
+			var fc = new FuckyText(elm)
+			elm.fc = fc;
+			elm.addEventListener("pointerover", function (e) {
+
+				e.target.fc.start();
+			})
+
+		}
+		var elms2 = document.querySelectorAll('.exs')
+
+		for (elm of elms2) {
+			var p = elm.querySelector('p')
+
+
+			if (!p) continue
+			var fc = new FuckyText(p)
+
+			elm.fc = fc;
+			elm.addEventListener("pointerover", function (e) {
+
+				e.currentTarget.fc.start();
+			})
+
+		}
+
+
+		let isOver = false;
+		const circwrapper = document.querySelector('#circ-wrapper');
+		const bb = circwrapper.getBoundingClientRect();
+		const circ = circwrapper.querySelector('.circ');
+		const lable = circwrapper.querySelector('.lable');
+		const scale = 30;
+		let pos = { x: 0, y: 0 };
+		const realPos = { x: 0, y: 0 }
+
+
+		circwrapper.addEventListener('pointermove', evt => {
+			let dx = bb.width / 2 - evt.offsetX;
+			let dy = bb.height / 2 - evt.offsetY;
+
+			let sx = dx / (bb.width / 2)
+			let sy = dy / (bb.height / 2)
+			let dot = dx * dx + dy * dy;
+
+			pos.x = -sx * scale
+			pos.y = sy * scale
+
+		})
+		circwrapper.addEventListener('mouseover', evt => {
+			isOver = true;
+		})
+		circwrapper.addEventListener('pointerleave', evt => {
+			pos = { x: 0, y: 0 };
+			isOver = false;
+
+		})
+
+		const loop = () => {
+
+			realPos.x += (pos.x - realPos.x) * .1;
+			realPos.y += (pos.y - realPos.y) * .1;
+			circ.style.left = realPos.x + "px"
+			circ.style.top = -realPos.y + "px"
+
+			lable.style.left = realPos.x / 3 + "px"
+			lable.style.top = -realPos.y / 3 + "px"
+			//circ.style.top=Math.random()*5+"px"
+
+			window.requestAnimationFrame(loop)
+		}
+		loop()
+	</script>
+
 </body>
+
 </html>

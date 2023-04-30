@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,200;6..72,400&display=swap"
+    rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [
+          ["$", "$"],
+          ["\\\\(", "\\\\)"],
+        ],
+      },
+      svg: {
+        fontCache: "global",
+      },
+    };
+  </script>
+  <script src="/mathjax/es5/tex-chtml.js" id="MathJax-script" async></script>
+  <style>
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #999;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: darkred;
+    }
+
+    body {
+      overflow-x: hidden;
+      font-family: 'Newsreader', serif;
+      line-height: 1.2;
+      scrollbar-width: none;
+
+    }
+
+    .formula {
+      margin: 1rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .board {
+      width: 100%;
+      height: 390px;
+      background-color: white;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      background-image: linear-gradient(to left, rgba(0, 0, 0, .05) 1px, transparent 0), linear-gradient(rgba(0, 0, 0, .05) 1px, transparent 0);
+      background-size: 10px 10px;
+    }
+
+
+    @media (max-width:700px) {
+      .board {
+        justify-content: initial;
+      }
+
+    }
+
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background-color: #f9f9f9;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    .rules {}
+
+    .rules .row {
+      display: flex;
+      justify-content: space-evenly;
+    }
+
+    body {
+      background-color: #202020;
+    }
+
+    .code {
+      background-color: #eee;
+      font-family: "Courier New", Courier, monospace;
+      border-radius: 3px;
+    }
+
+    .qoute {
+      font-size: .8rem;
+      margin: 1rem;
+      color: #404040;
+    }
+
+    #btn {
+      box-sizing: border-box;
+      font: 10px sans-serif;
+      background-color: #f9f9f9;
+      border-radius: 0;
+      border: 1px solid #999;
+      cursor: pointer;
+    }
+
+    #inpt,
+    #calc {
+      font: 10px sans-serif;
+      background-color: #f9f9f9;
+      border-radius: 0;
+      border: 1px solid #999;
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="board">
+    <div id="sd" class="formula">
+
+    </div>
+  </div>
+
+  <div style="text-align: center;position: relative; top: -2.3em;">
+    <select id="calc">
+      <option value="g3cp">
+        G3cp
+      </option>
+      <option value="g4ip">
+        G4ip
+      </option>
+    </select> <input id="inpt" placeholder=""> <input id="btn" type="button" value="Search">
+
+  </div>
+  <main class="container">
+
+    <div> <b>
+        <h1>[+] G3cp/G4ip</h1>
+      </b></div>
+    <div>
+
+
+      <div style="position: relative; text-align: justify;">
+
+        <figure style="float: right;margin: 1em">
+          <img src="gentzen.png" width="168">
+          <figcaption style="font-size: 9px;color:#404040;">Gerhard Gentzen (1909-1945)
+        </figure>
+        It is a proof-search tool for classical and intuitionistic propositional logic, and provides proof in sequent
+        style for theorems of these logics.
+        Sequent calculus was invented by brilliant logician Gerhard Genzen in 1934, It is an implementation of two
+        cut-free sequent systems <b>G3cp</b> & <b>G4ip</b>, which are different from Gentzen's original system <b>LK</b>
+        and <b>LJ</b>. Gentzen used sequent calculus to prove the relative consistency of Peano arithmetic (<b>PA</b>).
+        <br>
+        Dirk van Dalen describes Gentzen with the following words:
+        <br>
+        <div class="qoute">
+          "Gentzen was an exponent of the new generation in every regard. A generation
+          which had begun to understand that Gödel wasn’t the end of logic but meant
+          the beginning of a new and rich life of the subject. Gentzen found himself at the
+          summit of the discipline as he brilliantly created methods to put into practice
+          in logic, namely those of natural deduction and sequent calculi. With the help
+          of these methods he saw chances to do what was still to be done after Gödel.
+          He thoroughly investigated the problem of excluding contradictions from arithmetic. The adjective “brilliant”
+          is correct here . . . Gentzen, who without fuss
+          had relegated Hilbert’s age to the museum, was immature in his socio-political
+          development"
+        </div>
+        <br>
+
+
+
+      </div>
+
+      <div>
+        Here is a brief presentation of <b>G3cp</b>:
+        <br>(Note that $\Gamma$ is a set of formulas, we use $\Gamma, A$ for $\Gamma \cup \{A\}$, so there
+        is no difference between $\Gamma,A$ and $A , \Gamma$ and also $\Gamma, A,
+        A$)
+      </div>
+    </div>
+
+
+    <br>
+    <div class="rules">
+      <div><b>Axioms:</b></div>
+      <div class="row">
+        <div class="formula">
+          $ \large \frac{}{P, \ \Gamma \hspace{.1cm} \vdash \Delta, \ P } $
+        </div>
+
+        <div class="formula">
+          $ \large \frac{}{\bot, \ \Gamma \hspace{.1cm} \vdash \Delta } $
+        </div>
+      </div>
+      <div><b>Rules:</b></div>
+      <div class="row">
+        <div class="formula">
+          $ \large \frac{\Gamma \hspace{.1cm} \vdash \Delta, \ A \hspace{.5cm}
+          \Gamma \hspace{.1cm} \vdash \Delta, \ B}{ \Gamma \hspace{.1cm}
+          \vdash \Delta, \ A \land B} \small \ L \land$
+        </div>
+
+        <div class="formula">
+          $ \large \frac{ A, \ B, \ \Gamma \hspace{.1cm} \vdash C } { A \land
+          B, \ \Gamma \hspace{.1cm} \vdash C} \small \ R \land$
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="formula">
+          $ \large \frac{A, \ \Gamma \hspace{.1cm} \vdash \Delta \hspace{.5cm}
+          B, \ \Gamma \hspace{.1cm} \vdash \Delta}{ A \lor B, \ \Gamma
+          \hspace{.1cm} \vdash \Delta} \small \ L \lor$
+        </div>
+        <div class="formula">
+          $ \large \frac{ \Gamma \hspace{.1cm} \vdash \Delta, \ A, \ B } {
+          \Gamma \hspace{.1cm} \vdash \Delta, \ A \lor B} \small \ R \lor $
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="formula">
+          $ \large \frac{ \Gamma \hspace{.1cm} \vdash \Delta, \ A
+          \hspace{.5cm} B, \ \Gamma \hspace{.1cm} \vdash \Delta}{ A \ \supset
+          \ B, \ \Gamma \hspace{.1cm} \vdash \Delta} \small \ L \supset$
+        </div>
+        <div class="formula">
+          $ \large \frac{ A, \ \Gamma \hspace{.1cm} \vdash \Delta, \ B } {
+          \Gamma \hspace{.1cm} \vdash \Delta, \ A \ \supset \ B} \small \ R
+          \supset $
+        </div>
+      </div>
+    </div>
+
+    <div>For more informations about the system and also <b>G4ip</b>, see "Structural Proof Theory" by Sara Negri.</div>
+    <br>
+    <div>
+      <div><b>How to search a proof</b></div>
+      <br>
+      <div>Type a well-formed formula in the input field above and then press the "Search" button, please use | for
+        $\lor$, & for $\land$ and > for $\supset$, f for $\bot$, the language has not primitive negation, so for the
+        negation of "A" use $A>f$.</div>
+      <div>Make sure the input formula is well-formed, wrap parentheses around each complex sentence. </div>
+      <div>If your formula is a theorem the leaves of the proof tree must be just axioms, otherwise it is not a provable
+        formula.</div>
+    </div>
+    <br>
+    <div>
+
+
+      Here are some examples, the well-known definition of material
+      implication `<span class="code">((A>B)>((A>f)|B))</span>`:
+    </div>
+
+    <div class="formula">
+      $\large \frac{\frac{\frac{\frac{A\hspace{.1cm}\vdash A,B,\bot
+      \hspace{1cm}B,A\hspace{.1cm}\vdash B,\bot }{(A\supset
+      B),A\hspace{.1cm}\vdash B,\bot }L\supset }{(A\supset
+      B)\hspace{.1cm}\vdash (A\supset \bot ),B}R\supset }{(A\supset
+      B)\hspace{.1cm}\vdash ((A\supset \bot )\lor B)}R\lor
+      }{\hspace{.1cm}\vdash ((A\supset B)\supset ((A\supset \bot )\lor
+      B))}R\supset $
+    </div>
+    <div>
+      The law of explosion or Pseudo-Scotus `<span class="code">(A&(A>f))>B</span>`:
+    </div>
+
+    <div class="formula">
+      $\large \frac{\frac{\frac{A\hspace{.1cm}\vdash B,A\hspace{1cm}A,\bot
+      \hspace{.1cm}\vdash B}{A,(A\supset \bot )\hspace{.1cm}\vdash B}L\supset
+      }{(A\land (A\supset \bot ))\hspace{.1cm}\vdash B}L\land
+      }{\hspace{.1cm}\vdash ((A\land (A\supset \bot ))\supset B)}R\supset $
+    </div>
+
+    <div>
+      Contraposition `<span class="code">((A>f)>(B>f))>(B>A)</span>` :
+    </div>
+
+    <div class="formula">
+      $\large \frac{\frac{\frac{\frac{B,A\hspace{.1cm}\vdash A,\bot
+      }{B\hspace{.1cm}\vdash (A\supset \bot ),A}R\supset
+      \hspace{1cm}\frac{B\hspace{.1cm}\vdash A,B\hspace{1cm}B,\bot
+      \hspace{.1cm}\vdash A}{(B\supset \bot ),B\hspace{.1cm}\vdash A}L\supset
+      }{((A\supset \bot )\supset (B\supset \bot )),B\hspace{.1cm}\vdash
+      A}L\supset }{((A\supset \bot )\supset (B\supset \bot
+      ))\hspace{.1cm}\vdash (B\supset A)}R\supset }{\hspace{.1cm}\vdash
+      (((A\supset \bot )\supset (B\supset \bot ))\supset (B\supset
+      A))}R\supset$
+    </div>
+
+    <div>
+      De Morgan's law `<span class="code">((A&B)>f)>((A>f)|(B>f))</span>`:
+    </div>
+
+    <div class="formula">
+      $\large \frac{\frac{\frac{\frac{\frac{\frac{A,B\hspace{.1cm}\vdash
+      A,\bot ,\bot \hspace{1cm}A,B\hspace{.1cm}\vdash B,\bot ,\bot
+      }{A,B\hspace{.1cm}\vdash (A\land B),\bot ,\bot }R\land \hspace{1cm}\bot
+      ,A,B\hspace{.1cm}\vdash \bot ,\bot }{((A\land B)\supset \bot
+      ),A,B\hspace{.1cm}\vdash \bot ,\bot }L\supset }{((A\land B)\supset \bot
+      ),B\hspace{.1cm}\vdash (A\supset \bot ),\bot }R\supset }{((A\land
+      B)\supset \bot )\hspace{.1cm}\vdash (A\supset \bot ),(B\supset \bot
+      )}R\supset }{((A\land B)\supset \bot )\hspace{.1cm}\vdash ((A\supset
+      \bot )\lor (B\supset \bot ))}R\lor }{\hspace{.1cm}\vdash (((A\land
+      B)\supset \bot )\supset ((A\supset \bot )\lor (B\supset \bot
+      )))}R\supset $
+    </div>
+  </main>
+
+
+  <script>
+    document.querySelectorAll(".code").forEach((o) => {
+      o.addEventListener("pointerup", (evt) => {
+        const p = evt.target;
+        console.log(p);
+        let range = new Range();
+        range.setStart(p.firstChild, 0);
+        range.setEnd(p.firstChild, p.textContent.length);
+
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(range);
+
+
+      });
+    });
+
+  </script>
+  <script src="Sequent.js"></script>
+</body>
+
+</html>

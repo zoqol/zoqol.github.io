@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>haZe</title>
+    <style>
+        canvas {
+
+            width: 480px;
+            height: 480px;
+            background-color: white;
+            position: relative;
+        }
+
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+            background-color: white;
+        }
+
+        pre {
+            color: #3e3e3e;
+            position: absolute;
+            bottom: 3rem;
+            text-align: center;
+            font-size: 11px;
+            justify-content: center;
+            margin-left: -3rem;
+        }
+
+        bgbtn {
+            display: block;
+            width: 35px;
+            height: 35px;
+            background-color: white;
+            margin: 5px;
+            float: left;
+            border-radius: 34px;
+            background-size: 100% 100%;
+            cursor: pointer;
+
+        }
+
+        #lnk {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+
+            border-radius: 50%;
+            background-color: white;
+            transition: all 0.1s ease-out;
+
+        }
+
+        #lnk:hover {
+            background-color: #3e3e3e;
+
+        }
+    </style>
+    <canvas width="480" height="480" id="canv" style="left:0px"></canvas>
+
+</head>
+<a href="http://zoqol.github.io" target="blank" id="lnk">
+    <bgbtn name="blue.jpg"
+        style="background-image:url('https://avatars0.githubusercontent.com/u/37377691?s=96&amp;v=4');"></bgbtn>
+</a>
+
+<audio id="audioPlayer" hidden autoplay>
+    <source src="haze.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+
+</audio>
+
+<body>
+    <script>
+        // Ported from ActionScript to JS: http://wa.zozuar.org/code.php?c=yWSL
+        var el = document.getElementById("canv"), ctx = el.getContext("2d"), leftPeak = 0, rightPeak = 0; const audioElement = document.getElementById("audioPlayer"); let analyser, bufferLength, dataArray; function visualize() { analyser && (analyser.getByteTimeDomainData(dataArray), leftPeak = dataArray[0] / 256, rightPeak = dataArray[bufferLength - 1] / 256, requestAnimationFrame(visualize)) } var w, h, circles, container; audioElement.addEventListener("play", (() => { visualize() })), document.addEventListener("click", (t => { const e = new AudioContext, a = e.createMediaElementSource(audioElement); analyser = e.createAnalyser(), a.connect(analyser), analyser.connect(e.destination), analyser.fftSize = 256, bufferLength = analyser.frequencyBinCount, dataArray = new Uint8Array(bufferLength), setTimeout((() => audioElement.play())) })), ctx.lineJoin = "round", ctx.lineCap = "round"; for (var s, ch, triangle, ts = [], url = "sound.mp3", R = 90, sc = 1, l = 25, maxtents = 8, tents = 0, rad = 50, center = { x: (w = 480) / 2, y: (h = 480) / 2 }, st = 2 * Math.PI / maxtents, theta = st / 2, i = 0; i < maxtents; i++) { var t = new Tentacle; t.rotation = -180 * theta / Math.PI, t.head = 20, t.girth = 9, t.muscleRange = 60, t.friction = 0, ts.push(t), theta += st } function loop() { ctx.fillStyle = "white", ctx.fillRect(0, 0, w, h), leftPeak > .68 && (Math.random() > .5 ? document.documentElement.style.filter = "invert(1)" : document.documentElement.style.filter = ""), sc = .2 * (1 - .2 * (leftPeak + rightPeak)) + .8 * sc; for (var t = 0; t < ts.length; t++) { var e = ts[t], a = leftPeak - rightPeak; e.head = 1 + 14 * a, e.muscleFreq = analyser ? 4 * (t % 2 == 0 ? leftPeak * (1 - rightPeak) : (1 - leftPeak) * rightPeak) : .1 } ctx.translate(center.x, center.y), ctx.rotate(.5 / 180 * Math.PI), ts.forEach((t => { ctx.rotate(2 * Math.PI / maxtents), ctx.translate(t.x, t.y), t.moveHandler(), ctx.translate(-t.x, -t.y) })), ctx.beginPath(), ctx.arc(0, 0, R * sc, 0, 2 * Math.PI), ctx.fillStyle = "black", ctx.fill(), ctx.beginPath(), ctx.ellipse(0, 0, R * sc * .88 - 5 * rightPeak, R * sc * .88 - 5 * leftPeak, rightPeak * Math.PI * 2, 0, 2 * Math.PI), ctx.fillStyle = "black", ctx.lineWidth = 7, ctx.strokeStyle = "white", ctx.stroke(), ctx.strokeStyle = "black", ctx.translate(-center.x, -center.y), requestAnimationFrame(loop) } function Tentacle() { this.numNodes = 30, this.head = 2 + Math.floor(4 * Math.random()), this.girth = 8 + Math.floor(12 * Math.random()), this.speedCoefficient = .09 + Math.floor(10 * Math.random() / 50), this.friction = .9 + Math.floor(10 * Math.random() / 100), this.muscleRange = 20 + Math.floor(50 * Math.random()), this.muscleFreq = .1 + Math.floor(100 * Math.random() / 250), this.nodes = [], this.tv = 0, this.theta = 0, this.count = 0, new Event("moveend"), this.generateNodes = function () { this.nodes = []; for (var t = 0; t < this.numNodes; t++)this.nodes.push({ x: 0, y: 0 }) }, this.generateNodes(), this.moveHandler = function (t) { this.nodes[0].x = this.head * Math.cos(Math.PI / 180 * this.theta), this.nodes[0].y = this.head * Math.sin(Math.PI / 180 * this.theta), this.count += this.muscleFreq; var e = this.muscleRange * Math.sin(this.count); this.nodes[1].x = -this.head * Math.cos(Math.PI / 180 * (this.theta + e)), this.nodes[1].y = -this.head * Math.sin(Math.PI / 180 * (this.theta + e)); for (var a = 2; a < this.numNodes; a++) { var n = this.nodes[a].x - this.nodes[a - 2].x, s = this.nodes[a].y - this.nodes[a - 2].y, i = Math.sqrt(n * n + s * s); this.nodes[a].x = this.nodes[a - 1].x + n * this.girth / i, this.nodes[a].y = this.nodes[a - 1].y + s * this.girth / i } for (var h = 2; h < this.numNodes; h++)ctx.beginPath(), ctx.lineWidth = (this.numNodes - h) * (this.numNodes - h) / 20, ctx.moveTo(this.nodes[h - 1].x, this.nodes[h - 1].y), ctx.lineTo(this.nodes[h].x, this.nodes[h].y), ctx.stroke() } } loop();
+
+
+    </script>
+    <pre>
+        [click somewhere]
+        Ported from ActionScript:
+        http://wa.zozuar.org/code.php?c=yWSL
+    </pre>
+
+</body>
+
+</html>

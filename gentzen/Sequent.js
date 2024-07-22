@@ -106,12 +106,13 @@
 		var wff2 = new sequent_core_Wff("B>A");
 		wff2.evaulate();
 		wff.evaulate();
-		var hash = HxOverrides.substr(window.location.hash, 3, null);
+		var hsh=atob(window.location.hash.substring(1));
+		var hash = HxOverrides.substr(hsh, 3, null);
 		var _this_r = new RegExp("%3E", "g".split("u").join(""));
 		hash = hash.replace(_this_r, ">");
 		var _this_r = new RegExp("%7C", "g".split("u").join(""));
 		hash = hash.replace(_this_r, "|");
-		var prefix = window.location.hash.substring(1, 2);
+		var prefix = hsh.substring(1, 2);
 		console.log("src/Main.hx:60:", hash);
 		var formula = "(((A>B)>A)>A)";
 		if (hash != "") {
@@ -165,7 +166,8 @@
 			if (calc.value == "g3cp") {
 				t = "c=";
 			}
-			window.document.location.hash = "#" + t + input.value;
+			
+			window.document.location.hash = btoa("#" + t + input.value);
 			if (input.value == "") {
 				return;
 			}

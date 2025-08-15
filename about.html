@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -29,18 +30,21 @@
       touch-action: none;
     }
     * {
-        font-family: 'CMU Serif', sans-serif;
-      font-optical-sizing: auto;
-
+        font-family: 'Courier New', Courier, monospace;
+ 
+  -webkit-font-smoothing: antialiased; /* Smooths edges in WebKit browsers */
+  -moz-osx-font-smoothing: grayscale;  /* Smooths edges in Firefox on Mac */
+  font-optical-sizing: auto;
+  margin: 0;
       margin: 0;
     }
     h1 {
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       margin-bottom: 10px;
     }
     body {
 
-        user-select: none;
+    
       overflow: hidden;
 
       margin: 0;
@@ -177,7 +181,9 @@
     }
 
     .fig{
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'Courier Prime', monospace;  
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
     }
     
     p {
@@ -217,6 +223,12 @@ img{
     pointer-events: none;
 }
 
+
+::selection {
+  background: darkred;
+  color: lightgray;
+  text-shadow: none;
+}
  
     </style>
   <body>
@@ -258,14 +270,14 @@ img{
 
  
        <figure style="margin-top: .7rem;">
-        <img alt="Javid Jafari | Philosopher" style="width:100%" src="pics/Javid Jafari.jpg" />
+        <img alt="Javid Jafari | Philosopher" style="width:100%" src="https://zoqol.github.io/pics/Javid Jafari.jpg" />
         <figcaption class="fig" style="font-size: 9px; color: #404040">
           This is me, Tehran, 2019.
         </figcaption>
       </figure>
 
-      <p style="margin-top:1rem"> In logic, my research focus  is on the relationship between paraconsistent and modal logics.</p>
- <p>      You can find me on:</p>
+      <p style="margin-top:1.6rem" > In logic, my research focus  is on the relationship between paraconsistent and modal logics.</p>
+ <p style="margin-top:1rem">      You can find me on:</p>
       </p>
 
  

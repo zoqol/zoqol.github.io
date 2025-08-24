@@ -1,90 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Rigid Body simulation</title>
-    <link rel="stylesheet" href="prism.css" />
-    <script src="prism.js"></script>
+<!-- saved from url=(0036)https://zoqol.github.io/spirals.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Spirals</title>
+ 
+ 
     <style>
     pre[class*="language-"].line-numbers {
    font-size:12px;
 }
-        #canv {
-            border: 1px solid gray;
-            background: white;
-        }
-        
-        body {
-            background-color: black
-        }
-        
-        .code {
-            padding: .5em;
-            text-align: center;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            border: 0;
-            outline: 0;
-        }
-        
-        .cont {
-            display: flex;
-        }
-        
-        .cont > div {
-            height: 100vh;
-        }
-        
-        .language-javascript {
-            height: 100vh;
-            background-color: #101010 !important;
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-            margin-bottom: 0 !important;
-            padding-bottom: 0 !important;
-        }
-        
-        .tt {
-            width: calc(100% - 500px);
-        }
-        /* scroll bar */
-        
-        ::-webkit-scrollbar {
-            width: .5em;
-            background-color: red;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background-color: black;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background-color: #202020;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: darkred;
-        }
+ 
+html,body{
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  background-color: #101011;
+}
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
     </style>
 
 </head>
 
-<body>
-    <div class="cont">
-        <div class="tt">
-            <pre class="line-numbers"><code  id="cd" class="language-javascript line-numbers">
-
-    </code></pre>
-        </div>
-        <div class="code">
-            <canvas id="canv" height="480" width="480"></canvas>
-
-        </div>
+<body data-new-gr-c-s-check-loaded="14.1163.0" data-gr-ext-installed="">
+     
+      <canvas id="canv" height="480" width="480"></canvas>
 
     </div>
      
@@ -100,40 +43,84 @@ el.addEventListener("mousemove", function (e) {
 var ctx = el.getContext("2d");
 var w = 480;
 var h = 480;
+var count=0;
 function Point(x, y) {
+
+  var ang=Math.PI*2*Math.random()
+  var mag=5
   this.p = { x: x, y: y };
-  this.v = { x: 0, y: -5 };
+
+  this.v = { x: Math.cos(ang)*mag, y: Math.sin(ang)*mag};
   this.a = { x: 0.1, y: 0.3 };
   this.t = 0;
   this.i = 0;
-  this.step = 0.01 + Math.random() * 0.1;
+  this.step = 0.001 + Math.random() * 0.1;
+  this.angle=0;
+  this.lastSign=1;
+ 
+  
   // body...
 }
 var po = new Point(w / 2, h);
 var p = po.p;
 var ps = [];
-var n = 20;
-generate();
+var n = 1;
+var cl=0;
 
-function generate() {
+
+function generate(evt) {
+  cl=0;
   ps.length = 0;
+  count=0
+  lineW=0;
 
   ctx.fillStyle = "white";
   ctx.fillRect(0, 0, w, h);
-  for (var i = 0; i < n; i++) {
-    var pp = new Point(w / 2, h);
-    pp.i = (i / n) * 4;
-    pp.rnd = Math.random() * 50;
+  for (var i = 0; i < 1; i++) {
+
+    
+    var pp = new Point(w/2,h/2);
+    pp.i = 4;
+    pp.rnd = 89;
+    pp.totalAngle=Math.PI+Math.random()*Math.PI*5;
+    pp.vangle=0;
+
+
+    pp.lw=10;
+    pp.signChange=0;
+    
     ps.push(pp);
+    pp.org=true
+    cp = new Point(w/2,h/2);
+     cp.v=structuredClone(pp.v)
+    cp.v.x*=-1;
+    cp.v.y*=-1;
+    
+    cp.org=true;
+    cp.i = 4;
+    cp.rnd = 89;
+    cp.totalAngle=Math.PI+Math.random()*Math.PI*5;
+    cp.vangle=0;
+    cp.lw=10;
+    
+    ps.push(cp);
+
+    
+    
   }
   // body...
 }
 el.addEventListener("mousedown", generate);
+generate({clientX:w/2,clientY:w/2});
+ 
 
 animate();
 
+
 function animate() {
+  
   //ctx.fillRect(0,0,w,h)
+  cl++
   ps.forEach(function (po) {
     // body...
     p = po.p;
@@ -141,22 +128,89 @@ function animate() {
     ctx.moveTo(p.x, p.y);
 
     var t = po.t;
-    var lw = 1 - t / 3.5;
-    if (t > 3.5) return;
+    var lwx = 1 - t / 3.5;
+   
+
+    
 
     //ctx.fillRect(0,0,w,h)
     po.t += po.step;
     t = po.t;
-    ctx.lineWidth = lw * 3;
+    var pt=Math.max(t,1)
+    var lw=(po.angle/po.totalAngle);
+    po.lw*=.94
+    ctx.lineWidth =Math.max(po.lw,3/Math.exp(lw*lw*4))
+   
+    //4/pt+
+    //3/Math.exp(lw*lw*4);
+    //2*(1-lw);
+    //3/Math.exp(lw*lw*4);
+    //3/Math.exp(lw*lw*4)
     //ctx.strokeStyle = 'rgba(0,0,0,'+lw+')';
     var x = t * Math.PI * po.i;
     var sign = Math.sin(x) / x;
-    sign = sign / Math.abs(sign);
+    sign= sign / Math.abs(sign);
+   
+   var isChanged=false;
+    if(po.lastSign!=sign) {
+      po.signChange++;
+      isChanged=true;
+      
+    }
+   
+    if(po.signChange<8) {
+      po.lastSign=sign;
+
+    }{
+      sign=po.lastSign;
+    }
+   
+   
+    
+
+    
 
     var v = po.v;
     var p = po.p;
     var a = po.a;
-    var b = ((Math.PI * (t * t)) / po.rnd) * sign;
+    var b = (1/t)*((Math.PI * (t * t)) / po.rnd) * sign
+
+
+    //&& Math.abs(b)>Math.PI/35
+    if(count<70   && isChanged && Math.random()<.7  && po.org ){
+  count++
+   
+  var cp=structuredClone(po)
+  cp.org=false
+ 
+  cp.signChange=0;
+  var sc=Math.random()+.01
+  cp.v.y*=sc
+ cp.v.x*=sc
+ 
+ cp.t*=.5
+ //cp.totalAngle*=.5
+ cp.step= 0.001 + Math.random() * 0.8;
+  cp.rnd=(.1+Math.random())*cp.rnd/2;
+ 
+ 
+   
+  /* var cp = new Point(po.p.x, po.p.y);
+   
+    cp.rnd = Math.random() * 50;
+    cp.totalAngle=Math.PI/2+Math.random()*Math.PI*3;
+    */
+    ps.push(cp);
+}
+   
+
+
+    po.angle+=Math.abs(b);
+    
+    if(po.angle>po.totalAngle) return;
+
+   // (1/t)*((Math.PI * (t * t)) / po.rnd) * sign;
+    
 
     var cosb = Math.cos(b);
     var sinb = Math.sin(b);
@@ -170,11 +224,17 @@ function animate() {
     p.x += v.x;
     p.y += v.y;
 
+
     ///ctx.moveTo(p.x,p.y)
     ctx.lineTo(p.x, p.y);
 
     // ctx.arc(p.x,p.y,1,0,Math.PI*2)
     ctx.stroke();
+
+       
+
+
+   
   });
 
   // body...
@@ -187,9 +247,30 @@ function animate() {
 		
     </script>
 
-    <body>
+    
 
-    </body>
+    
 
-</html>
+
 	
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>

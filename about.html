@@ -1,370 +1,139 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Javid Jafari</title>
-<meta name="google-site-verification" content="rNPjArzlXdhiE4Wa-sRG9L1YfPCkiPy2hFDaLqzzSZ8" />
-  
-    <link href="https://fonts.cdnfonts.com/css/cmu-serif" rel="stylesheet">
-
-  
-  </head>
-
-  <style>
-    :root {
-      --w: 20;
-      --sc: 1;
-
-      --bl: black;
-      --wh: white;
-      --delta: 0;
-      --ml: 1;
-      --mr: 1;
-      --bcurve: cubic-bezier(0.165, 0.84, 0.4, 1);
-      --time: 0.05s;
-    }
-
-    html {
-      touch-action: none;
-    }
-    * {
-        font-family: 'Courier New', Courier, monospace;
- 
-  -webkit-font-smoothing: antialiased; /* Smooths edges in WebKit browsers */
-  -moz-osx-font-smoothing: grayscale;  /* Smooths edges in Firefox on Mac */
-  font-optical-sizing: auto;
-  margin: 0;
-      margin: 0;
-    }
-    h1 {
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-    }
-    body {
-
-    
-      overflow: hidden;
-
-      margin: 0;
-      background-color: black;
-      background-image: linear-gradient(
-          to left,
-          transparent 0%,
-          transparent calc(100% - 1px),
-          gray 50%
-        ),
-        linear-gradient(
-          to bottom,
-          transparent 0%,
-          transparent calc(100% - 1px),
-          gray 50%
-        );
-
-      background-size: calc(var(--w) * 1px) calc(var(--w) * 1px);
-
-      [data-layout] {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        display: block;
-        background: radial-gradient(
-          circle,
-          rgba(0, 0, 0, 0.3) 0%,
-          rgba(0, 0, 0, 0.5) 0%,
-          black 100%
-        );
-        background-size: 50%;
-        background-position: -100vw;
-        z-index: -1;
-      }
-    }
-
-    main {
-      display: block;
-
-      margin: auto;
-      width: 380px;
-
-      transform: translateY(calc(var(--delta, 0) * 10px));
-
-      will-change: transform;
-     
-
-      margin-top: 1rem;
-      @media (orientation: portrait) {
-        width: calc(100% - 1rem);
-      }
-   
-    }
-    .main {
-      
-      background-color: white;
-      padding: 2rem;
-      padding-top: 0;
-
-      column-count: 2;
-      column-gap: 1.5em;
-    }
-    .upper {
-      height: 20px;
-      width: 100%;
-      display: block;
-      background-color: var(--wh);
-      will-change: border-radius;
-
-      border-top-left-radius: 100%
-        calc(var(--delta) * var(--sc) * var(--ml) * 1rem - 10px);
-      border-top-right-radius: 100%
-        calc(var(--delta) * var(--sc) * var(--mr) * 1rem);
-      position: relative;
-    }
-    .uc {
-      background-color: var(--wh);
-    }
-
-    .upper2 {
-      height: 20px;
-      width: 100%;
-      display: block;
-      background-color: var(--bl);
-      will-change: border-radius;
-
-      border-bottom-left-radius: 100%
-        calc(var(--delta) * var(--sc) * -1rem * var(--sc) + 10px);
-      border-bottom-right-radius: 100%
-        calc(var(--delta) * var(--sc) * -1rem * var(--sc));
-      position: relative;
-    }
-
-    .bot {
-      height: 20px;
-      width: 100%;
-      display: block;
-      background-color: black;
-      will-change: border-radius;
-
-      border-top-left-radius: 100% calc(var(--delta) * var(--sc) * 1rem);
-      border-top-right-radius: 100%
-        calc(var(--delta) * var(--sc) * 1rem - + 10px);
-      position: relative;
-    }
-
-    .bot2 {
-      height: 20px;
-      width: 100%;
-      display: block;
-      background-color: white;
-      will-change: border-radius;
-
-      border-bottom-left-radius: 100%
-        calc(var(--delta) * var(--sc) * -1rem * var(--sc));
-      border-bottom-right-radius: 100%
-        calc(var(--delta) * var(--sc) * -1rem * var(--sc) + 10px);
-      position: relative;
-    }
-
-    .uc2 {
-      background-color: white;
-    }
-    p ,ul{
-      font-size: 12px;
-    }
-    ul{
-        padding-left: 1rem;
-    }
-    .main{
-      
-    }
-
-    .fig{
-        font-family: 'Courier Prime', monospace;  
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-    }
-    
-    p {
-  text-align: justify;
-  text-justify: inter-word; /* or "newspaper" in some browsers */
-  hyphens: auto;            /* enable hyphenation */
-  overflow-wrap: break-word; /* break long words */
-  word-break: break-all;   
-}
-.white{
-    background-color: white;
-    padding: 2rem;
-    padding-top: 0;
-    margin-top: -3rem;
-}
-
-a{
-    color: white;
-    text-decoration: unset;
-    background-color: darkred;
-    font-size: 11px;
-    &:hover{
-        background-color: black;
-    }
-}
-
-.pin{
-    background-image:url('/pics/pushpin.png');
-    background-size: contain;
-    width: 30px;
-    height: 30px;
-    position: relative;
-    left: -.5rem;
-
-}
-img{
-    pointer-events: none;
-}
+    <title>J. Jafari</title>
+    <style>
+        @font-face {
+            font-family: "Lora";
+            src: url("./font/cmunti.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
 
 
-::selection {
-  background: darkred;
-  color: lightgray;
-  text-shadow: none;
-}
- 
+        body {
+            margin: 0;
+            background-color: #eee;
+
+
+        }
+
+        section {
+            font-family: "Lora";
+            max-width: 800px;
+            margin: auto;
+            margin-top: 7vh;
+            display: flex;
+            gap: 2rem;
+            color: #101011;
+
+            @media (orientation: portrait) {
+
+                flex-direction: column;
+                padding: 1rem;
+
+                img {
+                    margin: auto;
+                }
+            }
+
+
+
+
+        }
+
+        img.profile {
+            width: 168px;
+            transition: opacity .3s ease;
+
+            &:hover {
+                opacity: .9;
+            }
+        }
+
+        p {
+            margin: 0 0rem 1rem;
+
+        }
+
+        bgbtn {
+
+            background-image: url(https://avatars0.githubusercontent.com/u/37377691?s=96&v=4);
+            width: 2rem;
+            height: 2rem;
+            display: block;
+            background-size: contain;
+
+            border-radius: 50%;
+            border: 1px solid lightgray;
+            position: absolute;
+            left: .8rem;
+            top: .8rem;
+            cursor: pointer;
+            transition: opacity .3s ease;
+
+            &:hover {
+                opacity: .5;
+            }
+        }
+
+
+        a {
+            color: darkred;
+            transition: background-color .3s ease;
+
+            &:hover {
+                background-color: darkred;
+                color: white;
+            }
+        }
     </style>
-  <body>
-    <div data-layout></div>
+</head>
 
-    <main>
-      <div class="uc">
-        <div class="upper2"></div>
-      </div>
-      <div class="upper">
-        <div class="pin"></div>
-      </div>
+<body>
+    <a href="https://zoqol.github.io/">
+        <bgbtn>
 
-      <div class="main">
-        <h1>Javid Jafari</h1>
-       
+        </bgbtn>
+    </a>
+    <section>
 
-        <p style="">
-          Hi, I’m Javid, I’m a programmer who is fascinated by using
-          code to makes things move. My main interests are creative coding, generative and algorithmic arts. (see my works <a href="https://zoqol.github.io/">here</a>)
-         <br> In addition to my work in computers, I’m also interested in philosophy (particularly,  <b>Metaphysics &amp; Logic</b>.). 
+        <img class="profile" src="img.png">
+        <span>
+            <p>
+                My name is Javid Jafari, a researcher in logic "and/or/then"
+                metaphysics. I earned my bachelor's degree in software engineering and
+                later turned to philosophy. During my master's studies, I worked on a
+                neo-Carnapian approach to ontology In early 2025, I completed my PhD
+                dissertation entitled <strong><i>"Model-Theoretic Inferentialism, Non-determinism and
+                        Formal Inconsistency"</i> </strong> under the supervision of <a target="_blank"
+                    href="https://scholar.google.com/citations?user=C5PjqXkAAAAJ&hl=en">Davood Hosseini.</a>
+            </p>
+            <p>
+                Some of my
+                favorite concepts: <strong>existence, modality, truth, set, negation, and
+                    inference.</strong>
+            </p>
+            <p>
+                You can find me on:
+            <ul>
+                <li><a href="https://philpeople.org/profiles/javid-jafari">Philpaper</a></li>
+                <li> <a href="https://hcommons.social/@zoqoly">Mastadon</a></li>
+            </ul>
 
-       
-        </p>
-<p style="text-align: left;padding-bottom:.4rem">I wrote my master’s thesis on a neo-Carnapian
-    approach to ontology.  </p>
-   
-        <p style="text-align: start">
-            In early 2025, I completed my PhD dissertation entitled <i
-            >"Model-Theoretic Inferentialism, Non-determinism and Formal
-            Inconsistency"</i
-          > under the supervision of Davood Hosseini.
-         
-     
-          <br />
-          <br />
-          My  favorite concepts in metaphysics are:
-          <b> existence, modality, truth, set, negation and inference.</b>
+            or contact me:
+            javidjafari [at] gmail.com
+            </p>
+            <p> I am also interested in creative coding and
+                generative art. You can see some of my works <a href="https://zoqol.github.io/">here</a>.
 
- 
-       <figure style="margin-top: .7rem;">
-        <img alt="Javid Jafari | Philosopher" style="width:100%" src="https://zoqol.github.io/pics/Javid Jafari.jpg" />
-        <figcaption class="fig" style="font-size: 9px; color: #404040">
-          This is me, Tehran, 2019.
-        </figcaption>
-      </figure>
 
-      <p style="margin-top:1.6rem" > In logic, my research focus  is on the relationship between paraconsistent and modal logics.</p>
- <p style="margin-top:1rem">      You can find me on:</p>
-      </p>
+            </p>
+        </span>
+    </section>
+</body>
 
- 
-      <ul>
-        <li>
-          <a href="https://philpeople.org/profiles/javid-jafari" target="_blank"
-            >Philpaper</a
-          >
-        </li>
-    
-        <li>
-          <a href="https://hcommons.social/@zoqoly" target="_blank">Mastadon</a>
-        </li>
-      </ul>
-       
-    <p>or contact me:</p>
-    <p>javidjafari [at] gmail.com</p>
-
-    </p>
-      </div>
-
- 
- 
-      <div class="bottomWrapper" style="--wh: white; --bl: black; --sc: 1">
-        <div class="bot2"></div>
-        <div class="uc2">
-          <div class="bot"></div>
-        </div>
-      </div>
-    </main>
-
-    <script>
-      let deltaY = 0;
-      let cdelta = 0;
-      let isDown = false;
-
-      let interval = null;
-      document.addEventListener("mousewheel", (evt) => {
-        deltaY = evt.deltaY / 100;
-        cdelta += (deltaY - cdelta) * 0.3;
-        main.body.style.setProperty("--delta", deltaY);
-
-        clearInterval(interval);
-        interval = setTimeout(() => {
-          console.log("domp");
-        }, 200);
-      });
-
-      document.addEventListener("pointerdown", () => {
-        isDown = true;
-      });
-      document.addEventListener("pointerup", () => {
-        isDown = false;
-        //    main.body.style.setProperty("--delta", .1 );
-        //alert('s')
-      });
-
-      document.addEventListener("pointercancel", () => {
-        isDown = false;
-        //     main.body.style.setProperty("--delta", .1 );
-
-        //alert('s')
-      });
-
-      document.addEventListener("pointermove", (evt) => {
-        if (isDown) {
-          deltaY = evt.movementY / 20;
-          cdelta += (deltaY - cdelta) * 0.3;
-        }
-        //  main.body.style.setProperty("--delta", deltaY );
-
-        //deltaY = evt.deltaY / 20;
-      });
-
-      const main = document;
-
-      anim();
-
-      function anim() {
-        cdelta *= 0.9;
-        if (true) {
-          main.body.style.setProperty("--delta", cdelta);
-          requestAnimationFrame(anim);
-        }
-      }
-
-      // anim();
-    </script>
-  </body>
 </html>

@@ -1,0 +1,1895 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+  <script>
+    MathJax = {
+      tex: {
+        macros: {
+          lng: "\\mathcal{L}",
+          wff: "{\\mathcal{W}(\\mathcal{L})}",
+          seq: "{\\mathcal{S}(\\mathcal{L})}",
+          then: "{\\Rightarrow}",
+          A: "\\mathfrak{A}",
+          B: "\\mathfrak{B}",
+          mf: ["{\\mathfrak{#1}}", 1],
+          tp: ["{\\langle {#1} \\rangle}", 1],
+          mc: ["\\mathcal{#1}", 1],
+          nmt: "\\mathcal{M}",
+       
+        },
+        inlineMath: [
+          ["$", "$"],
+          ["\\\\(", "\\\\)"],
+        ],
+      },
+      svg: {
+        fontCache: "global",
+      },
+    };
+  </script>
+  <script src="./mathjax/es5/tex-chtml.js" id="MathJax-script" async></script>
+  <style>
+    @font-face {
+      font-family: "Lora";
+      src: url("./font/cmunti.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: "XB Niloofar";
+      src: url("./font/XB Niloofar.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: "XB Niloofar";
+      src: url("./font/XB NiloofarIt.ttf") format("truetype");
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    @font-face {
+      font-family: "XB Niloofar";
+      src: url("./font/XB NiloofarBd.ttf") format("truetype");
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: "XB Niloofar";
+      src: url("./font/XB NiloofarBdIt.ttf") format("truetype");
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #999;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: darkred;
+    }
+
+
+
+
+    :root {
+      font-size: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      line-break: loose;
+      margin: 0;
+      background-color: #eee;
+      padding: 1rem;
+      font-family: "Lora";
+      counter-reset: page;
+    }
+
+    ol,
+    li {
+      font-family: "Lora";
+      line-height: 2;
+    }
+
+    .page {
+      padding: 1rem;
+      direction: ltr;
+      background-color: white;
+      margin: 1rem;
+
+      counter-increment: page;
+      position: relative;
+      line-height: 1.4;
+
+
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .strong {
+      font-weight: bold;
+    }
+
+
+    .section {
+      font-weight: bold;
+      font-size: 1.5em;
+      display: block;
+      margin: 1rem;
+
+    }
+
+    :root {
+      counter-reset: sec;
+    }
+
+    sec {
+      counter-reset: def;
+      counter-increment: sec;
+    }
+
+    def {
+      display: block;
+      counter-increment: def;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+
+      &:before {
+        content: attr(data-name) " " counter(sec) "." counter(def);
+        font-weight: bold;
+      }
+    }
+
+    box {
+      display: block;
+      width: .7rem;
+      height: .7rem;
+      margin-left: auto;
+      border: 1px solid black;
+    }
+
+    abstract {
+      padding: 0 6rem;
+      display: block;
+
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(12rem, 1fr) .5rem minmax(12rem, 1fr);
+      width: min(1400px, 100%);
+      min-height: calc(100vh - 2rem);
+      margin: 0 auto;
+    }
+
+    .app-shell {
+      display: block;
+      width: 100%;
+      min-height: calc(100vh - 2rem);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      width: 10rem;
+      height: auto;
+      min-height: 0;
+      max-height: calc(100vh - 2rem);
+      z-index: 20;
+      border: 1px solid #ddd;
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    }
+
+    .sidebar.collapsed {
+      height: auto;
+      max-height: none;
+    }
+
+    .sidebar-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      padding: .75rem .75rem;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+      font-weight: bold;
+      cursor: move;
+      user-select: none;
+      touch-action: none;
+    }
+
+    .sidebar-title-group {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      min-width: 0;
+    }
+
+    .sidebar-collapse-button {
+      flex: 0 0 auto;
+      border: 1px solid #aaa;
+      background: white;
+      padding: 0 .3rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-style: normal;
+      font-size: .8rem;
+      line-height: 1.1;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .sidebar-collapse-button:hover {
+      background: #f2f2f2;
+    }
+
+    .sidebar-title-text {
+      min-width: 0;
+    }
+
+    .sidebar-add-button {
+      flex: 0 0 auto;
+      border: 1px solid #aaa;
+      background: white;
+      padding: 0 .35rem;
+      font: inherit;
+      font-size: .9rem;
+      line-height: 1.2;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .sidebar-add-button:hover {
+      background: #f2f2f2;
+    }
+
+    .sample-list {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+      padding: .5rem;
+      overflow: auto;
+    }
+
+    .sidebar.collapsed .sample-list {
+      display: none;
+    }
+
+    .sample-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: .25rem;
+      align-items: stretch;
+    }
+
+    .sample-button {
+      width: 100%;
+      border: 1px solid #c8c8c8;
+      background: white;
+      padding: .45rem .5rem;
+      font: inherit;
+      font-size: .78rem;
+      line-height: 1.25;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .sample-button:hover {
+      background: #f2f2f2;
+    }
+
+    .sample-button.active {
+      border-color: #888;
+      background: #efefef;
+    }
+
+    .sample-load-button {
+      border: 1px solid #c8c8c8;
+      background: white;
+      padding: 0 .3rem;
+      font: inherit;
+      font-size: .8rem;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .sample-load-button:hover {
+      background: #f2f2f2;
+    }
+
+    .sample-name-input {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #c8c8c8;
+      background: white;
+      padding: .45rem .4rem;
+      font: inherit;
+      font-size: .78rem;
+      line-height: 1.25;
+      outline: none;
+    }
+
+    .sample-name-input.active {
+      border-color: #888;
+      background: #efefef;
+    }
+
+    .sample-delete-button {
+      border: 1px solid #c8c8c8;
+      background: white;
+      padding: 0 .35rem;
+      font: inherit;
+      font-size: .85rem;
+      line-height: 1.2;
+      cursor: pointer;
+    }
+
+    .sample-delete-button:hover {
+      background: #f2f2f2;
+    }
+
+    .sample-delete-button[hidden] {
+      display: none;
+    }
+
+    body.is-dragging-sidebar {
+      user-select: none;
+      cursor: grabbing;
+    }
+
+    .splitter {
+      width: .5rem;
+      min-height: calc(100vh - 2rem);
+      cursor: col-resize;
+      background: transparent;
+      position: relative;
+    }
+
+    .splitter::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: #bbb;
+      transform: translateX(-50%);
+    }
+
+    .splitter:hover::before,
+    .splitter:focus-visible::before,
+    body.is-resizing .splitter::before {
+      width: 3px;
+      background: #777;
+    }
+
+    .pane {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: calc(100vh - 2rem);
+      background: white;
+      border: 1px solid #ddd;
+    }
+
+    .pane-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      position: relative;
+      padding: .75rem 1rem;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+      background: #fafafa;
+    }
+
+    .pane-title-text {
+      min-width: 0;
+    }
+
+    .mobile-tabs {
+      display: none;
+    }
+
+    .mobile-tab-button {
+      border: 1px solid #aaa;
+      background: white;
+      padding: .35rem .65rem;
+      font: inherit;
+      font-size: .82rem;
+      line-height: 1.2;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .mobile-tab-button.active {
+      background: #efefef;
+      border-color: #888;
+    }
+
+    .save-button {
+      border: 1px solid #aaa;
+      background: white;
+      padding: .35rem .65rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-style: normal;
+      font-size: .85rem;
+      cursor: pointer;
+    }
+
+    .save-button:hover {
+      background: #f2f2f2;
+    }
+
+    .preview-language-button {
+      border: 1px solid #aaa;
+      background: white;
+      padding: .2rem .35rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-style: normal;
+      font-size: .7rem;
+      line-height: 1.1;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      letter-spacing: 0;
+    }
+
+    .preview-language-button:hover {
+      background: #f2f2f2;
+    }
+
+    .symbol-picker {
+      position: absolute;
+      top: 3.1rem;
+      left: 1rem;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: .35rem;
+      width: 18rem;
+      max-width: calc(100% - 2rem);
+      max-height: 18rem;
+      overflow: auto;
+      padding: .5rem;
+      border: 1px solid #cfcfcf;
+      background: #fcfcfc;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    }
+
+    .symbol-picker[hidden] {
+      display: none;
+    }
+
+    .symbol-item {
+      border: 1px solid #c8c8c8;
+      background: white;
+      padding: .35rem 0;
+      cursor: pointer;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .symbol-item:hover {
+      background: #f2f2f2;
+    }
+
+    #editor {
+      flex: 1;
+      width: 100%;
+      min-height: 24rem;
+      resize: none;
+      border: 0;
+      outline: 0;
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: .75rem;
+      line-height: 1.5;
+      background: white;
+    }
+
+    #editor.editor-farsi {
+      direction: rtl;
+      text-align: right;
+      unicode-bidi: plaintext;
+    }
+
+    #preview {
+      flex: 1;
+      overflow: auto;
+      padding: 4rem 4.5rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .preview-section {
+      display: block;
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: bold;
+    }
+
+    .preview-statement {
+      display: block;
+      margin: 0rem 0;
+    }
+
+    .preview-label {
+      font-weight: bold;
+    }
+
+    .preview-title {
+      display: block;
+      margin: 1rem 0 .5rem;
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: bold;
+    }
+
+    .preview-author {
+      display: block;
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+
+    .preview-abstract {
+      display: block;
+      width: min(26rem, 100%);
+      margin: 1.5rem auto 2rem;
+      padding: 0 1rem;
+      font-size: .95rem;
+    }
+
+    #preview.preview-farsi {
+      font-family: "XB Niloofar";
+      direction: rtl;
+      text-align: justify;
+      text-justify: inter-word;
+      unicode-bidi: plaintext;
+    }
+
+    #preview.preview-farsi .preview-title,
+    #preview.preview-farsi .preview-author,
+    #preview.preview-farsi .preview-abstract-label {
+      text-align: center;
+    }
+
+    #preview.preview-farsi .preview-abstract {
+      text-align: right;
+    }
+
+    .preview-abstract-label {
+      display: block;
+      margin-bottom: .25rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+
+    @media print {
+      html,
+      body {
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        background: white;
+      }
+
+      .workspace {
+        display: block;
+        width: auto;
+        min-height: auto;
+        margin: 0;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .app-shell {
+        display: block;
+      }
+
+      .pane:first-child,
+      .splitter,
+      .pane-title {
+        display: none;
+      }
+
+      .pane {
+        display: block;
+        min-height: auto;
+        border: 0;
+        background: white;
+      }
+
+      #preview {
+        display: block;
+        overflow: visible;
+        padding: 0;
+        color: black;
+      }
+    }
+
+    body.printing-pdf .mobile-tabs,
+    body.printing-pdf .sidebar,
+    body.printing-pdf .splitter,
+    body.printing-pdf .pane:first-child,
+    body.printing-pdf .pane:first-child *,
+    body.printing-pdf .pane-title,
+    body.printing-pdf .preview-language-button,
+    body.printing-pdf .save-button {
+      display: none !important;
+    }
+
+    body.printing-pdf #editor {
+      display: none !important;
+    }
+
+    body.printing-pdf .workspace {
+      display: block !important;
+      width: auto !important;
+      min-height: auto !important;
+      margin: 0 !important;
+    }
+
+    body.printing-pdf .workspace .pane {
+      display: block !important;
+      min-height: auto !important;
+      border: 0 !important;
+      background: white !important;
+    }
+
+    body.printing-pdf #preview {
+      display: block !important;
+      overflow: visible !important;
+      padding: 0 !important;
+      color: black !important;
+    }
+
+    @media (max-width: 800px) {
+      body {
+        padding: 0;
+        background: white;
+      }
+
+      .app-shell {
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 8.5rem;
+        height: auto;
+        max-height: calc(100vh - 2rem);
+      }
+
+      .mobile-tabs {
+        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 25;
+        gap: 0;
+        background: #fafafa;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .mobile-tab-button {
+        flex: 1 1 0;
+        border: 0;
+        border-right: 1px solid #ddd;
+        border-radius: 0;
+      }
+
+      .mobile-tab-button:last-child {
+        border-right: 0;
+      }
+
+      .workspace {
+        display: block;
+        width: 100%;
+        min-height: calc(100vh - 2rem);
+        margin: 0;
+      }
+
+      .workspace .pane {
+        min-height: calc(100vh - 6rem);
+        border-left: 0;
+        border-right: 0;
+      }
+
+      #preview {
+        padding: 1rem;
+      }
+
+      .workspace .splitter {
+        display: none;
+      }
+
+      body.mobile-show-editor .workspace .pane:first-child {
+        display: flex;
+        min-height: calc(100vh - 2rem);
+      }
+
+      body.mobile-show-editor .workspace .pane:last-child {
+        display: none;
+      }
+
+      body.mobile-show-preview .workspace .pane:first-child {
+        display: none;
+      }
+
+      body.mobile-show-preview .workspace .pane:last-child {
+        display: flex;
+      }
+
+      .splitter {
+        display: none;
+      }
+
+      .pane {
+        min-height: 45vh;
+      }
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <main class="app-shell">
+    <div class="mobile-tabs" aria-label="Mobile view switcher">
+      <button class="mobile-tab-button" id="mobileEditorTab" type="button">Editor</button>
+      <button class="mobile-tab-button" id="mobilePreviewTab" type="button">Preview</button>
+    </div>
+    <aside class="sidebar" aria-label="Sample articles">
+      <div class="sidebar-title">
+        <div class="sidebar-title-group">
+          <button class="sidebar-collapse-button" id="sidebarCollapseButton" type="button" aria-label="Collapse samples">−</button>
+          <span class="sidebar-title-text">Samples</span>
+        </div>
+        <button class="sidebar-add-button" id="addSampleButton" type="button" aria-label="Add sample">⧉</button>
+      </div>
+      <div class="sample-list" id="sampleList"></div>
+    </aside>
+
+    <div class="workspace">
+      <section class="pane">
+        <div class="pane-title">
+          <span class="pane-title-text">Editor</span>
+          <button class="save-button" id="symbolToggleButton" type="button" aria-label="Insert symbol" aria-expanded="false">Σ</button>
+          <button class="save-button" id="updatePreviewButton" type="button" aria-label="Update preview">▶</button>
+        </div>
+        <div class="symbol-picker" id="symbolPicker" hidden></div>
+        <textarea id="editor" spellcheck="true" autofocus>\title{Countability and Cantor's Theorem}
+
+\author{Author}
+
+\abstract{These notes state the definition of a countable set and Cantor's theorem on the existence of uncountable sets.}
+
+\section{Countable Sets}
+
+\definition{A set $A$ is countable if either $A$ is finite, or there exists a bijection $$f:\mathbb{N} \to A.$$ Equivalently, the elements of $A$ can be listed as a sequence $$a_0,a_1,a_2,\ldots$$ possibly with repetitions.}
+
+\theorem{There exists an uncountable set. In particular, the power set $\mathcal{P}(\mathbb{N})$ is uncountable, since $$\left|\mathcal{P}(\mathbb{N})\right| > \left|\mathbb{N}\right|.$$ This follows from Cantor's diagonal argument: for every function $f:\mathbb{N}\to\mathcal{P}(\mathbb{N})$, the set $$D=\{n\in\mathbb{N}: n\notin f(n)\}$$ is not equal to $f(k)$ for any $k\in\mathbb{N}$. Hence no such function is surjective.}</textarea>
+      </section>
+
+      <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" tabindex="0"></div>
+
+      <section class="pane">
+        <div class="pane-title">
+          <span class="pane-title-text">Preview</span>
+          <button class="preview-language-button" id="previewLanguageButton" type="button" aria-label="Switch preview language">EN</button>
+          <button class="save-button" id="savePdfButton" type="button" aria-label="Save as PDF">⎙</button>
+        </div>
+        <div id="preview" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
+    const workspace = document.querySelector(".workspace");
+    const splitter = document.getElementById("splitter");
+    const sampleList = document.getElementById("sampleList");
+    const addSampleButton = document.getElementById("addSampleButton");
+    const sidebarCollapseButton = document.getElementById("sidebarCollapseButton");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarTitle = document.querySelector(".sidebar-title");
+    const symbolToggleButton = document.getElementById("symbolToggleButton");
+    const symbolPicker = document.getElementById("symbolPicker");
+    const updatePreviewButton = document.getElementById("updatePreviewButton");
+    const previewLanguageButton = document.getElementById("previewLanguageButton");
+    const savePdfButton = document.getElementById("savePdfButton");
+    const editorWidthStorageKey = "canonical-editor-width";
+    const customSamplesStorageKey = "canonical-custom-samples";
+    const activeSampleStorageKey = "canonical-active-sample";
+    const editorStateStorageKey = "canonical-editor-state";
+    const sidebarPositionStorageKey = "canonical-sidebar-position";
+    const sidebarCollapsedStorageKey = "canonical-sidebar-collapsed";
+    const previewLanguageStorageKey = "canonical-preview-language";
+    const mobileViewStorageKey = "canonical-mobile-view";
+    let renderTimer;
+    let sidebarDragState = null;
+    let pendingCustomNameFocusId = null;
+    let mobileView = localStorage.getItem(mobileViewStorageKey) || "editor";
+    let activeSampleKey = "countability";
+    let customSamples = loadCustomSamples();
+    let previewLanguage = localStorage.getItem(previewLanguageStorageKey);
+    const mobileEditorTab = document.getElementById("mobileEditorTab");
+    const mobilePreviewTab = document.getElementById("mobilePreviewTab");
+    const articleSamples = [
+      {
+        key: "countability",
+        label: "Countable Set",
+        content: `\\title{Countability and Cantor's Theorem}
+
+\\author{Author}
+
+\\abstract{These notes state the definition of a countable set and Cantor's theorem on the existence of uncountable sets.}
+
+\\section{Countable Sets}
+
+\\definition{A set $A$ is countable if either $A$ is finite, or there exists a bijection $$f:\\mathbb{N} \\to A.$$ Equivalently, the elements of $A$ can be listed as a sequence $$a_0,a_1,a_2,\\ldots$$ possibly with repetitions.}
+
+\\theorem{There exists an uncountable set. In particular, the power set $\\mathcal{P}(\\mathbb{N})$ is uncountable, since $$\\left|\\mathcal{P}(\\mathbb{N})\\right| > \\left|\\mathbb{N}\\right|.$$ This follows from Cantor's diagonal argument: for every function $f:\\mathbb{N}\\to\\mathcal{P}(\\mathbb{N})$, the set $$D=\\{n\\in\\mathbb{N}: n\\notin f(n)\\}$$ is not equal to $f(k)$ for any $k\\in\\mathbb{N}$. Hence no such function is surjective.}`
+      },
+      {
+        key: "sequents",
+        label: "Sequents",
+        content: `\\title{Sequents}
+
+\\author{Author}
+
+\\abstract{A short example about sequents, identity, and notation.}
+
+\\section{Sequent Calculus}
+
+\\definition{A sequent has the form $$\\Gamma \\Rightarrow \\Delta$$ where $\\Gamma$ and $\\Delta$ are finite collections of formulas.}
+
+\\theorem{If $A \\in \\Gamma$, then the sequent $$\\Gamma \\Rightarrow A$$ is derivable by the identity axiom.}
+
+Axioms:
+
+$$
+\\begin{array}{cc}
+\\displaystyle \\frac{}{P, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ P } &
+\\displaystyle \\frac{}{\\bot, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta }
+\\end{array}
+$$
+
+Rules:
+
+$$
+\\begin{array}{cc}
+\\displaystyle \\frac{\\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ A \\hspace{.5cm}
+\\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ B}{ \\Gamma \\hspace{.1cm}
+\\vdash \\Delta, \\ A \\land B} \\small \\ L \\land &
+\\displaystyle \\frac{ A, \\ B, \\ \\Gamma \\hspace{.1cm} \\vdash C } { A \\land
+B, \\ \\Gamma \\hspace{.1cm} \\vdash C} \\small \\ R \\land \\\\[1.35em]
+\\displaystyle \\frac{A, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta \\hspace{.5cm}
+B, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta}{ A \\lor B, \\ \\Gamma
+\\hspace{.1cm} \\vdash \\Delta} \\small \\ L \\lor &
+\\displaystyle \\frac{ \\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ A, \\ B } {
+\\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ A \\lor B} \\small \\ R \\lor \\\\[1.35em]
+\\displaystyle \\frac{ \\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ A
+\\hspace{.5cm} B, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta}{ A \\ \\supset
+\\ B, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta} \\small \\ L \\supset &
+\\displaystyle \\frac{ A, \\ \\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ B } {
+\\Gamma \\hspace{.1cm} \\vdash \\Delta, \\ A \\ \\supset \\ B} \\small \\ R
+\\supset
+\\end{array}
+$$
+
+$$
+\\frac{\\frac{\\frac{A\\hspace{.1cm}\\vdash B,A\\hspace{1cm}A,\\bot
+\\hspace{.1cm}\\vdash B}{A,(A\\supset \\bot )\\hspace{.1cm}\\vdash B}L\\supset
+}{(A\\land (A\\supset \\bot ))\\hspace{.1cm}\\vdash B}L\\land
+}{\\hspace{.1cm}\\vdash ((A\\land (A\\supset \\bot ))\\supset B)}R\\supset
+$$`
+      },
+      {
+        key: "logic",
+        label: "Logic",
+        content: `\\title{Basic Logic Symbols}
+
+\\author{Author}
+
+\\abstract{A compact sample using common logical notation.}
+
+\\section{Connectives}
+
+\\definition{We write $$A \\vdash B$$ when $B$ is derivable from $A$, and $$A \\models B$$ when $B$ holds in every model of $A$.}
+
+\\theorem{If $A \\to B$ and $A$ hold, then $B$ follows, so the sequent $$A, A \\to B \\vdash B$$ is valid.}`
+      },
+      {
+        key: "farsi",
+        label: "فارسی",
+        content: `\\title{نمونه فارسی}
+
+\\author{نویسنده}
+
+\\abstract{این یک نمونه کوتاه فارسی است که با فونت XB Niloofar نمایش داده می‌شود. در این نمونه، هدف نمایش بهتر چیدمان متن راست‌به‌چپ، خوانایی حروف فارسی، و هماهنگی آن با فرمول‌های ریاضی در محیط پیش‌نمایش است.}
+
+\\section{مقدمه}
+
+\\definition{انتگرال یک تابع، روشی برای اندازه‌گیری تجمع پیوستهٔ مقدارهای آن روی یک بازه است. اگر $f(x)$ تابعی بر روی بازه‌ای باشد، می‌توان انتگرال آن را به صورت $$\\int f(x)\\,dx$$ نوشت.}
+
+انتگرال یکی از مفاهیم اصلی در حسابان است و برای اندازه‌گیری مجموع پیوستهٔ مقادیر یک تابع به کار می‌رود. وقتی تابعی روی یک بازه تعریف شده باشد، انتگرال آن می‌تواند مساحت زیر نمودار، جرم یک جسم، یا مقدار تجمعی یک کمیت را نمایش دهد. به همین دلیل، انتگرال در ریاضیات، فیزیک، و مهندسی کاربرد گسترده‌ای دارد.
+
+\\theorem{اگر $F(x)$ تابعی باشد که مشتق آن برابر $f(x)$ است، آنگاه $$\\int_a^b f(x)\\,dx = F(b) - F(a).$$ این رابطه نشان می‌دهد که انتگرال معکوس مشتق است و از قضیه اصلی حسابان به دست می‌آید.}`
+      }
+    ];
+    const symbolItems = [
+      { label: "∀", insert: "\\forall", title: "\\forall" },
+      { label: "∃", insert: "\\exists", title: "\\exists" },
+      { label: "⊢", insert: "\\vdash", title: "\\vdash" },
+      { label: "⊨", insert: "\\models", title: "\\models" },
+      { label: "→", insert: "\\to", title: "\\to" },
+      { label: "↔", insert: "\\leftrightarrow", title: "\\leftrightarrow" },
+      { label: "⇒", insert: "\\Rightarrow", title: "\\Rightarrow" },
+      { label: "⇔", insert: "\\Leftrightarrow", title: "\\Leftrightarrow" },
+      { label: "⊃", insert: "\\supset", title: "\\supset" },
+      { label: "⊂", insert: "\\subset", title: "\\subset" },
+      { label: "⊆", insert: "\\subseteq", title: "\\subseteq" },
+      { label: "∈", insert: "\\in", title: "\\in" },
+      { label: "∉", insert: "\\notin", title: "\\notin" },
+      { label: "∧", insert: "\\land", title: "\\land" },
+      { label: "∨", insert: "\\lor", title: "\\lor" },
+      { label: "¬", insert: "\\neg", title: "\\neg" },
+      { label: "⊤", insert: "\\top", title: "\\top" },
+      { label: "⊥", insert: "\\bot", title: "\\bot" },
+      { label: "σ", insert: "\\sigma", title: "\\sigma" },
+      { label: "π", insert: "\\pi", title: "\\pi" },
+      { label: "∫", insert: "\\int", title: "\\int" },
+      { label: "ℕ", insert: "\\mathbb{N}", title: "\\mathbb{N}" },
+      { label: "ℤ", insert: "\\mathbb{Z}", title: "\\mathbb{Z}" },
+      { label: "ℙ", insert: "\\mathcal{P}", title: "\\mathcal{P}" },
+      { label: "∅", insert: "\\emptyset", title: "\\emptyset" }
+    ];
+
+    function setPaneWidths(editorWidth) {
+      const bounds = workspace.getBoundingClientRect();
+      const splitterWidth = splitter.offsetWidth;
+      const minPaneWidth = 192;
+      const clampedEditorWidth = Math.min(
+        Math.max(editorWidth, minPaneWidth),
+        bounds.width - splitterWidth - minPaneWidth
+      );
+      const previewWidth = bounds.width - splitterWidth - clampedEditorWidth;
+
+      workspace.style.gridTemplateColumns = clampedEditorWidth + "px " + splitterWidth + "px " + previewWidth + "px";
+      return clampedEditorWidth;
+    }
+
+    function restorePaneWidths() {
+      const savedEditorWidth = Number(localStorage.getItem(editorWidthStorageKey));
+
+      if (!window.matchMedia("(min-width: 801px)").matches) {
+        workspace.style.gridTemplateColumns = "";
+        return;
+      }
+
+      if (savedEditorWidth > 0) {
+        setPaneWidths(savedEditorWidth);
+      }
+    }
+
+    function parseSidebarPosition() {
+      try {
+        const value = JSON.parse(localStorage.getItem(sidebarPositionStorageKey));
+        if (value && typeof value.left === "number" && typeof value.top === "number") {
+          return value;
+        }
+      } catch (error) {
+      }
+
+      return { left: 16, top: 16 };
+    }
+
+    function clampSidebarPosition(left, top) {
+      const bounds = document.documentElement.getBoundingClientRect();
+      const sidebarBounds = sidebar.getBoundingClientRect();
+      const maxLeft = Math.max(16, bounds.width - sidebarBounds.width - 16);
+      const maxTop = Math.max(16, bounds.height - sidebarBounds.height - 16);
+
+      return {
+        left: Math.min(Math.max(left, 16), maxLeft),
+        top: Math.min(Math.max(top, 16), maxTop)
+      };
+    }
+
+    function applySidebarPosition(left, top) {
+      const clamped = clampSidebarPosition(left, top);
+      sidebar.style.left = clamped.left + "px";
+      sidebar.style.top = clamped.top + "px";
+      localStorage.setItem(sidebarPositionStorageKey, JSON.stringify(clamped));
+    }
+
+    function restoreSidebarPosition() {
+      const position = parseSidebarPosition();
+      applySidebarPosition(position.left, position.top);
+    }
+
+    function isSidebarCollapsed() {
+      return localStorage.getItem(sidebarCollapsedStorageKey) === "true";
+    }
+
+    function setSidebarCollapsed(collapsed) {
+      sidebar.classList.toggle("collapsed", collapsed);
+      sidebarCollapseButton.textContent = collapsed ? "+" : "−";
+      sidebarCollapseButton.setAttribute("aria-label", collapsed ? "Expand samples" : "Collapse samples");
+      localStorage.setItem(sidebarCollapsedStorageKey, collapsed ? "true" : "false");
+    }
+
+    function isPreviewFarsi() {
+      return previewLanguage === "fa";
+    }
+
+    function syncPreviewLanguageButton() {
+      previewLanguageButton.textContent = previewLanguage === "fa" ? "en" : "fa";
+      previewLanguageButton.setAttribute("aria-label", previewLanguage === "fa" ? "Switch preview to English" : "Switch preview to Farsi");
+      previewLanguageButton.title = previewLanguage === "fa" ? "English preview" : "Farsi preview";
+    }
+
+    function syncEditorDirection() {
+      editor.classList.toggle("editor-farsi", previewLanguage === "fa");
+    }
+
+    function isMobileViewport() {
+      return window.matchMedia("(max-width: 800px)").matches;
+    }
+
+    function syncMobileView() {
+      const showPreview = mobileView === "preview";
+      const showEditor = !showPreview;
+
+      mobileEditorTab.classList.toggle("active", showEditor);
+      mobilePreviewTab.classList.toggle("active", showPreview);
+
+      document.body.classList.toggle("mobile-show-editor", isMobileViewport() && showEditor);
+      document.body.classList.toggle("mobile-show-preview", isMobileViewport() && showPreview);
+    }
+
+    function setMobileView(view) {
+      mobileView = view === "preview" ? "preview" : "editor";
+      localStorage.setItem(mobileViewStorageKey, mobileView);
+      syncMobileView();
+    }
+
+    function setPreviewLanguage(language) {
+      previewLanguage = language === "fa" ? "fa" : "en";
+      localStorage.setItem(previewLanguageStorageKey, previewLanguage);
+      syncPreviewLanguageButton();
+      syncEditorDirection();
+      renderPreview();
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function toPersianDigits(text) {
+      return text.replace(/[0-9]/g, function (digit) {
+        return String.fromCharCode(0x06f0 + Number(digit));
+      });
+    }
+
+    function convertDigitsOutsideMath(text, shouldConvert) {
+      if (!shouldConvert) {
+        return text;
+      }
+
+      let result = "";
+      let index = 0;
+      let inMath = false;
+      let displayMath = false;
+
+      while (index < text.length) {
+        const character = text[index];
+        const nextCharacter = text[index + 1];
+
+        if (!inMath && character === "$") {
+          if (nextCharacter === "$") {
+            inMath = true;
+            displayMath = true;
+            result += "$$";
+            index += 2;
+            continue;
+          }
+
+          inMath = true;
+          displayMath = false;
+          result += "$";
+          index++;
+          continue;
+        }
+
+        if (inMath && character === "$") {
+          if (displayMath && nextCharacter === "$") {
+            inMath = false;
+            displayMath = false;
+            result += "$$";
+            index += 2;
+            continue;
+          }
+
+          if (!displayMath) {
+            inMath = false;
+            result += "$";
+            index++;
+            continue;
+          }
+        }
+
+        if (!inMath && /[0-9]/.test(character)) {
+          result += toPersianDigits(character);
+        } else {
+          result += character;
+        }
+
+        index++;
+      }
+
+      return result;
+    }
+
+    function normalizePreviewSpacing(text) {
+      return text
+        .replace(/\r\n/g, "\n")
+        .replace(/\n{2,}/g, "\n");
+    }
+
+    function readBracedValue(text, startIndex) {
+      if (text[startIndex] !== "{") {
+        return null;
+      }
+
+      let depth = 0;
+
+      for (let index = startIndex; index < text.length; index++) {
+        const character = text[index];
+        const previousCharacter = text[index - 1];
+
+        if (character === "{" && previousCharacter !== "\\") {
+          depth++;
+        } else if (character === "}" && previousCharacter !== "\\") {
+          depth--;
+
+          if (depth === 0) {
+            return {
+              value: text.slice(startIndex + 1, index),
+              endIndex: index + 1
+            };
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function formatPreviewText(text) {
+      const commandPattern = /\\(title|author|abstract|section|definition|theorem)\s*\{/g;
+      let html = "";
+      let lastIndex = 0;
+      let sectionNumber = 0;
+      let definitionNumber = 0;
+      let theoremNumber = 0;
+      let match;
+      const isFarsiPreview = isPreviewFarsi();
+      const abstractLabel = isFarsiPreview ? "چکیده" : "Abstract";
+      const definitionLabel = isFarsiPreview ? "تعریف" : "Definition";
+      const theoremLabel = isFarsiPreview ? "قضیه" : "Theorem";
+
+      while ((match = commandPattern.exec(text)) !== null) {
+        const valueStartIndex = commandPattern.lastIndex - 1;
+        const bracedValue = readBracedValue(text, valueStartIndex);
+
+        if (!bracedValue) {
+          continue;
+        }
+
+        html += escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text.slice(lastIndex, match.index)), isFarsiPreview));
+
+        if (match[1] === "title") {
+          html += '<span class="preview-title">' + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        } else if (match[1] === "author") {
+          html += '<span class="preview-author">' + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        } else if (match[1] === "abstract") {
+          html += '<span class="preview-abstract"><span class="preview-abstract-label">' + abstractLabel + "</span>" + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        } else if (match[1] === "section") {
+          sectionNumber++;
+          definitionNumber = 0;
+          theoremNumber = 0;
+          const renderedSectionNumber = isFarsiPreview ? toPersianDigits(String(sectionNumber)) : String(sectionNumber);
+          html += '<span class="preview-section">' + renderedSectionNumber + ". " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        } else if (match[1] === "definition") {
+          definitionNumber++;
+          const renderedDefinitionNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + definitionNumber + ".") : sectionNumber + "." + definitionNumber + ".";
+          html += '<span class="preview-statement"><span class="preview-label">' + definitionLabel + " " + renderedDefinitionNumber + "</span> " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        } else {
+          theoremNumber++;
+          const renderedTheoremNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + theoremNumber + ".") : sectionNumber + "." + theoremNumber + ".";
+          html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+        }
+
+        lastIndex = bracedValue.endIndex;
+        commandPattern.lastIndex = bracedValue.endIndex;
+      }
+
+      html += escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text.slice(lastIndex)), isFarsiPreview));
+
+      return html;
+    }
+
+    function renderPreview(options) {
+      const shouldTypeset = !options || options.typeset !== false;
+
+      if (window.MathJax && MathJax.typesetClear) {
+        MathJax.typesetClear([preview]);
+      }
+
+      preview.classList.toggle("preview-farsi", isPreviewFarsi());
+      preview.innerHTML = formatPreviewText(editor.value);
+      syncMobileView();
+
+      if (shouldTypeset && window.MathJax && MathJax.typesetPromise) {
+        clearTimeout(renderTimer);
+        renderTimer = setTimeout(function () {
+          MathJax.typesetPromise([preview]);
+        }, 150);
+      }
+    }
+
+    function setEditorContent(text) {
+      editor.value = text;
+      editor.focus();
+      editor.selectionStart = editor.selectionEnd = 0;
+    }
+
+    function saveEditorState() {
+      localStorage.setItem(editorStateStorageKey, JSON.stringify({
+        activeSampleKey: activeSampleKey,
+        content: editor.value
+      }));
+    }
+
+    function loadEditorState() {
+      try {
+        const value = JSON.parse(localStorage.getItem(editorStateStorageKey));
+        if (value && typeof value.activeSampleKey === "string" && typeof value.content === "string") {
+          return value;
+        }
+      } catch (error) {
+      }
+
+      return null;
+    }
+
+    function loadCustomSamples() {
+      try {
+        const value = JSON.parse(localStorage.getItem(customSamplesStorageKey));
+        if (Array.isArray(value)) {
+          return value.filter(function (sample) {
+            return sample && typeof sample.id === "string" && typeof sample.label === "string" && typeof sample.content === "string";
+          }).map(function (sample) {
+            return {
+              id: sample.id,
+              key: sample.key || sample.id,
+              label: sample.label,
+              content: sample.content,
+              locked: sample.locked !== false
+            };
+          });
+        }
+      } catch (error) {
+      }
+
+      return [];
+    }
+
+    function saveCustomSamples() {
+      localStorage.setItem(customSamplesStorageKey, JSON.stringify(customSamples));
+    }
+
+    function saveActiveSampleKey(key) {
+      activeSampleKey = key;
+      localStorage.setItem(activeSampleStorageKey, key);
+    }
+
+    function restoreActiveSampleKey() {
+      const saved = localStorage.getItem(activeSampleStorageKey);
+      if (saved) {
+        activeSampleKey = saved;
+      }
+    }
+
+    function makeEmptyCustomContent(label) {
+      return "\\title{" + label + "}";
+    }
+
+    function updateTitleInContent(content, label) {
+      if (/\\title\{[^}]*\}/.test(content)) {
+        return content.replace(/\\title\{[^}]*\}/, "\\title{" + label + "}");
+      }
+
+      return "\\title{" + label + "}\n\n" + content;
+    }
+
+    function saveCurrentSample() {
+      const currentSample = customSamples.find(function (sample) {
+        return sample.key === activeSampleKey;
+      });
+
+      if (!currentSample) {
+        saveEditorState();
+        renderPreview();
+        return;
+      }
+
+      currentSample.content = editor.value;
+      saveCustomSamples();
+      saveEditorState();
+      renderPreview();
+    }
+
+    function getAllSamples() {
+      return articleSamples.concat(customSamples);
+    }
+
+    function selectSample(sample) {
+      setEditorContent(sample.content);
+      saveActiveSampleKey(sample.key);
+      saveEditorState();
+      setPreviewLanguage(sample.key === "farsi" ? "fa" : "en");
+      renderSampleList();
+    }
+
+    function addCurrentSample() {
+      const id = "custom-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+      const defaultLabel = "new sample";
+      const sample = {
+        id: id,
+        key: id,
+        label: defaultLabel,
+        content: makeEmptyCustomContent(defaultLabel),
+        locked: false
+      };
+
+      customSamples = customSamples.concat(sample);
+      saveCustomSamples();
+      saveActiveSampleKey(sample.key);
+      pendingCustomNameFocusId = sample.id;
+      setEditorContent(sample.content);
+      saveEditorState();
+      renderPreview();
+      renderSampleList();
+    }
+
+    function renameCustomSample(id, label) {
+      const trimmedLabel = label.trim() || "new sample";
+
+      customSamples = customSamples.map(function (sample) {
+        if (sample.id !== id) {
+          return sample;
+        }
+
+        return {
+          id: sample.id,
+          key: sample.key,
+          label: trimmedLabel,
+          content: sample.content,
+          locked: sample.locked
+        };
+      });
+    }
+
+    function finalizeCustomSampleName(id, inputElement) {
+      const trimmedLabel = inputElement.value.trim() || "new sample";
+      let updatedSample = null;
+
+      customSamples = customSamples.map(function (sample) {
+        if (sample.id !== id) {
+          return sample;
+        }
+
+        updatedSample = {
+          id: sample.id,
+          key: sample.key,
+          label: trimmedLabel,
+          content: updateTitleInContent(sample.content, trimmedLabel),
+          locked: true
+        };
+
+        return updatedSample;
+      });
+
+      if (!updatedSample) {
+        return;
+      }
+
+      saveCustomSamples();
+
+      if (activeSampleKey === updatedSample.key) {
+        editor.value = updatedSample.content;
+        saveEditorState();
+        renderPreview();
+      }
+
+      renderSampleList();
+      editor.focus();
+    }
+
+    function deleteCustomSample(id, event) {
+      if (event) {
+        event.stopPropagation();
+      }
+
+      const index = customSamples.findIndex(function (sample) {
+        return sample.id === id;
+      });
+
+      if (index < 0) {
+        return;
+      }
+
+      const removed = customSamples[index];
+      customSamples = customSamples.filter(function (sample) {
+        return sample.id !== id;
+      });
+      saveCustomSamples();
+
+      if (activeSampleKey === removed.key) {
+        const fallback = getAllSamples()[0];
+        if (fallback) {
+          saveActiveSampleKey(fallback.key);
+          setEditorContent(fallback.content);
+          saveEditorState();
+          renderPreview();
+        }
+      }
+
+      renderSampleList();
+    }
+
+    function renderSampleList() {
+      sampleList.innerHTML = "";
+
+      const allSamples = getAllSamples();
+      if (allSamples.length > 0 && !allSamples.some(function (sample) {
+        return sample.key === activeSampleKey;
+      })) {
+        activeSampleKey = allSamples[0].key;
+        localStorage.setItem(activeSampleStorageKey, activeSampleKey);
+      }
+
+      allSamples.forEach(function (sample) {
+        const row = document.createElement("div");
+        row.className = "sample-row";
+
+        const isCustom = sample.key.indexOf("custom-") === 0;
+
+        if (isCustom) {
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "sample-delete-button";
+          deleteButton.textContent = "×";
+          deleteButton.setAttribute("aria-label", "Delete sample");
+          deleteButton.addEventListener("click", function (event) {
+            deleteCustomSample(sample.id, event);
+          });
+
+          if (sample.locked) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "sample-button";
+            button.textContent = sample.label;
+            button.dataset.sampleKey = sample.key;
+            if (sample.key === activeSampleKey) {
+              button.classList.add("active");
+            }
+
+            button.addEventListener("click", function () {
+              selectSample(sample);
+            });
+
+            row.appendChild(button);
+          } else {
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.className = "sample-name-input";
+            nameInput.value = sample.label;
+            nameInput.setAttribute("aria-label", "Sample name");
+            if (sample.key === activeSampleKey) {
+              nameInput.classList.add("active");
+            }
+
+            nameInput.addEventListener("click", function (event) {
+              event.stopPropagation();
+            });
+
+            nameInput.addEventListener("keydown", function (event) {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                finalizeCustomSampleName(sample.id, nameInput);
+              }
+            });
+
+            nameInput.addEventListener("input", function () {
+              renameCustomSample(sample.id, nameInput.value);
+            });
+
+            row.appendChild(nameInput);
+            if (pendingCustomNameFocusId === sample.id) {
+              pendingCustomNameFocusId = null;
+              requestAnimationFrame(function () {
+                nameInput.focus();
+                nameInput.select();
+              });
+            }
+          }
+
+          row.appendChild(deleteButton);
+        } else {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "sample-button";
+          button.textContent = sample.label;
+          button.dataset.sampleKey = sample.key;
+          if (sample.key === activeSampleKey) {
+            button.classList.add("active");
+          }
+
+          button.addEventListener("click", function () {
+            selectSample(sample);
+          });
+
+          button.style.gridColumn = "1 / -1";
+
+          row.appendChild(button);
+        }
+
+        sampleList.appendChild(row);
+      });
+    }
+
+    function insertAtCursor(text) {
+      const value = editor.value;
+      const hasSelection = typeof editor.selectionStart === "number" && typeof editor.selectionEnd === "number";
+
+      if (document.activeElement === editor && hasSelection) {
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.setRangeText(text, start, end, "end");
+        return;
+      }
+
+      const needsSeparator = value.length > 0 && !/[\s]$/.test(value);
+      editor.value = value + (needsSeparator ? " " : "") + text;
+      editor.selectionStart = editor.selectionEnd = editor.value.length;
+    }
+
+    function closeSymbolPicker() {
+      symbolPicker.hidden = true;
+      symbolToggleButton.setAttribute("aria-expanded", "false");
+    }
+
+    function openSymbolPicker() {
+      symbolPicker.hidden = false;
+      symbolToggleButton.setAttribute("aria-expanded", "true");
+    }
+
+    function toggleSymbolPicker() {
+      if (symbolPicker.hidden) {
+        openSymbolPicker();
+      } else {
+        closeSymbolPicker();
+      }
+    }
+
+    symbolToggleButton.setAttribute("aria-expanded", "false");
+
+    symbolItems.forEach(function (item) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "symbol-item";
+      button.textContent = item.label;
+      button.title = item.title;
+      button.setAttribute("aria-label", item.title);
+      button.addEventListener("click", function () {
+        insertAtCursor(item.insert);
+        editor.focus();
+        closeSymbolPicker();
+      });
+      symbolPicker.appendChild(button);
+    });
+
+    document.getElementById("MathJax-script").addEventListener("load", renderPreview);
+    restoreActiveSampleKey();
+    renderSampleList();
+    const savedEditorState = loadEditorState();
+    if (savedEditorState) {
+      const savedSample = getAllSamples().find(function (sample) {
+        return sample.key === savedEditorState.activeSampleKey;
+      });
+
+      if (savedSample) {
+        saveActiveSampleKey(savedSample.key);
+        editor.value = savedEditorState.content;
+
+        if (savedSample.key.indexOf("custom-") === 0) {
+          customSamples = customSamples.map(function (sample) {
+            if (sample.key !== savedSample.key) {
+              return sample;
+            }
+
+            return {
+              id: sample.id,
+              key: sample.key,
+              label: sample.label,
+              content: savedEditorState.content,
+              locked: sample.locked
+            };
+          });
+          saveCustomSamples();
+        }
+      }
+    }
+    renderSampleList();
+    renderPreview();
+    addSampleButton.addEventListener("click", function () {
+      addCurrentSample();
+    });
+    symbolToggleButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      toggleSymbolPicker();
+    });
+    symbolPicker.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+    document.addEventListener("click", function () {
+      closeSymbolPicker();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeSymbolPicker();
+      }
+    });
+    sidebarTitle.addEventListener("pointerdown", function (event) {
+      if (event.target.closest("button, input, textarea, select, a, label")) {
+        return;
+      }
+
+      event.preventDefault();
+      sidebarDragState = {
+        offsetX: event.clientX - sidebar.getBoundingClientRect().left,
+        offsetY: event.clientY - sidebar.getBoundingClientRect().top
+      };
+      sidebarTitle.setPointerCapture(event.pointerId);
+      document.body.classList.add("is-dragging-sidebar");
+    });
+    sidebarTitle.addEventListener("pointermove", function (event) {
+      if (!sidebarTitle.hasPointerCapture(event.pointerId) || !sidebarDragState) {
+        return;
+      }
+
+      applySidebarPosition(event.clientX - sidebarDragState.offsetX, event.clientY - sidebarDragState.offsetY);
+    });
+    function endSidebarDrag(event) {
+      if (sidebarTitle.hasPointerCapture(event.pointerId)) {
+        sidebarTitle.releasePointerCapture(event.pointerId);
+      }
+
+      sidebarDragState = null;
+      document.body.classList.remove("is-dragging-sidebar");
+    }
+    sidebarTitle.addEventListener("pointerup", endSidebarDrag);
+    sidebarTitle.addEventListener("pointercancel", endSidebarDrag);
+    updatePreviewButton.addEventListener("click", saveCurrentSample);
+    editor.addEventListener("input", function () {
+      if (activeSampleKey.indexOf("custom-") === 0) {
+        customSamples = customSamples.map(function (sample) {
+          if (sample.key !== activeSampleKey) {
+            return sample;
+          }
+
+          return {
+            id: sample.id,
+            key: sample.key,
+            label: sample.label,
+            content: editor.value,
+            locked: sample.locked
+          };
+        });
+        saveCustomSamples();
+      }
+
+      saveEditorState();
+    });
+    document.addEventListener("keydown", function (event) {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        saveCurrentSample();
+      }
+    });
+    savePdfButton.addEventListener("click", function () {
+      clearTimeout(renderTimer);
+      saveCurrentSample();
+      renderPreview({ typeset: false });
+      document.body.classList.add("printing-pdf");
+
+      function clearPrintMode() {
+        document.body.classList.remove("printing-pdf");
+      }
+
+      window.addEventListener("afterprint", clearPrintMode, { once: true });
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([preview]).then(function () {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              window.print();
+            });
+          });
+        });
+      } else {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            window.print();
+          });
+        });
+      }
+    });
+    if (previewLanguage !== "fa" && previewLanguage !== "en") {
+      previewLanguage = activeSampleKey === "farsi" ? "fa" : "en";
+      localStorage.setItem(previewLanguageStorageKey, previewLanguage);
+    }
+    syncPreviewLanguageButton();
+    syncEditorDirection();
+    syncMobileView();
+    renderPreview();
+    restoreSidebarPosition();
+    setSidebarCollapsed(isSidebarCollapsed());
+    previewLanguageButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setPreviewLanguage(previewLanguage === "fa" ? "en" : "fa");
+    });
+    mobileEditorTab.addEventListener("click", function () {
+      setMobileView("editor");
+    });
+    mobilePreviewTab.addEventListener("click", function () {
+      setMobileView("preview");
+    });
+    sidebarCollapseButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      setSidebarCollapsed(!sidebar.classList.contains("collapsed"));
+    });
+
+    splitter.addEventListener("pointerdown", function (event) {
+      event.preventDefault();
+      splitter.setPointerCapture(event.pointerId);
+      document.body.classList.add("is-resizing");
+    });
+
+    splitter.addEventListener("pointermove", function (event) {
+      if (!splitter.hasPointerCapture(event.pointerId)) {
+        return;
+      }
+
+      const bounds = workspace.getBoundingClientRect();
+      const editorWidth = setPaneWidths(event.clientX - bounds.left);
+
+      localStorage.setItem(editorWidthStorageKey, editorWidth);
+    });
+
+    splitter.addEventListener("pointerup", function (event) {
+      if (splitter.hasPointerCapture(event.pointerId)) {
+        splitter.releasePointerCapture(event.pointerId);
+      }
+
+      document.body.classList.remove("is-resizing");
+    });
+
+    splitter.addEventListener("pointercancel", function (event) {
+      if (splitter.hasPointerCapture(event.pointerId)) {
+        splitter.releasePointerCapture(event.pointerId);
+      }
+
+      document.body.classList.remove("is-resizing");
+    });
+
+    window.addEventListener("resize", restorePaneWidths);
+    window.addEventListener("resize", syncMobileView);
+    restorePaneWidths();
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+
+</html>

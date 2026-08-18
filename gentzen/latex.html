@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -113,6 +112,7 @@
       padding: 1rem;
       font-family: "Lora";
       counter-reset: page;
+      overflow: hidden;
     }
 
     ol,
@@ -190,14 +190,16 @@
       display: grid;
       grid-template-columns: minmax(12rem, 1fr) .5rem minmax(12rem, 1fr);
       width: min(1400px, 100%);
-      min-height: calc(100vh - 2rem);
+      height: calc(100vh - 2rem);
+      min-height: 0;
       margin: 0 auto;
     }
 
     .app-shell {
       display: block;
       width: 100%;
-      min-height: calc(100vh - 2rem);
+      height: calc(100vh - 2rem);
+      min-height: 0;
     }
 
     .sidebar {
@@ -406,9 +408,11 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      min-height: calc(100vh - 2rem);
+      min-height: 0;
+      height: 100%;
       background: white;
       border: 1px solid #ddd;
+      overflow: hidden;
     }
 
     .pane-title {
@@ -518,7 +522,8 @@
     #editor {
       flex: 1;
       width: 100%;
-      min-height: 24rem;
+      min-height: 0;
+      overflow: auto;
       resize: none;
       border: 0;
       outline: 0;
@@ -536,12 +541,21 @@
     }
 
     #preview {
+      position: relative;
       flex: 1;
+      min-height: 0;
       overflow: auto;
       padding: 4rem 4.5rem;
       line-height: 1.5;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
+    }
+
+    .preview-save-highlight {
+      outline: 2px solid rgba(181, 132, 0, .85);
+      background: rgba(255, 225, 90, .16);
+      border-radius: 2px;
+      transition: background .2s ease, outline-color .2s ease;
     }
 
     .preview-section {
@@ -700,7 +714,8 @@
       }
 
       .app-shell {
-        min-height: 100vh;
+        height: 100vh;
+        min-height: 0;
       }
 
       .sidebar {
@@ -733,12 +748,14 @@
       .workspace {
         display: block;
         width: 100%;
-        min-height: calc(100vh - 2rem);
+        height: calc(100vh - 2rem);
+        min-height: 0;
         margin: 0;
       }
 
       .workspace .pane {
-        min-height: calc(100vh - 6rem);
+        height: calc(100vh - 2rem);
+        min-height: 0;
         border-left: 0;
         border-right: 0;
       }
@@ -753,7 +770,7 @@
 
       body.mobile-show-editor .workspace .pane:first-child {
         display: flex;
-        min-height: calc(100vh - 2rem);
+        height: calc(100vh - 2rem);
       }
 
       body.mobile-show-editor .workspace .pane:last-child {
@@ -858,12 +875,16 @@
     let renderTimer;
     let sidebarDragState = null;
     let pendingCustomNameFocusId = null;
+    let lastEditorSelectionStart = 0;
+    let lastEditorSelectionEnd = 0;
     let mobileView = localStorage.getItem(mobileViewStorageKey) || "editor";
     let activeSampleKey = "countability";
     let customSamples = loadCustomSamples();
     let previewLanguage = localStorage.getItem(previewLanguageStorageKey);
     const mobileEditorTab = document.getElementById("mobileEditorTab");
     const mobilePreviewTab = document.getElementById("mobilePreviewTab");
+    let previewHighlightTimer = null;
+    let highlightedPreviewBlock = null;
     const articleSamples = [
       {
         key: "countability",
@@ -1218,6 +1239,25 @@ $$`
       return null;
     }
 
+    function wrapSourceFragment(className, sourceStart, sourceEnd, content) {
+      return '<span class="' + className + ' preview-source-fragment" data-source-start="' + sourceStart + '" data-source-end="' + sourceEnd + '">' + content + "</span>";
+    }
+
+    function appendPreviewTextSegment(text, sourceStart, sourceEnd, isFarsiPreview) {
+      if (!text) {
+        return "";
+      }
+
+      const normalizedText = normalizePreviewSpacing(text);
+      const renderedText = escapeHtml(convertDigitsOutsideMath(normalizedText, isFarsiPreview));
+
+      if (!renderedText) {
+        return "";
+      }
+
+      return wrapSourceFragment("preview-text-segment", sourceStart, sourceEnd, renderedText);
+    }
+
     function formatPreviewText(text) {
       const commandPattern = /\\(title|author|abstract|section|definition|theorem)\s*\{/g;
       let html = "";
@@ -1239,45 +1279,50 @@ $$`
           continue;
         }
 
-        html += escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text.slice(lastIndex, match.index)), isFarsiPreview));
+        html += appendPreviewTextSegment(text.slice(lastIndex, match.index), lastIndex, match.index, isFarsiPreview);
 
         if (match[1] === "title") {
-          html += '<span class="preview-title">' + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-title">' + wrapSourceFragment("preview-title-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         } else if (match[1] === "author") {
-          html += '<span class="preview-author">' + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-author">' + wrapSourceFragment("preview-author-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         } else if (match[1] === "abstract") {
-          html += '<span class="preview-abstract"><span class="preview-abstract-label">' + abstractLabel + "</span>" + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-abstract"><span class="preview-abstract-label">' + abstractLabel + "</span>" + wrapSourceFragment("preview-abstract-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         } else if (match[1] === "section") {
           sectionNumber++;
           definitionNumber = 0;
           theoremNumber = 0;
           const renderedSectionNumber = isFarsiPreview ? toPersianDigits(String(sectionNumber)) : String(sectionNumber);
-          html += '<span class="preview-section">' + renderedSectionNumber + ". " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-section">' + renderedSectionNumber + ". " + wrapSourceFragment("preview-section-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         } else if (match[1] === "definition") {
           definitionNumber++;
           const renderedDefinitionNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + definitionNumber + ".") : sectionNumber + "." + definitionNumber + ".";
-          html += '<span class="preview-statement"><span class="preview-label">' + definitionLabel + " " + renderedDefinitionNumber + "</span> " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-statement"><span class="preview-label">' + definitionLabel + " " + renderedDefinitionNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         } else {
           theoremNumber++;
           const renderedTheoremNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + theoremNumber + ".") : sectionNumber + "." + theoremNumber + ".";
-          html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview)) + "</span>";
+          html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
         }
 
         lastIndex = bracedValue.endIndex;
         commandPattern.lastIndex = bracedValue.endIndex;
       }
 
-      html += escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text.slice(lastIndex)), isFarsiPreview));
+      html += appendPreviewTextSegment(text.slice(lastIndex), lastIndex, text.length, isFarsiPreview);
 
       return html;
     }
 
     function renderPreview(options) {
       const shouldTypeset = !options || options.typeset !== false;
+      const shouldSyncScroll = options && options.scrollToEditor === true;
+      const shouldHighlight = options && options.highlight === true;
+      const caretIndex = typeof editor.selectionStart === "number" ? editor.selectionStart : lastEditorSelectionStart;
 
       if (window.MathJax && MathJax.typesetClear) {
         MathJax.typesetClear([preview]);
       }
+
+      clearPreviewHighlight();
 
       preview.classList.toggle("preview-farsi", isPreviewFarsi());
       preview.innerHTML = formatPreviewText(editor.value);
@@ -1286,8 +1331,106 @@ $$`
       if (shouldTypeset && window.MathJax && MathJax.typesetPromise) {
         clearTimeout(renderTimer);
         renderTimer = setTimeout(function () {
-          MathJax.typesetPromise([preview]);
+          MathJax.typesetPromise([preview]).then(function () {
+            if (shouldSyncScroll) {
+              setTimeout(function () {
+                requestAnimationFrame(function () {
+                  const targetBlock = scrollPreviewToSourceIndex(caretIndex);
+                  if (shouldHighlight) {
+                    highlightPreviewBlock(targetBlock);
+                  }
+                });
+              }, 50);
+            } else if (shouldHighlight) {
+              highlightPreviewBlock(findPreviewBlockForSourceIndex(caretIndex));
+            }
+          });
         }, 150);
+      } else if (shouldSyncScroll) {
+        setTimeout(function () {
+          requestAnimationFrame(function () {
+            const targetBlock = scrollPreviewToSourceIndex(caretIndex);
+            if (shouldHighlight) {
+              highlightPreviewBlock(targetBlock);
+            }
+          });
+        }, 50);
+      } else if (shouldHighlight) {
+        highlightPreviewBlock(findPreviewBlockForSourceIndex(caretIndex));
+      }
+    }
+
+    function findPreviewBlockForSourceIndex(sourceIndex) {
+      const blocks = preview.querySelectorAll("[data-source-start][data-source-end]");
+      let fallback = null;
+      let bestMatch = null;
+      let bestLength = Infinity;
+
+      for (let index = 0; index < blocks.length; index++) {
+        const block = blocks[index];
+        const start = Number(block.getAttribute("data-source-start"));
+        const end = Number(block.getAttribute("data-source-end"));
+
+        if (!Number.isFinite(start) || !Number.isFinite(end)) {
+          continue;
+        }
+
+        if (sourceIndex >= start && sourceIndex < end) {
+          const length = end - start;
+          if (length < bestLength) {
+            bestMatch = block;
+            bestLength = length;
+          }
+        }
+
+        if (sourceIndex >= end) {
+          fallback = block;
+        }
+      }
+
+      return bestMatch || fallback || blocks[blocks.length - 1] || null;
+    }
+
+    function scrollPreviewToSourceIndex(sourceIndex) {
+      const targetBlock = findPreviewBlockForSourceIndex(sourceIndex);
+
+      if (!targetBlock) {
+        return null;
+      }
+
+      const previewRect = preview.getBoundingClientRect();
+      const blockRect = targetBlock.getBoundingClientRect();
+      const blockBottom = blockRect.bottom - previewRect.top + preview.scrollTop;
+      const desiredTop = Math.max(0, blockBottom - preview.clientHeight + Math.max(24, Math.round(preview.clientHeight * .12)));
+      const maxTop = Math.max(0, preview.scrollHeight - preview.clientHeight);
+
+      preview.scrollTop = Math.min(desiredTop, maxTop);
+      return targetBlock;
+    }
+
+    function highlightPreviewBlock(targetBlock) {
+      clearPreviewHighlight();
+
+      if (!targetBlock) {
+        return;
+      }
+
+      targetBlock.classList.add("preview-save-highlight");
+      highlightedPreviewBlock = targetBlock;
+      previewHighlightTimer = setTimeout(function () {
+        clearPreviewHighlight();
+      }, 1100);
+    }
+
+    function clearPreviewHighlight() {
+      if (previewHighlightTimer) {
+        clearTimeout(previewHighlightTimer);
+        previewHighlightTimer = null;
+      }
+
+      if (highlightedPreviewBlock) {
+        highlightedPreviewBlock.classList.remove("preview-save-highlight");
+        highlightedPreviewBlock = null;
       }
     }
 
@@ -1295,6 +1438,15 @@ $$`
       editor.value = text;
       editor.focus();
       editor.selectionStart = editor.selectionEnd = 0;
+      lastEditorSelectionStart = 0;
+      lastEditorSelectionEnd = 0;
+    }
+
+    function rememberEditorSelection() {
+      if (typeof editor.selectionStart === "number" && typeof editor.selectionEnd === "number") {
+        lastEditorSelectionStart = editor.selectionStart;
+        lastEditorSelectionEnd = editor.selectionEnd;
+      }
     }
 
     function saveEditorState() {
@@ -1373,14 +1525,14 @@ $$`
 
       if (!currentSample) {
         saveEditorState();
-        renderPreview();
+        renderPreview({ scrollToEditor: true, highlight: true });
         return;
       }
 
       currentSample.content = editor.value;
       saveCustomSamples();
       saveEditorState();
-      renderPreview();
+      renderPreview({ scrollToEditor: true, highlight: true });
     }
 
     function getAllSamples() {
@@ -1606,17 +1758,22 @@ $$`
     function insertAtCursor(text) {
       const value = editor.value;
       const hasSelection = typeof editor.selectionStart === "number" && typeof editor.selectionEnd === "number";
+      const useCurrentSelection = document.activeElement === editor && hasSelection;
+      const start = useCurrentSelection ? editor.selectionStart : lastEditorSelectionStart;
+      const end = useCurrentSelection ? editor.selectionEnd : lastEditorSelectionEnd;
 
-      if (document.activeElement === editor && hasSelection) {
-        const start = editor.selectionStart;
-        const end = editor.selectionEnd;
+      if (typeof start === "number" && typeof end === "number") {
         editor.setRangeText(text, start, end, "end");
+        lastEditorSelectionStart = editor.selectionStart;
+        lastEditorSelectionEnd = editor.selectionEnd;
         return;
       }
 
       const needsSeparator = value.length > 0 && !/[\s]$/.test(value);
       editor.value = value + (needsSeparator ? " " : "") + text;
       editor.selectionStart = editor.selectionEnd = editor.value.length;
+      lastEditorSelectionStart = editor.selectionStart;
+      lastEditorSelectionEnd = editor.selectionEnd;
     }
 
     function closeSymbolPicker() {
@@ -1646,6 +1803,9 @@ $$`
       button.textContent = item.label;
       button.title = item.title;
       button.setAttribute("aria-label", item.title);
+      button.addEventListener("pointerdown", function (event) {
+        event.preventDefault();
+      });
       button.addEventListener("click", function () {
         insertAtCursor(item.insert);
         editor.focus();
@@ -1737,6 +1897,7 @@ $$`
     sidebarTitle.addEventListener("pointercancel", endSidebarDrag);
     updatePreviewButton.addEventListener("click", saveCurrentSample);
     editor.addEventListener("input", function () {
+      rememberEditorSelection();
       if (activeSampleKey.indexOf("custom-") === 0) {
         customSamples = customSamples.map(function (sample) {
           if (sample.key !== activeSampleKey) {
@@ -1755,6 +1916,17 @@ $$`
       }
 
       saveEditorState();
+    });
+    editor.addEventListener("keyup", rememberEditorSelection);
+    editor.addEventListener("click", rememberEditorSelection);
+    editor.addEventListener("mouseup", rememberEditorSelection);
+    editor.addEventListener("select", rememberEditorSelection);
+    editor.addEventListener("focus", rememberEditorSelection);
+    editor.addEventListener("touchend", rememberEditorSelection);
+    document.addEventListener("selectionchange", function () {
+      if (document.activeElement === editor) {
+        rememberEditorSelection();
+      }
     });
     document.addEventListener("keydown", function (event) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
@@ -1852,44 +2024,6 @@ $$`
     window.addEventListener("resize", syncMobileView);
     restorePaneWidths();
   </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
 </body>
 
 </html>

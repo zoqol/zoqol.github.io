@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page</title>
+  <title>ProofPan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
@@ -560,7 +560,7 @@
 
     .preview-section {
       display: block;
-      margin: 0;
+      margin: 1rem 0 .5rem;
       font-size: 1.35rem;
       font-weight: bold;
     }
@@ -596,6 +596,15 @@
       font-size: .95rem;
     }
 
+    .preview-english {
+      display: block;
+      margin: 1rem 0;
+      font-family: "Lora";
+      direction: ltr;
+      text-align: left;
+      unicode-bidi: isolate;
+    }
+
     #preview.preview-farsi {
       font-family: "XB Niloofar";
       direction: rtl;
@@ -623,31 +632,37 @@
 
     @page {
       size: A4;
-      margin: 20mm;
+      margin: 20mm 30mm;
     }
 
     @media print {
       html,
       body {
+        height: auto;
         min-height: auto;
         margin: 0;
         padding: 0;
         background: white;
+        overflow: visible;
+      }
+
+      .app-shell {
+        display: block;
+        height: auto;
+        min-height: auto;
       }
 
       .workspace {
         display: block;
         width: auto;
+        height: auto;
         min-height: auto;
         margin: 0;
+        overflow: visible;
       }
 
       .sidebar {
         display: none;
-      }
-
-      .app-shell {
-        display: block;
       }
 
       .pane:first-child,
@@ -658,9 +673,11 @@
 
       .pane {
         display: block;
+        height: auto;
         min-height: auto;
         border: 0;
         background: white;
+        overflow: visible;
       }
 
       #preview {
@@ -686,18 +703,33 @@
       display: none !important;
     }
 
+    body.printing-pdf {
+      height: auto !important;
+      min-height: auto !important;
+      overflow: visible !important;
+    }
+
+    body.printing-pdf .app-shell {
+      height: auto !important;
+      min-height: auto !important;
+    }
+
     body.printing-pdf .workspace {
       display: block !important;
       width: auto !important;
+      height: auto !important;
       min-height: auto !important;
       margin: 0 !important;
+      overflow: visible !important;
     }
 
     body.printing-pdf .workspace .pane {
       display: block !important;
+      height: auto !important;
       min-height: auto !important;
       border: 0 !important;
       background: white !important;
+      overflow: visible !important;
     }
 
     body.printing-pdf #preview {
@@ -985,6 +1017,8 @@ $$`
 
 انتگرال یکی از مفاهیم اصلی در حسابان است و برای اندازه‌گیری مجموع پیوستهٔ مقادیر یک تابع به کار می‌رود. وقتی تابعی روی یک بازه تعریف شده باشد، انتگرال آن می‌تواند مساحت زیر نمودار، جرم یک جسم، یا مقدار تجمعی یک کمیت را نمایش دهد. به همین دلیل، انتگرال در ریاضیات، فیزیک، و مهندسی کاربرد گسترده‌ای دارد.
 
+\\english{This paragraph is written in English inside a Farsi document. It stays left-to-right, keeps English digits like 123, and still supports formulas such as $f(x)=x^2$.}
+
 \\theorem{اگر $F(x)$ تابعی باشد که مشتق آن برابر $f(x)$ است، آنگاه $$\\int_a^b f(x)\\,dx = F(b) - F(a).$$ این رابطه نشان می‌دهد که انتگرال معکوس مشتق است و از قضیه اصلی حسابان به دست می‌آید.}`
       }
     ];
@@ -1258,8 +1292,12 @@ $$`
       return wrapSourceFragment("preview-text-segment", sourceStart, sourceEnd, renderedText);
     }
 
+    function renderPreviewContent(text, isFarsiPreview) {
+      return escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text), isFarsiPreview));
+    }
+
     function formatPreviewText(text) {
-      const commandPattern = /\\(title|author|abstract|section|definition|theorem)\s*\{/g;
+      const commandPattern = /\\(title|author|abstract|section|definition|theorem|english)\s*\{/g;
       let html = "";
       let lastIndex = 0;
       let sectionNumber = 0;
@@ -1282,25 +1320,27 @@ $$`
         html += appendPreviewTextSegment(text.slice(lastIndex, match.index), lastIndex, match.index, isFarsiPreview);
 
         if (match[1] === "title") {
-          html += '<span class="preview-title">' + wrapSourceFragment("preview-title-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
+          html += '<span class="preview-title">' + wrapSourceFragment("preview-title-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
         } else if (match[1] === "author") {
-          html += '<span class="preview-author">' + wrapSourceFragment("preview-author-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
+          html += '<span class="preview-author">' + wrapSourceFragment("preview-author-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
         } else if (match[1] === "abstract") {
-          html += '<span class="preview-abstract"><span class="preview-abstract-label">' + abstractLabel + "</span>" + wrapSourceFragment("preview-abstract-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
+          html += '<span class="preview-abstract"><span class="preview-abstract-label">' + abstractLabel + "</span>" + wrapSourceFragment("preview-abstract-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
         } else if (match[1] === "section") {
           sectionNumber++;
           definitionNumber = 0;
           theoremNumber = 0;
           const renderedSectionNumber = isFarsiPreview ? toPersianDigits(String(sectionNumber)) : String(sectionNumber);
-          html += '<span class="preview-section">' + renderedSectionNumber + ". " + wrapSourceFragment("preview-section-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
+          html += '<span class="preview-section">' + renderedSectionNumber + ". " + wrapSourceFragment("preview-section-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
         } else if (match[1] === "definition") {
           definitionNumber++;
           const renderedDefinitionNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + definitionNumber + ".") : sectionNumber + "." + definitionNumber + ".";
-          html += '<span class="preview-statement"><span class="preview-label">' + definitionLabel + " " + renderedDefinitionNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
-        } else {
+          html += '<span class="preview-statement"><span class="preview-label">' + definitionLabel + " " + renderedDefinitionNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
+        } else if (match[1] === "theorem") {
           theoremNumber++;
           const renderedTheoremNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + theoremNumber + ".") : sectionNumber + "." + theoremNumber + ".";
-          html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(bracedValue.value), isFarsiPreview))) + "</span>";
+          html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
+        } else {
+          html += '<span class="preview-english">' + wrapSourceFragment("preview-english-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, false)) + "</span>";
         }
 
         lastIndex = bracedValue.endIndex;
@@ -1929,7 +1969,7 @@ $$`
       }
     });
     document.addEventListener("keydown", function (event) {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+      if ((event.ctrlKey || event.metaKey) && (event.key.toLowerCase() === "s" || event.code === "KeyS")) {
         event.preventDefault();
         saveCurrentSample();
       }

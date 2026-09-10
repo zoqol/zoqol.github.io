@@ -284,6 +284,53 @@
       background: #f2f2f2;
     }
 
+    .sidebar-actions {
+      display: flex;
+      gap: .25rem;
+    }
+
+    .document-settings-popup {
+      position: absolute;
+      top: 3rem;
+      right: .5rem;
+      z-index: 30;
+      width: 9rem;
+      padding: .5rem;
+      border: 1px solid #bbb;
+      background: white;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+    }
+
+    .document-settings-popup[hidden] {
+      display: none;
+    }
+
+    .document-settings-title {
+      margin: 0 0 .35rem;
+      font-size: .78rem;
+      font-weight: bold;
+    }
+
+    .document-mode-option {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .3rem .15rem;
+      font-size: .75rem;
+      cursor: pointer;
+    }
+
+    .document-mode-option + .document-settings-title {
+      margin-top: .5rem;
+      padding-top: .5rem;
+      border-top: 1px solid #ddd;
+    }
+
+    .document-settings-popup .preview-language-button {
+      width: 100%;
+      padding: .35rem;
+    }
+
     .sample-list {
       display: flex;
       flex-direction: column;
@@ -466,6 +513,11 @@
       background: #f2f2f2;
     }
 
+    .save-button.active {
+      border-color: #555;
+      background: #e2e2e2;
+    }
+
     .preview-language-button {
       border: 1px solid #aaa;
       background: white;
@@ -545,10 +597,59 @@
       flex: 1;
       min-height: 0;
       overflow: auto;
-      padding: 4rem 4.5rem;
+      padding: 1.25rem;
+      background: #e7e7e7;
       line-height: 1.5;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
+    }
+
+    .preview-page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 1.25rem;
+      padding: 20mm 30mm;
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 2px 9px rgba(0, 0, 0, .18);
+      transform-origin: top center;
+    }
+
+    .preview-page:last-child {
+      margin-bottom: 0;
+    }
+
+    #preview.preview-slideshow .preview-page {
+      width: 13.333in;
+      height: 7.5in;
+      padding: .6in .8in;
+      font-size: 2rem;
+      line-height: 1.35;
+      page: slideshow-page;
+    }
+
+    #preview.preview-slideshow .preview-title {
+      font-size: 2.2em;
+      line-height: 1.15;
+      margin-bottom: .75em;
+    }
+
+    #preview.preview-slideshow .preview-section {
+      font-size: 1.7em;
+      line-height: 1.2;
+      margin: .8em 0 .45em;
+    }
+
+    .preview-page::after {
+      content: attr(data-page-number);
+      position: absolute;
+      right: 0;
+      bottom: 7mm;
+      left: 0;
+      color: #777;
+      font-size: .75rem;
+      text-align: center;
     }
 
     .preview-save-highlight {
@@ -568,6 +669,20 @@
     .preview-statement {
       display: block;
       margin: 0rem 0;
+    }
+
+    .preview-itemize,
+    .preview-enumerate {
+      margin: .5rem 0 1rem;
+      padding-inline-start: 2rem;
+      white-space: normal;
+    }
+
+    .preview-itemize li,
+    .preview-enumerate li {
+      margin: .2rem 0;
+      line-height: 1.5;
+      white-space: pre-wrap;
     }
 
     .preview-label {
@@ -632,7 +747,12 @@
 
     @page {
       size: A4;
-      margin: 20mm 30mm;
+      margin: 0;
+    }
+
+    @page slideshow-page {
+      size: 13.333in 7.5in;
+      margin: 0;
     }
 
     @media print {
@@ -684,8 +804,25 @@
         display: block;
         overflow: visible;
         padding: 0;
+        background: white;
         color: black;
       }
+
+      .preview-page {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        padding: 20mm 30mm;
+        overflow: hidden;
+        box-shadow: none;
+        zoom: 1 !important;
+        break-after: page;
+      }
+
+      .preview-page:last-child {
+        break-after: auto;
+      }
+
     }
 
     body.printing-pdf .mobile-tabs,
@@ -732,11 +869,39 @@
       overflow: visible !important;
     }
 
+    body.printing-pdf .workspace .pane:first-child {
+      display: none !important;
+    }
+
     body.printing-pdf #preview {
       display: block !important;
       overflow: visible !important;
       padding: 0 !important;
+      background: white !important;
       color: black !important;
+    }
+
+    body.printing-pdf .preview-page {
+      width: 210mm !important;
+      height: 297mm !important;
+      margin: 0 !important;
+      padding: 20mm 30mm !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
+      zoom: 1 !important;
+      break-after: page;
+    }
+
+    body.printing-pdf #preview.preview-slideshow .preview-page {
+      width: 13.333in !important;
+      height: 7.5in !important;
+      padding: .6in .8in !important;
+      font-size: 2rem !important;
+      line-height: 1.35 !important;
+    }
+
+    body.printing-pdf .preview-page:last-child {
+      break-after: auto;
     }
 
     @media (max-width: 800px) {
@@ -842,7 +1007,17 @@
           <button class="sidebar-collapse-button" id="sidebarCollapseButton" type="button" aria-label="Collapse samples">−</button>
           <span class="sidebar-title-text">Samples</span>
         </div>
-        <button class="sidebar-add-button" id="addSampleButton" type="button" aria-label="Add sample">⧉</button>
+        <div class="sidebar-actions">
+          <button class="sidebar-add-button" id="documentSettingsButton" type="button" aria-label="Document settings" aria-expanded="false" title="Document settings">⚙</button>
+          <button class="sidebar-add-button" id="addSampleButton" type="button" aria-label="Add sample">⧉</button>
+        </div>
+      </div>
+      <div class="document-settings-popup" id="documentSettingsPopup" role="dialog" aria-label="Document settings" hidden>
+        <p class="document-settings-title">Page mode</p>
+        <label class="document-mode-option"><input id="documentModeOption" type="radio" name="documentMode" value="document"> Document mode</label>
+        <label class="document-mode-option"><input id="slideshowModeOption" type="radio" name="documentMode" value="slideshow"> Slide-show mode</label>
+        <p class="document-settings-title">Language</p>
+        <button class="preview-language-button" id="previewLanguageButton" type="button" aria-label="Switch preview language">EN</button>
       </div>
       <div class="sample-list" id="sampleList"></div>
     </aside>
@@ -873,7 +1048,6 @@
       <section class="pane">
         <div class="pane-title">
           <span class="pane-title-text">Preview</span>
-          <button class="preview-language-button" id="previewLanguageButton" type="button" aria-label="Switch preview language">EN</button>
           <button class="save-button" id="savePdfButton" type="button" aria-label="Save as PDF">⎙</button>
         </div>
         <div id="preview" aria-live="polite"></div>
@@ -888,6 +1062,10 @@
     const splitter = document.getElementById("splitter");
     const sampleList = document.getElementById("sampleList");
     const addSampleButton = document.getElementById("addSampleButton");
+    const documentSettingsButton = document.getElementById("documentSettingsButton");
+    const documentSettingsPopup = document.getElementById("documentSettingsPopup");
+    const documentModeOption = document.getElementById("documentModeOption");
+    const slideshowModeOption = document.getElementById("slideshowModeOption");
     const sidebarCollapseButton = document.getElementById("sidebarCollapseButton");
     const sidebar = document.querySelector(".sidebar");
     const sidebarTitle = document.querySelector(".sidebar-title");
@@ -903,6 +1081,7 @@
     const sidebarPositionStorageKey = "canonical-sidebar-position";
     const sidebarCollapsedStorageKey = "canonical-sidebar-collapsed";
     const previewLanguageStorageKey = "canonical-preview-language";
+    const samplePreviewModesStorageKey = "canonical-sample-preview-modes";
     const mobileViewStorageKey = "canonical-mobile-view";
     let renderTimer;
     let sidebarDragState = null;
@@ -913,10 +1092,13 @@
     let activeSampleKey = "countability";
     let customSamples = loadCustomSamples();
     let previewLanguage = localStorage.getItem(previewLanguageStorageKey);
+    let samplePreviewModes = loadSamplePreviewModes();
+    let previewMode = "document";
     const mobileEditorTab = document.getElementById("mobileEditorTab");
     const mobilePreviewTab = document.getElementById("mobilePreviewTab");
     let previewHighlightTimer = null;
     let highlightedPreviewBlock = null;
+    let paginationResizeTimer = null;
     const articleSamples = [
       {
         key: "countability",
@@ -1000,7 +1182,57 @@ $$`
 
 \\definition{We write $$A \\vdash B$$ when $B$ is derivable from $A$, and $$A \\models B$$ when $B$ holds in every model of $A$.}
 
+\\itemize{
+\\item{The conjunction $A \\land B$ is true when both $A$ and $B$ are true.}
+\\item{The disjunction $A \\lor B$ is true when at least one of $A$ and $B$ is true.}
+\\item{The implication $A \\to B$ is false only when $A$ is true and $B$ is false.}
+}
+
+\\enumerate{
+\\item{Choose formulas for $A$ and $B$.}
+\\item{Evaluate the premises.}
+\\item{Derive the conclusion.}
+}
+
 \\theorem{If $A \\to B$ and $A$ hold, then $B$ follows, so the sequent $$A, A \\to B \\vdash B$$ is valid.}`
+      },
+      {
+        key: "slideshow",
+        label: "Slide Show",
+        content: `\\title{An Introduction to Propositional Logic}
+
+\\author{Author}
+
+\\abstract{A short presentation about formulas, connectives, and valid arguments.}
+
+\\section{What Is Propositional Logic?}
+
+Propositional logic studies statements that are either true or false and the ways in which they can be combined.
+
+\\itemize{
+\\item{Atomic propositions are represented by letters such as $P$, $Q$, and $R$.}
+\\item{Complex formulas are formed using logical connectives.}
+\\item{A valuation assigns a truth value to every atomic proposition.}
+}
+
+\\section{The Main Connectives}
+
+\\itemize{
+\\item{Negation: $\\neg A$ means “not $A$.”}
+\\item{Conjunction: $A \\land B$ means “$A$ and $B$.”}
+\\item{Disjunction: $A \\lor B$ means “$A$ or $B$.”}
+\\item{Implication: $A \\to B$ means “if $A$, then $B$.”}
+}
+
+\\section{A Valid Argument}
+
+\\enumerate{
+\\item{Assume $A \\to B$.}
+\\item{Assume $A$.}
+\\item{Conclude $B$ by modus ponens.}
+}
+
+\\theorem{The sequent $$A, A \\to B \\vdash B$$ is valid.}`
       },
       {
         key: "farsi",
@@ -1296,8 +1528,34 @@ $$`
       return escapeHtml(convertDigitsOutsideMath(normalizePreviewSpacing(text), isFarsiPreview));
     }
 
+    function renderList(text, sourceStart, sourceEnd, isFarsiPreview, isNumbered) {
+      const itemPattern = /\\item\s*\{/g;
+      let itemsHtml = "";
+      let match;
+
+      while ((match = itemPattern.exec(text)) !== null) {
+        const valueStartIndex = itemPattern.lastIndex - 1;
+        const bracedValue = readBracedValue(text, valueStartIndex);
+
+        if (!bracedValue) {
+          continue;
+        }
+
+        itemsHtml += "<li>" + renderPreviewContent(bracedValue.value, isFarsiPreview) + "</li>";
+        itemPattern.lastIndex = bracedValue.endIndex;
+      }
+
+      if (!itemsHtml) {
+        itemsHtml = "<li>" + renderPreviewContent(text, isFarsiPreview) + "</li>";
+      }
+
+      const tagName = isNumbered ? "ol" : "ul";
+      const className = isNumbered ? "preview-enumerate" : "preview-itemize";
+      return "<" + tagName + ' class="' + className + ' preview-source-fragment" data-source-start="' + sourceStart + '" data-source-end="' + sourceEnd + '">' + itemsHtml + "</" + tagName + ">";
+    }
+
     function formatPreviewText(text) {
-      const commandPattern = /\\(title|author|abstract|section|definition|theorem|english)\s*\{/g;
+      const commandPattern = /\\(title|author|abstract|section|definition|theorem|english|itemize|enumerate)\s*\{/g;
       let html = "";
       let lastIndex = 0;
       let sectionNumber = 0;
@@ -1339,6 +1597,10 @@ $$`
           theoremNumber++;
           const renderedTheoremNumber = isFarsiPreview ? toPersianDigits(sectionNumber + "." + theoremNumber + ".") : sectionNumber + "." + theoremNumber + ".";
           html += '<span class="preview-statement"><span class="preview-label">' + theoremLabel + " " + renderedTheoremNumber + "</span> " + wrapSourceFragment("preview-statement-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, isFarsiPreview)) + "</span>";
+        } else if (match[1] === "itemize") {
+          html += renderList(bracedValue.value, match.index, bracedValue.endIndex, isFarsiPreview, false);
+        } else if (match[1] === "enumerate") {
+          html += renderList(bracedValue.value, match.index, bracedValue.endIndex, isFarsiPreview, true);
         } else {
           html += '<span class="preview-english">' + wrapSourceFragment("preview-english-content", match.index, bracedValue.endIndex, renderPreviewContent(bracedValue.value, false)) + "</span>";
         }
@@ -1350,6 +1612,108 @@ $$`
       html += appendPreviewTextSegment(text.slice(lastIndex), lastIndex, text.length, isFarsiPreview);
 
       return html;
+    }
+
+    function createPreviewPage(pageNumber) {
+      const page = document.createElement("div");
+      page.className = "preview-page";
+      page.dataset.pageNumber = String(pageNumber);
+      page.setAttribute("aria-label", "Page " + pageNumber);
+      return page;
+    }
+
+    function loadSamplePreviewModes() {
+      try {
+        const savedModes = JSON.parse(localStorage.getItem(samplePreviewModesStorageKey) || "{}");
+        return savedModes && typeof savedModes === "object" && !Array.isArray(savedModes) ? savedModes : {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function getPreviewModeForSample(sampleKey) {
+      if (samplePreviewModes[sampleKey] === "slideshow") {
+        return "slideshow";
+      }
+
+      if (samplePreviewModes[sampleKey] === "document") {
+        return "document";
+      }
+
+      return sampleKey === "slideshow" ? "slideshow" : "document";
+    }
+
+    function loadPreviewModeForSample(sampleKey) {
+      previewMode = getPreviewModeForSample(sampleKey);
+      syncPreviewMode();
+    }
+
+    function syncPreviewMode() {
+      const isSlideshow = previewMode === "slideshow";
+      preview.classList.toggle("preview-slideshow", isSlideshow);
+      documentModeOption.checked = !isSlideshow;
+      slideshowModeOption.checked = isSlideshow;
+    }
+
+    function setPreviewMode(mode) {
+      previewMode = mode === "slideshow" ? "slideshow" : "document";
+      samplePreviewModes[activeSampleKey] = previewMode;
+      localStorage.setItem(samplePreviewModesStorageKey, JSON.stringify(samplePreviewModes));
+      syncPreviewMode();
+      paginatePreview();
+    }
+
+    function updatePreviewPageScale() {
+      const pages = preview.querySelectorAll(":scope > .preview-page");
+
+      pages.forEach(function (page) {
+        page.style.zoom = "1";
+      });
+
+      if (!pages.length || document.body.classList.contains("printing-pdf")) {
+        return;
+      }
+
+      const availableWidth = Math.max(1, preview.clientWidth - 40);
+      const a4Width = pages[0].offsetWidth;
+      const scale = Math.min(1, availableWidth / a4Width);
+
+      pages.forEach(function (page) {
+        page.style.zoom = String(scale);
+      });
+    }
+
+    function paginatePreview() {
+      const existingPages = Array.from(preview.querySelectorAll(":scope > .preview-page"));
+      const nodes = [];
+
+      existingPages.forEach(function (page) {
+        nodes.push.apply(nodes, Array.from(page.childNodes));
+      });
+
+      if (!nodes.length) {
+        return;
+      }
+
+      preview.innerHTML = "";
+      let pageNumber = 1;
+      let page = createPreviewPage(pageNumber);
+      preview.appendChild(page);
+
+      nodes.forEach(function (node) {
+        const hadContent = page.childNodes.length > 0;
+        page.appendChild(node);
+
+        if (hadContent && page.scrollHeight > page.clientHeight + 1) {
+          page.removeChild(node);
+          pageNumber++;
+          page = createPreviewPage(pageNumber);
+          preview.appendChild(page);
+          page.appendChild(node);
+        }
+      });
+
+      updatePreviewPageScale();
     }
 
     function renderPreview(options) {
@@ -1365,13 +1729,14 @@ $$`
       clearPreviewHighlight();
 
       preview.classList.toggle("preview-farsi", isPreviewFarsi());
-      preview.innerHTML = formatPreviewText(editor.value);
+      preview.innerHTML = '<div class="preview-page" data-page-number="1" aria-label="Page 1">' + formatPreviewText(editor.value) + "</div>";
       syncMobileView();
 
       if (shouldTypeset && window.MathJax && MathJax.typesetPromise) {
         clearTimeout(renderTimer);
         renderTimer = setTimeout(function () {
           MathJax.typesetPromise([preview]).then(function () {
+            paginatePreview();
             if (shouldSyncScroll) {
               setTimeout(function () {
                 requestAnimationFrame(function () {
@@ -1386,7 +1751,11 @@ $$`
             }
           });
         }, 150);
-      } else if (shouldSyncScroll) {
+      } else {
+        paginatePreview();
+      }
+
+      if (!shouldTypeset && shouldSyncScroll) {
         setTimeout(function () {
           requestAnimationFrame(function () {
             const targetBlock = scrollPreviewToSourceIndex(caretIndex);
@@ -1395,7 +1764,7 @@ $$`
             }
           });
         }, 50);
-      } else if (shouldHighlight) {
+      } else if (!shouldTypeset && shouldHighlight) {
         highlightPreviewBlock(findPreviewBlockForSourceIndex(caretIndex));
       }
     }
@@ -1583,6 +1952,7 @@ $$`
       setEditorContent(sample.content);
       saveActiveSampleKey(sample.key);
       saveEditorState();
+      loadPreviewModeForSample(sample.key);
       setPreviewLanguage(sample.key === "farsi" ? "fa" : "en");
       renderSampleList();
     }
@@ -1601,6 +1971,7 @@ $$`
       customSamples = customSamples.concat(sample);
       saveCustomSamples();
       saveActiveSampleKey(sample.key);
+      loadPreviewModeForSample(sample.key);
       pendingCustomNameFocusId = sample.id;
       setEditorContent(sample.content);
       saveEditorState();
@@ -1679,12 +2050,15 @@ $$`
       customSamples = customSamples.filter(function (sample) {
         return sample.id !== id;
       });
+      delete samplePreviewModes[removed.key];
+      localStorage.setItem(samplePreviewModesStorageKey, JSON.stringify(samplePreviewModes));
       saveCustomSamples();
 
       if (activeSampleKey === removed.key) {
         const fallback = getAllSamples()[0];
         if (fallback) {
           saveActiveSampleKey(fallback.key);
+          loadPreviewModeForSample(fallback.key);
           setEditorContent(fallback.content);
           saveEditorState();
           renderPreview();
@@ -1885,10 +2259,34 @@ $$`
         }
       }
     }
+    loadPreviewModeForSample(activeSampleKey);
     renderSampleList();
     renderPreview();
     addSampleButton.addEventListener("click", function () {
       addCurrentSample();
+    });
+    documentSettingsButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      const willOpen = documentSettingsPopup.hidden;
+      documentSettingsPopup.hidden = !willOpen;
+      documentSettingsButton.setAttribute("aria-expanded", String(willOpen));
+
+      if (willOpen) {
+        setSidebarCollapsed(false);
+      }
+    });
+    documentSettingsPopup.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+    documentModeOption.addEventListener("change", function () {
+      if (documentModeOption.checked) {
+        setPreviewMode("document");
+      }
+    });
+    slideshowModeOption.addEventListener("change", function () {
+      if (slideshowModeOption.checked) {
+        setPreviewMode("slideshow");
+      }
     });
     symbolToggleButton.addEventListener("click", function (event) {
       event.stopPropagation();
@@ -1899,10 +2297,14 @@ $$`
     });
     document.addEventListener("click", function () {
       closeSymbolPicker();
+      documentSettingsPopup.hidden = true;
+      documentSettingsButton.setAttribute("aria-expanded", "false");
     });
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
         closeSymbolPicker();
+        documentSettingsPopup.hidden = true;
+        documentSettingsButton.setAttribute("aria-expanded", "false");
       }
     });
     sidebarTitle.addEventListener("pointerdown", function (event) {
@@ -1982,12 +2384,14 @@ $$`
 
       function clearPrintMode() {
         document.body.classList.remove("printing-pdf");
+        updatePreviewPageScale();
       }
 
       window.addEventListener("afterprint", clearPrintMode, { once: true });
 
       if (window.MathJax && MathJax.typesetPromise) {
         MathJax.typesetPromise([preview]).then(function () {
+          paginatePreview();
           requestAnimationFrame(function () {
             requestAnimationFrame(function () {
               window.print();
@@ -2009,6 +2413,7 @@ $$`
     syncPreviewLanguageButton();
     syncEditorDirection();
     syncMobileView();
+    syncPreviewMode();
     renderPreview();
     restoreSidebarPosition();
     setSidebarCollapsed(isSidebarCollapsed());
@@ -2040,6 +2445,7 @@ $$`
 
       const bounds = workspace.getBoundingClientRect();
       const editorWidth = setPaneWidths(event.clientX - bounds.left);
+      updatePreviewPageScale();
 
       localStorage.setItem(editorWidthStorageKey, editorWidth);
     });
@@ -2062,6 +2468,10 @@ $$`
 
     window.addEventListener("resize", restorePaneWidths);
     window.addEventListener("resize", syncMobileView);
+    window.addEventListener("resize", function () {
+      clearTimeout(paginationResizeTimer);
+      paginationResizeTimer = setTimeout(updatePreviewPageScale, 150);
+    });
     restorePaneWidths();
   </script>
 </body>

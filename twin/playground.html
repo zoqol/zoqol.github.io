@@ -46,9 +46,10 @@
       top: calc(50% - 70px);
       width: 220px;
       height: 140px;
-      min-width: 40px;
-      min-height: 40px;
-      border: 2px solid #18181b;
+      min-width: 1px;
+      min-height: 1px;
+      border: 0;
+      box-shadow: inset 0 0 0 2px #18181b;
       background: #e4e4e7;
       cursor: move;
       touch-action: none;
@@ -182,7 +183,7 @@
     const animatedRectangle = document.getElementById('animatedRectangle');
     const rectangles = [startRectangle, endRectangle];
     const motionLine = document.getElementById('motionLine');
-    const minimumSize = 40;
+    const minimumSize = 1;
     const panelHeight = 164;
     const tweenIds = {
       position: 'rectangle-position',
@@ -625,31 +626,53 @@
     }
 
     function resizeRectangle(dx, dy) {
-      const { direction, left, top, width, height } = interaction;
-      let nextLeft = left;
-      let nextTop = top;
+      const {
+        direction,
+        width,
+        height,
+        centerX,
+        centerY,
+        startRotation
+      } = interaction;
+      const radians = startRotation * Math.PI / 180;
+      const cos = Math.cos(radians);
+      const sin = Math.sin(radians);
+
+      // Translate screen-space pointer movement into the rectangle's
+      // own rotated coordinate system.
+      const localDx = dx * cos + dy * sin;
+      const localDy = -dx * sin + dy * cos;
       let nextWidth = width;
       let nextHeight = height;
+      let localCenterShiftX = 0;
+      let localCenterShiftY = 0;
 
       if (direction.includes('e')) {
-        nextWidth = clamp(width + dx, minimumSize, window.innerWidth - left);
-      }
-
-      if (direction.includes('s')) {
-        nextHeight = clamp(height + dy, minimumSize, workspaceHeight() - top);
+        nextWidth = Math.max(minimumSize, width + localDx);
+        localCenterShiftX = (nextWidth - width) / 2;
       }
 
       if (direction.includes('w')) {
-        const right = left + width;
-        nextLeft = clamp(left + dx, 0, right - minimumSize);
-        nextWidth = right - nextLeft;
+        nextWidth = Math.max(minimumSize, width - localDx);
+        localCenterShiftX = -(nextWidth - width) / 2;
+      }
+
+      if (direction.includes('s')) {
+        nextHeight = Math.max(minimumSize, height + localDy);
+        localCenterShiftY = (nextHeight - height) / 2;
       }
 
       if (direction.includes('n')) {
-        const bottom = top + height;
-        nextTop = clamp(top + dy, 0, bottom - minimumSize);
-        nextHeight = bottom - nextTop;
+        nextHeight = Math.max(minimumSize, height - localDy);
+        localCenterShiftY = -(nextHeight - height) / 2;
       }
+
+      // Move the center by half the size delta so the opposite edge or
+      // corner stays fixed in world space.
+      const worldCenterShiftX = localCenterShiftX * cos - localCenterShiftY * sin;
+      const worldCenterShiftY = localCenterShiftX * sin + localCenterShiftY * cos;
+      const nextLeft = centerX + worldCenterShiftX - nextWidth / 2;
+      const nextTop = centerY + worldCenterShiftY - nextHeight / 2;
 
       setBox(interaction.rectangle, nextLeft, nextTop, nextWidth, nextHeight);
     }

@@ -1,776 +1,334 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Twin.js Playground</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: #fff;
-    }
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      user-select: none;
-    }
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        canvas{
 
-    .motion-guide {
-      position: absolute;
-      inset: 0 0 164px;
-      width: 100%;
-      height: calc(100% - 164px);
-      overflow: visible;
-      pointer-events: none;
-      z-index: 2;
-    }
 
-    .motion-guide line {
-      stroke: #a1a1aa;
-      stroke-width: 1.5;
-      stroke-dasharray: 5 5;
-      vector-effect: non-scaling-stroke;
-    }
+            margin: 2px;
+        display: block;
 
-    .rectangle {
-      position: absolute;
-      left: calc(50% - 110px);
-      top: calc(50% - 70px);
-      width: 220px;
-      height: 140px;
-      min-width: 1px;
-      min-height: 1px;
-      border: 0;
-      box-shadow: inset 0 0 0 2px #18181b;
-      background: #e4e4e7;
-      cursor: move;
-      touch-action: none;
-      z-index: 1;
-    }
 
-    .rectangle.active {
-      outline: 2px solid rgba(37, 99, 235, 0.22);
-      outline-offset: 3px;
-    }
 
-    .animated-rectangle {
-      display: none;
-      pointer-events: none;
-    }
+        }
+        body{
+            
+            background-image: url("bg.gif");
+        }
+        .ma{
 
-    .rectangle-name {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: #71717a;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      pointer-events: none;
-    }
+            width:70%;
 
-    .handle {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border: 1.5px solid #18181b;
-      border-radius: 1px;
-      background: #fff;
-      z-index: 1;
-    }
+        
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 10px;
+            background-color: white;
+            overflow: hidden;
 
-    .handle-nw { left: -6px; top: -6px; cursor: nwse-resize; }
-    .handle-n  { left: 50%; top: -6px; transform: translateX(-50%); cursor: ns-resize; }
-    .handle-ne { right: -6px; top: -6px; cursor: nesw-resize; }
-    .handle-e  { right: -6px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
-    .handle-se { right: -6px; bottom: -6px; cursor: nwse-resize; }
-    .handle-s  { left: 50%; bottom: -6px; transform: translateX(-50%); cursor: ns-resize; }
-    .handle-sw { left: -6px; bottom: -6px; cursor: nesw-resize; }
-    .handle-w  { left: -6px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
 
-    .rotate-handle {
-      left: 50%;
-      top: -38px;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      transform: translateX(-50%);
-      cursor: grab;
-    }
 
-    .rotate-handle:active {
-      cursor: grabbing;
-    }
 
-    .rotate-handle::after {
-      content: "";
-      position: absolute;
-      left: 4px;
-      top: 10px;
-      width: 0;
-      height: 25px;
-      border-left: 1.5px solid #18181b;
-    }
+        }
 
-    minimal-panel.bottom-panel {
-      z-index: 10;
-      overflow: visible !important;
-    }
+        .hldr{
 
-    .timing-functions-link {
-      position: absolute;
-      left: 520px;
-      top: 137px;
-      color: #52525b;
-      font: 10px sans-serif;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      white-space: nowrap;
-    }
 
-    .timing-functions-link:hover {
-      color: #18181b;
-    }
-  </style>
+           display: inline;
+            text-align: center;
+              
+
+
+
+        }
+        code{
+
+            clear: both;
+
+        }
+        #soki{
+        padding: 10px;
+            clear: both;
+        }
+        .header{
+            padding-top: 50px;
+            width: 100%;
+            height: 220px;
+            text-align: center;
+            color: #308080;
+
+
+        }
+        h2{
+            padding-left: 20px;
+            color: darkcyan;
+        }
+        h1{
+            font-size: 34px;
+        }
+        .dlbtn{
+            width: 200px;
+            height: 45px;
+            background-color: darkcyan;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 16px;
+            border: solid;
+            border-width: 1px;
+            border-color: white;
+
+        }
+        a:link{
+
+           text-decoration: none;
+        }
+        .dlbtn:hover {
+            background-color: whitesmoke;
+           border: solid;
+            border-width: 1px;
+            border-color: black;
+            color: black;
+
+
+        }
+
+#hoo{
+ display: flex;
+ flex-wrap: wrap;
+ justify-content: center;
+}
+    </style>
+
 </head>
 <body>
-  <svg class="motion-guide" aria-hidden="true">
-    <line id="motionLine"></line>
-  </svg>
 
-  <div class="rectangle" id="startRectangle" data-name="START" aria-label="Draggable and resizable start rectangle">
-    <span class="rectangle-name">START</span>
-    <span class="handle rotate-handle" data-direction="rotate" title="Rotate"></span>
-    <span class="handle handle-nw" data-direction="nw"></span>
-    <span class="handle handle-n" data-direction="n"></span>
-    <span class="handle handle-ne" data-direction="ne"></span>
-    <span class="handle handle-e" data-direction="e"></span>
-    <span class="handle handle-se" data-direction="se"></span>
-    <span class="handle handle-s" data-direction="s"></span>
-    <span class="handle handle-sw" data-direction="sw"></span>
-    <span class="handle handle-w" data-direction="w"></span>
-  </div>
+<div  class="ma">
+    <div class="header">
+        <h1><pre>Twin.JS</pre></h1>
+        <code>A JavaScript Library to Make Things Move</code>
+       <a href="Twin.js" download><div class="dlbtn"><pre>download</pre></div></a>
+        <hr>
+    </div>
+<div id="hoo"></div>
 
-  <div class="rectangle" id="endRectangle" data-name="END" aria-label="Draggable and resizable end rectangle">
-    <span class="rectangle-name">END</span>
-    <span class="handle rotate-handle" data-direction="rotate" title="Rotate"></span>
-    <span class="handle handle-nw" data-direction="nw"></span>
-    <span class="handle handle-n" data-direction="n"></span>
-    <span class="handle handle-ne" data-direction="ne"></span>
-    <span class="handle handle-e" data-direction="e"></span>
-    <span class="handle handle-se" data-direction="se"></span>
-    <span class="handle handle-s" data-direction="s"></span>
-    <span class="handle handle-sw" data-direction="sw"></span>
-    <span class="handle handle-w" data-direction="w"></span>
-  </div>
+    <script src="Twin.js"></script>
 
-  <div class="rectangle animated-rectangle" id="animatedRectangle" aria-hidden="true"></div>
+    <script>
+        function Boom(id,easeFunc,caption){
+            var div=document.createElement("DIV");
+            div.setAttribute('class','hldr');
+            var c=document.createElement("CANVAS");
+            c.setAttribute("width",225);
+            c.setAttribute("height",225);
+            c.setAttribute("id",id);
+            div.appendChild(c);
+            var matn=document.createElement('CODE');
+            matn.innerHTML=caption;
+            div.appendChild(matn);
 
-  <script src="minimalcomps.mini.js"></script>
-  <script src="Twin2.js"></script>
-  <script>
-    const startRectangle = document.getElementById('startRectangle');
-    const endRectangle = document.getElementById('endRectangle');
-    const animatedRectangle = document.getElementById('animatedRectangle');
-    const rectangles = [startRectangle, endRectangle];
-    const motionLine = document.getElementById('motionLine');
-    const minimumSize = 1;
-    const panelHeight = 164;
-    const tweenIds = {
-      position: 'rectangle-position',
-      size: 'rectangle-size',
-      rotation: 'rectangle-rotation',
-      opacity: 'rectangle-opacity'
-    };
-    const animationState = {
-      left: 0,
-      top: 0,
-      width: 0,
-      height: 0,
-      rotation: 0,
-      opacity: 1
-    };
-    const easingOptions = [
-      { label: 'Linear', fn: Easing.linear.eIn, css: 'cubic-bezier(0, 0, 1, 1)' },
-      { label: 'Quadratic In', fn: Easing.x2.eIn, css: 'cubic-bezier(0.55, 0.085, 0.68, 0.53)' },
-      { label: 'Quadratic Out', fn: Easing.x2.eOut, css: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' },
-      { label: 'Quadratic In Out', fn: Easing.x2.eInOut, css: 'cubic-bezier(0.455, 0.03, 0.515, 0.955)' },
-      { label: 'Cubic In', fn: Easing.x3.eIn, css: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)' },
-      { label: 'Cubic Out', fn: Easing.x3.eOut, css: 'cubic-bezier(0.215, 0.61, 0.355, 1)' },
-      { label: 'Cubic In Out', fn: Easing.x3.eInOut, css: 'cubic-bezier(0.645, 0.045, 0.355, 1)' },
-      { label: 'Back In Out', fn: Easing.back.eInOut, css: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' },
-      { label: 'Exponential In Out', fn: Easing.expo.eInOut, css: 'cubic-bezier(1, 0, 0, 1)' },
-      { label: 'Elastic In Out', fn: Easing.elastic.eInOut, css: 'cubic-bezier(0.68, -0.6, 0.32, 1.6)' },
-      { label: 'Circular In Out', fn: Easing.circ.eInOut, css: 'cubic-bezier(0.785, 0.135, 0.15, 0.86)' }
-    ];
-    let interaction = null;
-    let selectedRectangle = startRectangle;
-    let isAnimating = false;
-    let renderQueued = false;
-    let completedChannels = 0;
+            document.getElementById('hoo').appendChild(div);
 
-    const bottomPanel = new mc2.Panel(
-      document.body,
-      0,
-      window.innerHeight - panelHeight,
-      window.innerWidth,
-      panelHeight
-    );
-    bottomPanel.classList.add('bottom-panel');
+            var off={};
+            off.x=35;
+            off.y=30;
+            var ctx = c.getContext("2d");
 
-    const timingFunctionsLink = document.createElement('a');
-    timingFunctionsLink.className = 'timing-functions-link';
-    timingFunctionsLink.href = 'https://zoqol.github.io/twin/';
-    timingFunctionsLink.target = '_blank';
-    timingFunctionsLink.rel = 'noopener noreferrer';
-    timingFunctionsLink.textContent = 'More on timing functions';
-    bottomPanel.appendChild(timingFunctionsLink);
+            var dots=[];
+            drawGrid();
+            drawAll();
+            var ti=60;
 
-    const positionLabel = new mc2.Label(bottomPanel, 14, 27, 'POSITION');
-    positionLabel.setBold(true).setColor('#18181b');
+            function drawGrid(){
+                ctx.beginPath();
+                ctx.lineWidth=.3;
+                ctx.strokeStyle="#808080";
+                var n=6;
+                for (var i=0;i<=n;i++){
 
-    const sizeLabel = new mc2.Label(bottomPanel, 14, 67, 'SIZE');
-    sizeLabel.setBold(true).setColor('#18181b');
+                    var a=(i/n)*150;
+                    ctx.moveTo(a+off.x,off.y);
+                    ctx.lineTo(a+off.x,150+off.y);
+                    ctx.moveTo(off.x,a+off.y);
+                    ctx.lineTo(150+off.x,a+off.y);
 
-    const rotationLabel = new mc2.Label(bottomPanel, 14, 107, 'ROTATION');
-    rotationLabel.setBold(true).setColor('#18181b');
+                }
+                ctx.stroke();
+                ctx.beginPath();
+              
 
-    const easingNames = easingOptions.map((option) => option.label);
-    const positionEasing = new mc2.Dropdown(
-      bottomPanel,
-      14,
-      43,
-      easingNames,
-      6,
-      handlePositionEasingChange
-    )
-      .setSize(120, 20)
-      .setDropdownPosition('top');
-    const sizeEasing = new mc2.Dropdown(bottomPanel, 14, 83, easingNames, 6)
-      .setSize(120, 20)
-      .setDropdownPosition('top');
-    const rotationEasing = new mc2.Dropdown(bottomPanel, 14, 123, easingNames, 7)
-      .setSize(120, 20)
-      .setDropdownPosition('top');
+            }
+            var obj={y:150};
+            var lpos=0;
+            function up(e){
+                var y=obj.y+off.y;
+                dots.push({x:((e.t)/ti)*150+off.x,y:y});
+                ctx.clearRect(0,0,300,300);
+                ctx.beginPath();
+                lpos= obj.y-150;
+                ctx.rect(off.x, off.y+150,150,lpos);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                drawGrid();
+                drawAll();
+                var end=dots[dots.length-1];
+                ctx.beginPath();
+                ctx.arc(end.x,end.y,3,0,Math.PI*2);
 
-    const opacityEasingLabel = new mc2.Label(bottomPanel, 244, 27, 'OPACITY EASING');
-    opacityEasingLabel.setBold(true).setColor('#18181b');
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.closePath()
+            }
 
-    const opacityEasing = new mc2.Dropdown(bottomPanel, 244, 43, easingNames, 6)
-      .setSize(120, 20)
-      .setDropdownPosition('top');
+            function drawAll(){
 
-    const timingLock = new mc2.Checkbox(
-      bottomPanel,
-      244,
-      82,
-      'Lock',
-      false,
-      toggleTimingLock
-    );
+                var p=dots[0];
+                if(!p) return;
+                ctx.beginPath();
+                ctx.globalAlpha=1;
+                ctx.strokeStyle="#11aaff";
+                ctx.moveTo(p.x, p.y);
+                for (var i=1;i<dots.length;i++){
+                    p=dots[i];
+                    ctx.lineTo(p.x, p.y);
+                }
 
-    const durationInput = new mc2.NumericStepper(
-      bottomPanel,
-      390,
-      82,
-      'DURATION (MS)',
-      1000,
-      100,
-      10000
-    );
+                ctx.stroke();
 
-    const cssTimingLabel = new mc2.Label(bottomPanel, 520, 7, 'TIMING FUNCTION IN CSS');
-    cssTimingLabel.setBold(true).setColor('#18181b');
+            }
+            c.addEventListener('mouseover',ovr);
+            function ovr(e){
+                dots.length=0;
+                obj={y:150};
+                Twin.go(id,obj,{y:0},ti,easeFunc,null,up);
+            }
 
-    const cssTimingArea = new mc2.TextArea(bottomPanel, 520, 27, '');
-    cssTimingArea.setSize(250, 92);
-    cssTimingArea.textArea.readOnly = true;
-    updateCssTiming();
+            //  c.addEventListener('mouseleave',out);
 
-    const opacitySlider = new mc2.VSlider(
-      bottomPanel,
-      174,
-      47,
-      'OPACITY',
-      1,
-      0,
-      1,
-      changeSelectedOpacity
-    );
-    opacitySlider.setHeight(46).setHandleSize(10).setDecimals(2);
+            c.addEventListener('mouseout',out);
+            function out(e){
 
-    const geometryLabel = new mc2.Label(bottomPanel, 14, 7, '');
-    geometryLabel.setColor('#52525b');
+                var tw=Twin.getObject(id);
 
-    const playButton = new mc2.PlayButton(
-      bottomPanel,
-      0,
-      136,
-      false,
-      togglePlayback
-    );
+                Twin.go(id,obj,{y:150},tw.t,easeFunc,fin,up2);
+            }
+            function fin(e){
 
-    const resetButton = new mc2.Button(
-      bottomPanel,
-      0,
-      136,
-      'Reset',
-      resetRectangles
-    ).setSize(70, 20);
+                ctx.clearRect(0,0,300,300);
+                ctx.globalAlpha=0;
+                ctx.beginPath();
+                ctx.globalAlpha=(1-(obj.y/150));
+                var wi=lpos+obj.y;
 
-    layoutControls();
-    Twin.init();
+                ctx.rect(off.x, off.y+150,150,wi);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                ctx.globalAlpha=1;
+                drawGrid();
+                drawAll();
+            }
+            function up2(){
 
-    rectangles.forEach((rectangle) => {
-      rectangle.addEventListener('pointerdown', (event) => {
-        if (event.button !== 0 || isAnimating) return;
+                dots.pop();
+                ctx.clearRect(0,0,300,300);
 
-        const bounds = rectangle.getBoundingClientRect();
-        const box = readBox(rectangle);
-        const handle = event.target.closest('.handle');
-        const direction = handle?.dataset.direction || '';
-        selectedRectangle = rectangle;
-        opacitySlider.setValue(getOpacity(rectangle));
+                ctx.beginPath();
+                ctx.globalAlpha=(1-(obj.y/150));
+                var wi=lpos+obj.y;
 
-        interaction = {
-          rectangle,
-          type: direction === 'rotate' ? 'rotate' : handle ? 'resize' : 'drag',
-          direction,
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          left: box.left,
-          top: box.top,
-          width: box.width,
-          height: box.height,
-          centerX: bounds.left + bounds.width / 2,
-          centerY: bounds.top + bounds.height / 2,
-          startRotation: getRotation(rectangle),
-          startPointerAngle: Math.atan2(
-            event.clientY - (bounds.top + bounds.height / 2),
-            event.clientX - (bounds.left + bounds.width / 2)
-          )
-        };
-
-        updateGeometryLabel(rectangle);
-        rectangle.classList.add('active');
-        rectangle.setPointerCapture(event.pointerId);
-        event.preventDefault();
-      });
-
-      rectangle.addEventListener('pointermove', (event) => {
-        if (!interaction || event.pointerId !== interaction.pointerId) return;
-
-        const dx = event.clientX - interaction.startX;
-        const dy = event.clientY - interaction.startY;
-
-        if (interaction.type === 'rotate') {
-          rotateRectangle(event);
-          return;
+                ctx.rect(off.x, off.y+150,150,wi);
+                ctx.fillStyle = 'lightblue';
+                ctx.fill();
+                ctx.globalAlpha=1;
+                drawGrid();
+                drawAll();
+            }
         }
+        Twin.init();
+        var b1=new Boom("sd",Easing.linear.eIn,"Easing.linear.eIn");
 
-        if (interaction.type === 'drag') {
-          const left = clamp(interaction.left + dx, 0, window.innerWidth - interaction.width);
-          const top = clamp(interaction.top + dy, 0, workspaceHeight() - interaction.height);
-          setBox(rectangle, left, top, interaction.width, interaction.height);
-          return;
-        }
+        var b2=new Boom("b2",Easing.x2.eIn,"Easing.x2.eIn");
+        var b3=new Boom("b3",Easing.x2.eOut,"Easing.x2.eOut");
+        var b4=new Boom("b4",Easing.x2.eInOut,"Easing.x2.eInOut");
 
-        resizeRectangle(dx, dy);
-      });
 
-      rectangle.addEventListener('pointerup', finishInteraction);
-      rectangle.addEventListener('pointercancel', finishInteraction);
-    });
+        var b5=new Boom("b5",Easing.x3.eIn,"Easing.x3.eIn");
+        var b6=new Boom("b6",Easing.x3.eOut,"Easing.x3.eOut");
+        var b7=new Boom("b7",Easing.x3.eInOut,"Easing.x3.eInOut");
 
-    window.addEventListener('resize', () => {
-      bottomPanel.move(0, workspaceHeight());
-      bottomPanel.setSize(window.innerWidth, panelHeight);
-      layoutControls();
+        var b8=new Boom("b8",Easing.x4.eIn,"Easing.x4.eIn");
+        var b9=new Boom("b9",Easing.x4.eOut,"Easing.x4.eOut");
+        var b10=new Boom("b10",Easing.x4.eInOut,"Easing.x4.eInOut");
 
-      rectangles.forEach((rectangle) => {
-        const box = readBox(rectangle);
-        const width = Math.min(box.width, window.innerWidth);
-        const height = Math.min(box.height, workspaceHeight());
-        const left = clamp(box.left, 0, window.innerWidth - width);
-        const top = clamp(box.top, 0, workspaceHeight() - height);
-        setBox(rectangle, left, top, width, height);
-      });
-    });
+        var b11=new Boom("b11",Easing.x5.eIn,"Easing.x5.eIn");
+        var b12=new Boom("b12",Easing.x5.eOut,"Easing.x5.eOut");
+        var b13=new Boom("b113",Easing.x5.eInOut,"Easing.x5.eInOut");
 
-    function rotateRectangle(event) {
-      const pointerAngle = Math.atan2(
-        event.clientY - interaction.centerY,
-        event.clientX - interaction.centerX
-      );
-      const angleDelta = Math.atan2(
-        Math.sin(pointerAngle - interaction.startPointerAngle),
-        Math.cos(pointerAngle - interaction.startPointerAngle)
-      );
-      let rotation = interaction.startRotation + angleDelta * 180 / Math.PI;
+        var b14=new Boom("b14",Easing.expo.eIn,"Easing.expo.eIn");
+        var b15=new Boom("b15",Easing.expo.eOut,"Easing.expo.eOut");
+        var b16=new Boom("b16",Easing.expo.eInOut,"Easing.expo.eInOut");
 
-      if (event.shiftKey) rotation = Math.round(rotation / 15) * 15;
-      setRotation(interaction.rectangle, rotation);
-    }
+        var b17=new Boom("b17",Easing.back.eIn,"Easing.back.eIn");
+        var b18=new Boom("b18",Easing.back.eOut,"Easing.back.eOut");
+        var b19=new Boom("b19",Easing.back.eInOut,"Easing.back.eInOut");
 
-    function changeSelectedOpacity(event) {
-      if (isAnimating) return;
-      setOpacity(selectedRectangle, event.detail);
-    }
+        var b20=new Boom("b20",Easing.circ.eIn,"Easing.circ.eIn");
+        var b21=new Boom("b21",Easing.circ.eOut,"Easing.circ.eOut");
+        var b22=new Boom("b22",Easing.circ.eInOut,"Easing.circ.eInOut");
 
-    function toggleTimingLock(event) {
-      const locked = event.detail;
-      if (locked) syncLockedEasings();
-      [sizeEasing, rotationEasing, opacityEasing].forEach((dropdown) => {
-        dropdown.setEnabled(!locked);
-      });
-    }
+        var b23=new Boom("b23",Easing.elastic.eIn,"Easing.elastic.eIn");
+        var b24=new Boom("b24",Easing.elastic.eOut,"Easing.elastic.eOut");
+        var b25=new Boom("b25",Easing.elastic.eInOut,"Easing.elastic.eInOut");
 
-    function handlePositionEasingChange() {
-      syncLockedEasings();
-      updateCssTiming();
-    }
+    </script>
+    <p></p>
+    <p></p>
+    <div id="soki">
+        <p> </p>
+        <p> </p>
+        <p> </p>
+        <p> </p>
+        <h2><pre>How Can I Use it?</pre></h2>
+        <p>you can use the method <code>Twin.go(id,obj,props,duration,ease,onFinish,onUpdate,easeProps)</code> </p>
+        <p>the arguments are :</p>
+        <pre>
+            id       : a unique string for identifying tween.
+            obj      : the object which you want to change it's properties.
+            props    : properties of the object that you want to change.
+            duration : time interval  
+            ease     : the type of motion( you can choose it from above the page)
+            onFinish : the function callback when motion ends.
+            onUpdate : the function callback when the motion updates.
 
-    function updateCssTiming() {
-      const option = easingOptions[positionEasing.index] || easingOptions[0];
-      cssTimingArea.setText(`animation-timing-function: ${option.css};`);
-    }
+        </pre>
 
-    function syncLockedEasings() {
-      if (!timingLock?.checked) return;
-      [sizeEasing, rotationEasing, opacityEasing].forEach((dropdown) => {
-        dropdown.setIndex(positionEasing.index);
-      });
-    }
+        <p>See the following example :</p>
+        <pre style='color:#000020;background:#f6f8ff;'><html2><body2 style='color:#000020; background:#f6f8ff; '><pre>
+Twin<span style='color:#308080; '>.</span>init<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#200080; font-weight:bold; '>var</span> el<span style='color:#308080; '>=</span>document<span style='color:#308080; '>.</span>getElementById<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id1'</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+     Twin<span style='color:#308080; '>.</span>go<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id'</span><span style='color:#308080; '>,</span><span style='color:#406080; '>{</span>x<span style='color:#406080; '>:</span>el<span style='color:#308080; '>.</span>offsetLeft<span style='color:#406080; '>}</span><span style='color:#308080; '>,</span><span style='color:#406080; '>{</span>x<span style='color:#406080; '>:</span><span style='color:#008c00; '>200</span><span style='color:#406080; '>}</span><span style='color:#308080; '>,</span><span style='color:#008c00; '>80</span><span style='color:#308080; '>,</span>Easing<span style='color:#308080; '>.</span>elastic<span style='color:#308080; '>.</span>eOut<span style='color:#308080; '>,</span>onFinished<span style='color:#308080; '>,</span><span style='color:#200080; font-weight:bold; '>function</span> <span style='color:#308080; '>(</span>e<span style='color:#308080; '>)</span><span style='color:#406080; '>{</span>
+          el<span style='color:#308080; '>.</span>style<span style='color:#308080; '>.</span>left<span style='color:#308080; '>=</span> e<span style='color:#308080; '>.</span>obj<span style='color:#308080; '>.</span>x<span style='color:#308080; '>+</span><span style='color:#1060b6; '>'px'</span><span style='color:#406080; '>;</span>
+     <span style='color:#406080; '>}</span><span style='color:#308080; '>)</span>
+Twin<span style='color:#308080; '>.</span>getObject<span style='color:#308080; '>(</span><span style='color:#1060b6; '>'id'</span><span style='color:#308080; '>)</span><span style='color:#308080; '>.</span>pause<span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+</pre>
 
-    function togglePlayback(event) {
-      const tweens = getTweens();
+    </div>
 
-      if (event.detail) {
-        if (isAnimating && tweens.some((tween) => tween?.isPaused)) {
-          tweens.forEach((tween) => tween?.play());
-        } else {
-          playAnimation();
-        }
-      } else if (isAnimating) {
-        tweens.forEach((tween) => tween?.pause());
-      }
-    }
 
-    function playAnimation() {
-      const start = readBox(startRectangle);
-      const end = readBox(endRectangle);
-      const startRotation = getRotation(startRectangle);
-      const endRotation = startRotation + shortestAngle(
-        getRotation(endRectangle) - startRotation
-      );
-      const duration = Math.max(1, Math.round(durationInput.value / 10));
+</div>
 
-      Object.assign(animationState, {
-        left: start.left,
-        top: start.top,
-        width: start.width,
-        height: start.height,
-        rotation: startRotation,
-        opacity: getOpacity(startRectangle)
-      });
-
-      startRectangle.style.visibility = 'hidden';
-      endRectangle.style.opacity = Math.min(getOpacity(endRectangle), 0.08);
-      animatedRectangle.style.display = 'block';
-      isAnimating = true;
-      completedChannels = 0;
-      opacitySlider.setEnabled(false);
-      durationInput.setEnabled(false);
-      playButton.setPlaying(true);
-      renderAnimation();
-
-      Twin.go(
-        tweenIds.position,
-        animationState,
-        {
-          left: end.left,
-          top: end.top
-        },
-        duration,
-        selectedEasing(positionEasing),
-        finishChannel,
-        queueAnimationRender
-      );
-
-      Twin.go(
-        tweenIds.size,
-        animationState,
-        {
-          width: end.width,
-          height: end.height
-        },
-        duration,
-        selectedChannelEasing(sizeEasing),
-        finishChannel,
-        queueAnimationRender
-      );
-
-      Twin.go(
-        tweenIds.rotation,
-        animationState,
-        {
-          rotation: endRotation
-        },
-        duration,
-        selectedChannelEasing(rotationEasing),
-        finishChannel,
-        queueAnimationRender
-      );
-
-      Twin.go(
-        tweenIds.opacity,
-        animationState,
-        {
-          opacity: getOpacity(endRectangle)
-        },
-        duration,
-        selectedChannelEasing(opacityEasing),
-        finishChannel,
-        queueAnimationRender
-      );
-    }
-
-    function selectedEasing(dropdown) {
-      return easingOptions[dropdown.index]?.fn || Easing.linear.eIn;
-    }
-
-    function selectedChannelEasing(dropdown) {
-      return selectedEasing(timingLock.checked ? positionEasing : dropdown);
-    }
-
-    function finishChannel() {
-      completedChannels += 1;
-      if (completedChannels === Object.keys(tweenIds).length) finishAnimation();
-    }
-
-    function queueAnimationRender() {
-      if (renderQueued) return;
-      renderQueued = true;
-      requestAnimationFrame(() => {
-        renderQueued = false;
-        renderAnimation();
-      });
-    }
-
-    function renderAnimation() {
-      animatedRectangle.style.left = `${animationState.left}px`;
-      animatedRectangle.style.top = `${animationState.top}px`;
-      animatedRectangle.style.width = `${animationState.width}px`;
-      animatedRectangle.style.height = `${animationState.height}px`;
-      animatedRectangle.style.transform = `rotate(${animationState.rotation}deg)`;
-      animatedRectangle.style.opacity = animationState.opacity;
-    }
-
-    function finishAnimation() {
-      const end = readBox(endRectangle);
-      animationState.left = end.left;
-      animationState.top = end.top;
-      animationState.width = end.width;
-      animationState.height = end.height;
-      animationState.rotation = getRotation(endRectangle);
-      animationState.opacity = getOpacity(endRectangle);
-      renderAnimation();
-      isAnimating = false;
-      opacitySlider.setEnabled(true);
-      durationInput.setEnabled(true);
-      playButton.setPlaying(false);
-      startRectangle.style.visibility = 'visible';
-      endRectangle.style.opacity = getOpacity(endRectangle);
-      animatedRectangle.style.display = 'none';
-    }
-
-    function stopAnimation() {
-      getTweens().forEach((tween) => {
-        if (!tween) return;
-        tween.onFinish = null;
-        tween.stop();
-        tween.isEnable = false;
-      });
-      isAnimating = false;
-      completedChannels = 0;
-      opacitySlider.setEnabled(true);
-      durationInput.setEnabled(true);
-      playButton.setPlaying(false);
-      startRectangle.style.visibility = 'visible';
-      endRectangle.style.opacity = getOpacity(endRectangle);
-      animatedRectangle.style.display = 'none';
-    }
-
-    function getTweens() {
-      return Object.values(tweenIds).map((id) => Twin.getObject(id));
-    }
-
-    function shortestAngle(angle) {
-      return ((angle + 180) % 360 + 360) % 360 - 180;
-    }
-
-    function layoutControls() {
-      const right = window.innerWidth - 14;
-      resetButton.setX(Math.max(6, right - 70));
-      playButton.setX(Math.max(6, right - 120));
-    }
-
-    function resizeRectangle(dx, dy) {
-      const {
-        direction,
-        width,
-        height,
-        centerX,
-        centerY,
-        startRotation
-      } = interaction;
-      const radians = startRotation * Math.PI / 180;
-      const cos = Math.cos(radians);
-      const sin = Math.sin(radians);
-
-      // Translate screen-space pointer movement into the rectangle's
-      // own rotated coordinate system.
-      const localDx = dx * cos + dy * sin;
-      const localDy = -dx * sin + dy * cos;
-      let nextWidth = width;
-      let nextHeight = height;
-      let localCenterShiftX = 0;
-      let localCenterShiftY = 0;
-
-      if (direction.includes('e')) {
-        nextWidth = Math.max(minimumSize, width + localDx);
-        localCenterShiftX = (nextWidth - width) / 2;
-      }
-
-      if (direction.includes('w')) {
-        nextWidth = Math.max(minimumSize, width - localDx);
-        localCenterShiftX = -(nextWidth - width) / 2;
-      }
-
-      if (direction.includes('s')) {
-        nextHeight = Math.max(minimumSize, height + localDy);
-        localCenterShiftY = (nextHeight - height) / 2;
-      }
-
-      if (direction.includes('n')) {
-        nextHeight = Math.max(minimumSize, height - localDy);
-        localCenterShiftY = -(nextHeight - height) / 2;
-      }
-
-      // Move the center by half the size delta so the opposite edge or
-      // corner stays fixed in world space.
-      const worldCenterShiftX = localCenterShiftX * cos - localCenterShiftY * sin;
-      const worldCenterShiftY = localCenterShiftX * sin + localCenterShiftY * cos;
-      const nextLeft = centerX + worldCenterShiftX - nextWidth / 2;
-      const nextTop = centerY + worldCenterShiftY - nextHeight / 2;
-
-      setBox(interaction.rectangle, nextLeft, nextTop, nextWidth, nextHeight);
-    }
-
-    function setBox(rectangle, left, top, width, height) {
-      rectangle.style.left = `${left}px`;
-      rectangle.style.top = `${top}px`;
-      rectangle.style.width = `${width}px`;
-      rectangle.style.height = `${height}px`;
-      updateMotionLine();
-      if (rectangle === selectedRectangle) updateGeometryLabel(rectangle);
-    }
-
-    function setRotation(rectangle, rotation) {
-      const normalized = ((rotation + 180) % 360 + 360) % 360 - 180;
-      rectangle.dataset.rotation = normalized;
-      rectangle.style.transform = `rotate(${normalized}deg)`;
-      updateMotionLine();
-      if (rectangle === selectedRectangle) updateGeometryLabel(rectangle);
-    }
-
-    function getRotation(rectangle) {
-      return Number(rectangle.dataset.rotation) || 0;
-    }
-
-    function setOpacity(rectangle, opacity) {
-      const value = clamp(Number(opacity), 0, 1);
-      rectangle.dataset.opacity = value;
-      rectangle.style.opacity = value;
-      if (rectangle === selectedRectangle) {
-        opacitySlider.setValue(value);
-        updateGeometryLabel(rectangle);
-      }
-    }
-
-    function getOpacity(rectangle) {
-      const opacity = Number(rectangle.dataset.opacity);
-      return Number.isFinite(opacity) && rectangle.dataset.opacity !== '' ? opacity : 1;
-    }
-
-    function readBox(rectangle) {
-      return {
-        left: rectangle.offsetLeft,
-        top: rectangle.offsetTop,
-        width: rectangle.offsetWidth,
-        height: rectangle.offsetHeight
-      };
-    }
-
-    function updateMotionLine() {
-      const start = startRectangle.getBoundingClientRect();
-      const end = endRectangle.getBoundingClientRect();
-      motionLine.setAttribute('x1', start.left + start.width / 2);
-      motionLine.setAttribute('y1', start.top + start.height / 2);
-      motionLine.setAttribute('x2', end.left + end.width / 2);
-      motionLine.setAttribute('y2', end.top + end.height / 2);
-    }
-
-    function resetRectangles() {
-      stopAnimation();
-      const width = Math.min(180, Math.max(minimumSize, (window.innerWidth - 48) / 2));
-      const height = Math.min(120, workspaceHeight());
-      const top = (workspaceHeight() - height) / 2;
-      const startLeft = clamp(window.innerWidth * 0.25 - width / 2, 0, window.innerWidth - width);
-      const endLeft = clamp(window.innerWidth * 0.75 - width / 2, 0, window.innerWidth - width);
-
-      selectedRectangle = startRectangle;
-      setRotation(startRectangle, 0);
-      setRotation(endRectangle, 0);
-      setOpacity(startRectangle, 1);
-      setOpacity(endRectangle, 1);
-      setBox(startRectangle, startLeft, top, width, height);
-      setBox(endRectangle, endLeft, top, width, height);
-      updateGeometryLabel(selectedRectangle);
-    }
-
-    function updateGeometryLabel(rectangle) {
-      const { left, top, width, height } = readBox(rectangle);
-      geometryLabel.setText(
-        `${rectangle.dataset.name}  ·  X ${Math.round(left)}   Y ${Math.round(top)}   W ${Math.round(width)}   H ${Math.round(height)}   R ${Math.round(getRotation(rectangle))}°   O ${Math.round(getOpacity(rectangle) * 100)}%`
-      );
-    }
-
-    function workspaceHeight() {
-      return Math.max(minimumSize, window.innerHeight - panelHeight);
-    }
-
-    function finishInteraction(event) {
-      if (!interaction || event.pointerId !== interaction.pointerId) return;
-      interaction.rectangle.classList.remove('active');
-      interaction = null;
-    }
-
-    function clamp(value, minimum, maximum) {
-      return Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
-    }
-
-    resetRectangles();
-  </script>
 </body>
+
+
+
 </html>
